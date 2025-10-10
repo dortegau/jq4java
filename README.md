@@ -7,7 +7,7 @@ A Java 8 port of [jq](https://jqlang.github.io/jq/), the lightweight and flexibl
 - ✅ **Java 8 compatible** - Works with Java 8+
 - ✅ **Zero dependencies** (except org.json for JSON parsing)
 - ✅ **Clean architecture** - JSON library isolated and replaceable
-- ✅ **TDD approach** - 46 passing tests
+- ✅ **TDD approach**
 - ✅ **CI/CD** - Automated testing on GitHub Actions
 
 ## Implemented
@@ -21,6 +21,7 @@ A Java 8 port of [jq](https://jqlang.github.io/jq/), the lightweight and flexibl
 - Array slicing: `.[1:3]`, `.[:2]`, `.[2:]`
 - Array construction: `[.a, .b]`
 - Object construction: `{a: .x, b: .y}`
+- Comma operator: `.a, .b` (multiple outputs)
 
 ## Usage
 
