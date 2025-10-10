@@ -1,19 +1,42 @@
 package com.dortegau.jq4java.json;
 
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
+/**
+ * Interface for JSON values in jq4java.
+ */
 public interface JqValue {
-    JqValue get(String field);
-    JqValue getIndex(int index);
-    JqValue slice(Integer start, Integer end);
-    Stream<JqValue> iterate();
-    String toJson();
-    
-    static JqValue array(JqValue[] elements) {
-        return OrgJsonValue.createArray(elements);
-    }
-    
-    static JqValue object(String[] keys, JqValue[] values) {
-        return OrgJsonValue.createObject(keys, values);
-    }
+  JqValue get(String key);
+
+  JqValue get(int index);
+
+  boolean isArray();
+
+  Stream<JqValue> stream();
+
+  default JqValue slice(Integer start, Integer end) {
+    throw new UnsupportedOperationException("slice not supported");
+  }
+
+  default String toJson() {
+    return toString();
+  }
+
+  static JqValue nullValue() {
+    return OrgJsonValue.nullValue();
+  }
+
+  static JqValue literal(String value) {
+    return OrgJsonValue.literal(value);
+  }
+
+  static JqValue array(List<JqValue> values) {
+    return OrgJsonValue.array(values);
+  }
+
+  static JqValue object(Map<String, JqValue> fields) {
+    return OrgJsonValue.object(fields);
+  }
 }

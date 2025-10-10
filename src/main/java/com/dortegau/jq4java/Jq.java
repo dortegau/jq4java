@@ -5,13 +5,23 @@ import com.dortegau.jq4java.json.JqValue;
 import com.dortegau.jq4java.json.OrgJsonValue;
 import com.dortegau.jq4java.parser.Parser;
 
+/**
+ * Main entry point for jq4java library.
+ */
 public class Jq {
-    public static String execute(String program, String input) {
-        Expression expr = Parser.parse(program);
-        JqValue inputValue = OrgJsonValue.parse(input);
-        return expr.evaluate(inputValue)
-            .map(JqValue::toJson)
-            .reduce((a, b) -> a + "\n" + b)
-            .orElse("");
-    }
+  /**
+   * Executes a jq expression on JSON input.
+   *
+   * @param program the jq expression to execute
+   * @param input the JSON input string
+   * @return the result as a JSON string
+   */
+  public static String execute(String program, String input) {
+    Expression expr = Parser.parse(program);
+    JqValue inputValue = OrgJsonValue.parse(input);
+    return expr.evaluate(inputValue)
+        .map(JqValue::toJson)
+        .reduce((a, b) -> a + "\n" + b)
+        .orElse("");
+  }
 }
