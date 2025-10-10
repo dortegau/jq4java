@@ -1,5 +1,9 @@
 # jq4java
 
+[![Build Status](https://github.com/dortegau/jq4java/actions/workflows/test.yml/badge.svg)](https://github.com/dortegau/jq4java/actions)
+[![Java Version](https://img.shields.io/badge/Java-8%2B-blue)](https://www.oracle.com/java/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A Java 8 port of [jq](https://jqlang.github.io/jq/), the lightweight and flexible command-line JSON processor.
 
 ## Features
