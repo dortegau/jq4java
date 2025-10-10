@@ -19,5 +19,8 @@ jobs:
         java-version: '8'
         distribution: 'temurin'
         
+    - name: Run checkstyle
+      run: mvn checkstyle:check
+      
     - name: Run tests
       run: mvn test
