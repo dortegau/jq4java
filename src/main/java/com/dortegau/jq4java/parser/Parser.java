@@ -4,6 +4,7 @@ import com.dortegau.jq4java.ast.ArrayConstruction;
 import com.dortegau.jq4java.ast.ArrayIndexing;
 import com.dortegau.jq4java.ast.ArrayIteration;
 import com.dortegau.jq4java.ast.ArraySlicing;
+import com.dortegau.jq4java.ast.Comma;
 import com.dortegau.jq4java.ast.Expression;
 import com.dortegau.jq4java.ast.FieldAccess;
 import com.dortegau.jq4java.ast.Identity;
@@ -26,6 +27,16 @@ public class Parser {
             String left = program.substring(0, pipeIndex).trim();
             String right = program.substring(pipeIndex + 1).trim();
             return new Pipe(parse(left), parse(right));
+        }
+        
+        // Comma has second lowest precedence
+        List<String> commaParts = splitByTopLevelChar(program, ',');
+        if (commaParts.size() > 1) {
+            List<Expression> expressions = new ArrayList<>();
+            for (String part : commaParts) {
+                expressions.add(parse(part.trim()));
+            }
+            return new Comma(expressions);
         }
         
         if (".".equals(program)) {
@@ -109,7 +120,7 @@ public class Parser {
         return -1;
     }
     
-    private static List<String> splitByComma(String s) {
+    private static List<String> splitByTopLevelChar(String s, char target) {
         List<String> result = new ArrayList<>();
         int depth = 0;
         int start = 0;
@@ -117,12 +128,16 @@ public class Parser {
             char c = s.charAt(i);
             if (c == '[' || c == '{') depth++;
             else if (c == ']' || c == '}') depth--;
-            else if (c == ',' && depth == 0) {
+            else if (c == target && depth == 0) {
                 result.add(s.substring(start, i));
                 start = i + 1;
             }
         }
         result.add(s.substring(start));
         return result;
+    }
+    
+    private static List<String> splitByComma(String s) {
+        return splitByTopLevelChar(s, ',');
     }
 }

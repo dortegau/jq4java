@@ -47,7 +47,11 @@ class JqTest {
 
     @ParameterizedTest
     @CsvSource({
-        ".foo | .bar, '{\"foo\": {\"bar\": 42}, \"bar\": \"badvalue\"}', 42"
+        ".foo | .bar, '{\"foo\": {\"bar\": 42}, \"bar\": \"badvalue\"}', 42",
+        ". | ., '5', 5",
+        ".a | .b | .c, '{\"a\":{\"b\":{\"c\":99}}}', 99",
+        ".[0] | .x, '[{\"x\":1},{\"x\":2}]', 1",
+        ".[] | ., '[1,2]', '1\n2'"
     })
     void testPipe(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
@@ -111,6 +115,17 @@ class JqTest {
         "'{foo: .bar}' | '{\"bar\":42}' | '{\"foo\":42}'"
     }, delimiter = '|')
     void testObjectConstruction(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'.a, .b' | '{\"a\":1, \"b\":2}' | '1\n2'",
+        "'.foo, .bar' | '{\"foo\":42, \"bar\":43}' | '42\n43'",
+        "'., .' | '5' | '5\n5'",
+        "'.a, .b, .a' | '{\"a\":1, \"b\":2}' | '1\n2\n1'"
+    }, delimiter = '|')
+    void testCommaOperator(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
 }
