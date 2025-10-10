@@ -7,6 +7,33 @@
     <groupId>com.dortegau</groupId>
     <artifactId>jq4java</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    
+    <name>jq4java</name>
+    <description>A Java 8 port of jq, the lightweight and flexible command-line JSON processor</description>
+    <url>https://github.com/dortegau/jq4java</url>
+    
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    
+    <developers>
+        <developer>
+            <id>dortegau</id>
+            <name>Daniel Ortega</name>
+            <url>https://github.com/dortegau</url>
+        </developer>
+    </developers>
+    
+    <scm>
+        <connection>scm:git:git://github.com/dortegau/jq4java.git</connection>
+        <developerConnection>scm:git:ssh://github.com:dortegau/jq4java.git</developerConnection>
+        <url>https://github.com/dortegau/jq4java/tree/main</url>
+    </scm>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
