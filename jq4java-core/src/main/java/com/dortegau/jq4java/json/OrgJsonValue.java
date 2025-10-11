@@ -12,6 +12,10 @@ import org.json.JSONTokener;
  * JqValue implementation using org.json library.
  */
 public class OrgJsonValue implements JqValue {
+  private static final JqValue TRUE = new OrgJsonValue(true);
+  private static final JqValue FALSE = new OrgJsonValue(false);
+  private static final JqValue NULL = new OrgJsonValue(JSONObject.NULL);
+  
   private final Object value;
 
   public OrgJsonValue(String jsonString) {
@@ -122,7 +126,7 @@ public class OrgJsonValue implements JqValue {
   }
 
   public static JqValue nullValue() {
-    return new OrgJsonValue(JSONObject.NULL);
+    return NULL;
   }
 
   /**
@@ -134,11 +138,11 @@ public class OrgJsonValue implements JqValue {
   public static JqValue literal(String literalValue) {
     switch (literalValue) {
       case "null":
-        return nullValue();
+        return NULL;
       case "true":
-        return new OrgJsonValue(true);
+        return TRUE;
       case "false":
-        return new OrgJsonValue(false);
+        return FALSE;
       default:
         try {
           if (literalValue.contains(".")) {
@@ -219,7 +223,7 @@ public class OrgJsonValue implements JqValue {
   }
 
   public static JqValue fromBoolean(boolean value) {
-    return new OrgJsonValue(value);
+    return value ? TRUE : FALSE;
   }
 
   @Override
