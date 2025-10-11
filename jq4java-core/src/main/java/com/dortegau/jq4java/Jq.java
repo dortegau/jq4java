@@ -19,9 +19,13 @@ public class Jq {
   public static String execute(String program, String input) {
     Expression expr = JqParser.parse(program);
     JqValue inputValue = OrgJsonValue.parse(input);
-    return expr.evaluate(inputValue)
-        .map(JqValue::toJson)
-        .reduce((a, b) -> a + "\n" + b)
-        .orElse("");
+    StringBuilder sb = new StringBuilder();
+    expr.evaluate(inputValue).forEach(value -> {
+      if (sb.length() > 0) {
+        sb.append('\n');
+      }
+      sb.append(value.toJson());
+    });
+    return sb.toString();
   }
 }
