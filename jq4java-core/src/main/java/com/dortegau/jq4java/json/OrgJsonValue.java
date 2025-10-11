@@ -420,4 +420,15 @@ public class OrgJsonValue implements JqValue {
 
     throw new RuntimeException("Cannot modulo values of these types");
   }
+
+  @Override
+  public boolean isTruthy() {
+    if (value == JSONObject.NULL) {
+      return false;
+    }
+    if (value instanceof Boolean) {
+      return (Boolean) value;
+    }
+    return true;
+  }
 }

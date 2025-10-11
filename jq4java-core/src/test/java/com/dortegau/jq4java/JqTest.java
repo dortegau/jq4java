@@ -187,7 +187,11 @@ class JqTest {
         "'[.a * 2, .b - 1]' ; '{\"a\":5,\"b\":3}' ; '[10,2]'",
         "'{sum: .a + .b, diff: .a - .b}' ; '{\"a\":10,\"b\":3}' ; '{\"sum\":13,\"diff\":7}'",
         "'.[] | . * 2' ; '[1,2,3]' ; '2\n4\n6'",
-        "'.price * .quantity' ; '{\"price\":10,\"quantity\":5}' ; '50'"
+        "'.price * .quantity' ; '{\"price\":10,\"quantity\":5}' ; '50'",
+        "'.a > 5 and .b < 10' ; '{\"a\":8,\"b\":3}' ; 'true'",
+        "'.a > 5 or .b > 10' ; '{\"a\":2,\"b\":15}' ; 'true'",
+        "'.active and .verified' ; '{\"active\":true,\"verified\":false}' ; 'false'",
+        "'[.[] > 5] | .[0] and .[1]' ; '[10,8]' ; 'true'"
     }, delimiter = ';')
     void testCombinedOperations(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
@@ -241,6 +245,26 @@ class JqTest {
         "'[1,2] + [3,4]', null, '[1,2,3,4]'"
     })
     void testArithmeticOperators(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "'true and false', null, false",
+        "'true and true', null, true",
+        "'false and false', null, false",
+        "'true or false', null, true",
+        "'false or false', null, false",
+        "'true or true', null, true",
+        "'true | not', null, false",
+        "'false | not', null, true",
+        "'null and true', null, false",
+        "'false and true', null, false",
+        "'null or true', null, true",
+        "'5 | not', null, false",
+        "'null | not', null, true"
+    })
+    void testLogicalOperators(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
 

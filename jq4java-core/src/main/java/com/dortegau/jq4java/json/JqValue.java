@@ -55,4 +55,6 @@ public interface JqValue extends Comparable<JqValue> {
   JqValue divide(JqValue other);
 
   JqValue modulo(JqValue other);
+
+  boolean isTruthy();
 }

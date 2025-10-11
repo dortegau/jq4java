@@ -1,6 +1,7 @@
 package com.dortegau.jq4java.parser;
 
 import com.dortegau.jq4java.ast.Alternative;
+import com.dortegau.jq4java.ast.And;
 import com.dortegau.jq4java.ast.Arithmetic;
 import com.dortegau.jq4java.ast.ArrayConstruction;
 import com.dortegau.jq4java.ast.ArrayIndexing;
@@ -14,7 +15,9 @@ import com.dortegau.jq4java.ast.FieldAccess;
 import com.dortegau.jq4java.ast.Identity;
 import com.dortegau.jq4java.ast.Length;
 import com.dortegau.jq4java.ast.Literal;
+import com.dortegau.jq4java.ast.Not;
 import com.dortegau.jq4java.ast.ObjectConstruction;
+import com.dortegau.jq4java.ast.Or;
 import com.dortegau.jq4java.ast.Pipe;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -56,13 +59,32 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
 
   @Override
   public Expression visitAlternativeExpr(JqGrammarParser.AlternativeExprContext ctx) {
+    List<JqGrammarParser.LogicalExprContext> logicalExprs = ctx.logicalExpr();
+    if (logicalExprs.size() == 1) {
+      return visitLogicalExpr(logicalExprs.get(0));
+    }
+    Expression result = visitLogicalExpr(logicalExprs.get(0));
+    for (int i = 1; i < logicalExprs.size(); i++) {
+      result = new Alternative(result, visitLogicalExpr(logicalExprs.get(i)));
+    }
+    return result;
+  }
+
+  @Override
+  public Expression visitLogicalExpr(JqGrammarParser.LogicalExprContext ctx) {
     List<JqGrammarParser.ComparisonExprContext> compExprs = ctx.comparisonExpr();
     if (compExprs.size() == 1) {
       return visitComparisonExpr(compExprs.get(0));
     }
     Expression result = visitComparisonExpr(compExprs.get(0));
     for (int i = 1; i < compExprs.size(); i++) {
-      result = new Alternative(result, visitComparisonExpr(compExprs.get(i)));
+      String operator = ctx.getChild(i * 2 - 1).getText();
+      Expression right = visitComparisonExpr(compExprs.get(i));
+      if (operator.equals("and")) {
+        result = new And(result, right);
+      } else if (operator.equals("or")) {
+        result = new Or(result, right);
+      }
     }
     return result;
   }
@@ -264,6 +286,11 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
   @Override
   public Expression visitBuiltinsExpr(JqGrammarParser.BuiltinsExprContext ctx) {
     return new Builtins();
+  }
+
+  @Override
+  public Expression visitNotExpr(JqGrammarParser.NotExprContext ctx) {
+    return new Not();
   }
 
   @Override

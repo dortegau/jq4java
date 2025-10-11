@@ -15,7 +15,11 @@ commaExpr
     ;
 
 alternativeExpr
-    : comparisonExpr (ALT comparisonExpr)*
+    : logicalExpr (ALT logicalExpr)*
+    ;
+
+logicalExpr
+    : comparisonExpr ((AND | OR) comparisonExpr)*
     ;
 
 comparisonExpr
@@ -53,6 +57,7 @@ primary
     | STRING                                        # StringLiteral
     | LENGTH                                        # LengthExpr
     | BUILTINS                                      # BuiltinsExpr
+    | NOT                                           # NotExpr
     | LBRACKET (expression (COMMA expression)*)? RBRACKET  # ArrayConstructor
     | LBRACE (objectField (COMMA objectField)*)? RBRACE    # ObjectConstructor
     | LPAREN expression RPAREN                      # ParenExpr
@@ -92,6 +97,9 @@ FALSE       : 'false' ;
 NULL        : 'null' ;
 LENGTH      : 'length' ;
 BUILTINS    : 'builtins' ;
+NOT         : 'not' ;
+AND         : 'and' ;
+OR          : 'or' ;
 
 NUMBER      : '-'? [0-9]+ ('.' [0-9]+)? ;
 IDENTIFIER  : [a-zA-Z_][a-zA-Z0-9_]* ;
