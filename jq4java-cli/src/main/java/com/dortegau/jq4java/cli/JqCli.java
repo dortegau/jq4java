@@ -8,9 +8,12 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class JqCli {
+public final class JqCli {
 
-    public static void main(String[] args) {
+    private JqCli() {
+    }
+
+    public static void main(final String[] args) {
         if (args.length == 0) {
             showHelp();
             System.exit(1);
@@ -25,8 +28,10 @@ public class JqCli {
                 showHelp();
                 System.exit(0);
             } else if (arg.equals("-V") || arg.equals("--version")) {
-                System.out.println("jq4java-1.0 (Java port of jq)");
-                System.out.println("https://github.com/dortegau/jq4java");
+                System.out.println(
+                    "jq4java-1.0 (Java port of jq)");
+                System.out.println(
+                    "https://github.com/dortegau/jq4java");
                 System.exit(0);
             } else if (filter == null) {
                 filter = arg;
@@ -36,10 +41,13 @@ public class JqCli {
         }
 
         if (filter == null) {
-            System.err.println("jq4java - commandline JSON processor [version 1.0]");
-            System.err.println("Java port of jq - https://github.com/dortegau/jq4java");
+            System.err.println(
+                "jq4java - commandline JSON processor [version 1.0]");
+            System.err.println(
+                "Java port of jq - https://github.com/dortegau/jq4java");
             System.err.println();
-            System.err.println("Use jq4java --help for help with command-line options,");
+            System.err.println(
+                "Use jq4java --help for help with command-line options,");
             System.exit(2);
         }
 
@@ -53,7 +61,7 @@ public class JqCli {
         }
     }
 
-    private static String readInput(String inputFile) throws IOException {
+    private static String readInput(final String inputFile) throws IOException {
         if (inputFile == null) {
             StringBuilder sb = new StringBuilder();
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
@@ -69,21 +77,29 @@ public class JqCli {
     }
 
     private static void showHelp() {
-        System.out.println("jq4java - commandline JSON processor [version 1.0]");
-        System.out.println("Java port of jq - https://github.com/dortegau/jq4java");
+        System.out.println(
+            "jq4java - commandline JSON processor [version 1.0]");
+        System.out.println(
+            "Java port of jq - https://github.com/dortegau/jq4java");
         System.out.println();
-        System.out.println("Usage: jq4java [options] <jq filter> [file...]");
+        System.out.println(
+            "Usage: jq4java [options] <jq filter> [file...]");
         System.out.println();
-        System.out.println("jq4java is a Java port of jq, a tool for processing JSON inputs,");
-        System.out.println("applying the given filter to its JSON text inputs and producing");
-        System.out.println("the filter's results as JSON on standard output.");
+        System.out.println(
+            "jq4java is a Java port of jq, a tool for processing JSON inputs,");
+        System.out.println(
+            "applying the given filter to its JSON text inputs and producing");
+        System.out.println(
+            "the filter's results as JSON on standard output.");
         System.out.println();
-        System.out.println("For jq documentation see https://jqlang.github.io/jq");
+        System.out.println(
+            "For jq documentation see https://jqlang.github.io/jq");
         System.out.println();
         System.out.println("Some of the options include:");
         System.out.println("  -h, --help               Show this help");
         System.out.println("  -V, --version            Show version");
         System.out.println();
-        System.out.println("See https://github.com/dortegau/jq4java for implementation status.");
+        System.out.println(
+            "See https://github.com/dortegau/jq4java for implementation status.");
     }
 }
