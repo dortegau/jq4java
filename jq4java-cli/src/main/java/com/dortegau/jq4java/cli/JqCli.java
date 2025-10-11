@@ -21,10 +21,13 @@ public final class JqCli {
 
         String filter = null;
         String inputFile = null;
+        boolean nullInput = false;
 
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
-            if (arg.equals("-h") || arg.equals("--help")) {
+            if (arg.equals("-n") || arg.equals("--null-input")) {
+                nullInput = true;
+            } else if (arg.equals("-h") || arg.equals("--help")) {
                 showHelp();
                 System.exit(0);
             } else if (arg.equals("-V") || arg.equals("--version")) {
@@ -52,7 +55,7 @@ public final class JqCli {
         }
 
         try {
-            String input = readInput(inputFile);
+            String input = nullInput ? "null" : readInput(inputFile);
             String result = Jq.execute(filter, input);
             System.out.println(result);
         } catch (Exception e) {
@@ -96,6 +99,7 @@ public final class JqCli {
             "For jq documentation see https://jqlang.github.io/jq");
         System.out.println();
         System.out.println("Some of the options include:");
+        System.out.println("  -n, --null-input         Use null as input");
         System.out.println("  -h, --help               Show this help");
         System.out.println("  -V, --version            Show version");
         System.out.println();
