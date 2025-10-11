@@ -14,16 +14,17 @@ A Java 8 port of [jq](https://jqlang.github.io/jq/), the command-line JSON proce
 
 ## Implemented
 
-- Literals: `true`, `false`, `null`, numbers
+- Literals: `true`, `false`, `null`, numbers, strings (`"hello"`)
 - Identity: `.`
-- Field access: `.foo`, `.foo.bar`
+- Field access: `.foo`, `.foo.bar`, `."my-key"`, `.["foo"]`
 - Pipe: `|`
 - Array iteration: `.[]`
 - Array indexing: `.[0]`, `.[-1]`
 - Array slicing: `.[1:3]`, `.[:2]`, `.[2:]`
 - Array construction: `[.a, .b]`
-- Object construction: `{a: .x, b: .y}`
+- Object construction: `{a: .x, b: .y}`, `{"my-key": .value}`
 - Comma operator: `.a, .b` (multiple outputs)
+- Alternative operator: `.foo // "default"` (null/false coalescing)
 
 ## Usage
 
