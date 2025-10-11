@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 /**
  * Interface for JSON values in jq4java.
  */
-public interface JqValue {
+public interface JqValue extends Comparable<JqValue> {
   JqValue get(String key);
 
   JqValue get(int index);
@@ -38,5 +38,9 @@ public interface JqValue {
 
   static JqValue object(Map<String, JqValue> fields) {
     return OrgJsonValue.object(fields);
+  }
+
+  static JqValue fromBoolean(boolean value) {
+    return OrgJsonValue.fromBoolean(value);
   }
 }

@@ -6,10 +6,16 @@
 
 A Java 8 port of [jq](https://jqlang.github.io/jq/), the command-line JSON processor.
 
+## Modules
+
+- **[jq4java-core](jq4java-core/)** - Core library for embedding in Java applications
+- **[jq4java-cli](jq4java-cli/)** - Command-line interface
+
 ## Features
 
 - ✅ **Java 8 compatible** - Works with Java 8+
 - ✅ **ANTLR-based parser** - Formal grammar for robust parsing
+- ✅ **Library + CLI** - Use as library or standalone tool
 - ✅ **CI/CD** - Automated testing on GitHub Actions
 
 ## Implemented
@@ -25,8 +31,11 @@ A Java 8 port of [jq](https://jqlang.github.io/jq/), the command-line JSON proce
 - Object construction: `{a: .x, b: .y}`, `{"my-key": .value}`
 - Comma operator: `.a, .b` (multiple outputs)
 - Alternative operator: `.foo // "default"` (null/false coalescing)
+- Comparison operators: `==`, `!=`, `<`, `<=`, `>`, `>=`
 
 ## Usage
+
+### As a Library
 
 ```java
 import com.dortegau.jq4java.Jq;
@@ -41,29 +50,59 @@ String result = Jq.execute(".users[0].email", "{\"users\":[{\"email\":\"test@exa
 // result: "\"test@example.com\""
 ```
 
+### As a CLI
+
+```bash
+# Build
+mvn clean package
+
+# Run
+java -jar jq4java-cli/target/jq4java.jar '.' input.json
+echo '{"a":1}' | java -jar jq4java-cli/target/jq4java.jar '.a'
+
+# Or use the wrapper script
+./jq4java-cli/jq4java '.name' data.json
+./jq4java-cli/jq4java --benchmark '.' large.json
+```
+
+See [jq4java-cli/README.md](jq4java-cli/README.md) for more CLI options.
+
 ## Development
 
 Requires Maven 3+ and Java 8+. ANTLR4 grammar is automatically compiled during build.
 
 ```bash
-# Generate parser and run tests
-mvn clean test
+# Build everything
+mvn clean package
 
-# Generate parser only
-mvn generate-sources
+# Run tests
+mvn test
+
+# Build only core library
+cd jq4java-core && mvn clean package
+
+# Build only CLI
+cd jq4java-cli && mvn clean package
 ```
 
 ## Architecture
 
 ```
-com.dortegau.jq4java/
-├── ast/              # AST nodes (Expression implementations)
-├── parser/           # ANTLR grammar and AST builder
-├── json/             # JSON abstraction (JqValue interface + implementations)
-└── Jq.java           # Public API
+jq4java/
+├── jq4java-core/                    # Core library
+│   └── com.dortegau.jq4java/
+│       ├── ast/                     # AST nodes (Expression implementations)
+│       ├── parser/                  # ANTLR grammar and AST builder
+│       ├── json/                    # JSON abstraction (JqValue interface + implementations)
+│       └── Jq.java                  # Public API
+└── jq4java-cli/                     # Command-line interface
+    └── com.dortegau.jq4java.cli/
+        └── JqCli.java               # CLI entry point
 ```
 
 The parser uses ANTLR4 to generate a formal grammar parser, then `JqAstBuilder` converts the parse tree into AST nodes. All JSON library usage is isolated in the `json` package, making it easy to swap implementations.
+
+The CLI is a separate module that depends on the core library, keeping the library lightweight for embedded use.
 
 ## Status
 
@@ -72,3 +111,4 @@ This is a work in progress.
 ## License
 
 MIT
+

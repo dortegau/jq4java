@@ -15,7 +15,11 @@ commaExpr
     ;
 
 alternativeExpr
-    : postfix (ALT postfix)*
+    : comparisonExpr (ALT comparisonExpr)*
+    ;
+
+comparisonExpr
+    : postfix ((EQ | NE | LT | LE | GT | GE) postfix)*
     ;
 
 postfix
@@ -59,6 +63,12 @@ PIPE        : '|' ;
 COMMA       : ',' ;
 COLON       : ':' ;
 ALT         : '//' ;
+EQ          : '==' ;
+NE          : '!=' ;
+LT          : '<' ;
+LE          : '<=' ;
+GT          : '>' ;
+GE          : '>=' ;
 LBRACKET    : '[' ;
 RBRACKET    : ']' ;
 LBRACE      : '{' ;

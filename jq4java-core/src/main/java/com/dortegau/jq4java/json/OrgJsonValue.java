@@ -217,4 +217,53 @@ public class OrgJsonValue implements JqValue {
       return sb.toString();
     }
   }
+
+  public static JqValue fromBoolean(boolean value) {
+    return new OrgJsonValue(value);
+  }
+
+  @Override
+  public int compareTo(JqValue other) {
+    if (!(other instanceof OrgJsonValue)) {
+      throw new IllegalArgumentException("Cannot compare with non-OrgJsonValue");
+    }
+    OrgJsonValue otherValue = (OrgJsonValue) other;
+    
+    if (value instanceof Number && otherValue.value instanceof Number) {
+      double thisNum = ((Number) value).doubleValue();
+      double otherNum = ((Number) otherValue.value).doubleValue();
+      return Double.compare(thisNum, otherNum);
+    }
+    
+    if (value instanceof String && otherValue.value instanceof String) {
+      return ((String) value).compareTo((String) otherValue.value);
+    }
+    
+    throw new RuntimeException("Cannot compare values of different types");
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (!(obj instanceof OrgJsonValue)) return false;
+    OrgJsonValue other = (OrgJsonValue) obj;
+    
+    if (value == JSONObject.NULL && other.value == JSONObject.NULL) return true;
+    if (value == JSONObject.NULL || other.value == JSONObject.NULL) return false;
+    
+    if (value instanceof JSONArray && other.value instanceof JSONArray) {
+      return value.toString().equals(other.value.toString());
+    }
+    
+    if (value instanceof JSONObject && other.value instanceof JSONObject) {
+      return value.toString().equals(other.value.toString());
+    }
+    
+    return value.equals(other.value);
+  }
+
+  @Override
+  public int hashCode() {
+    return value == null ? 0 : value.hashCode();
+  }
 }
