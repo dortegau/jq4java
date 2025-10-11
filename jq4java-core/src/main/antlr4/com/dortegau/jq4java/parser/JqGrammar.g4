@@ -48,6 +48,7 @@ primary
     | NUMBER                                        # NumberLiteral
     | STRING                                        # StringLiteral
     | LENGTH                                        # LengthExpr
+    | BUILTINS                                      # BuiltinsExpr
     | LBRACKET (expression (COMMA expression)*)? RBRACKET  # ArrayConstructor
     | LBRACE (objectField (COMMA objectField)*)? RBRACE    # ObjectConstructor
     | LPAREN expression RPAREN                      # ParenExpr
@@ -81,6 +82,7 @@ TRUE        : 'true' ;
 FALSE       : 'false' ;
 NULL        : 'null' ;
 LENGTH      : 'length' ;
+BUILTINS    : 'builtins' ;
 
 NUMBER      : '-'? [0-9]+ ('.' [0-9]+)? ;
 IDENTIFIER  : [a-zA-Z_][a-zA-Z0-9_]* ;

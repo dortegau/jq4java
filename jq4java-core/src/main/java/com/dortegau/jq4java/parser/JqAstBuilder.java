@@ -5,6 +5,7 @@ import com.dortegau.jq4java.ast.ArrayConstruction;
 import com.dortegau.jq4java.ast.ArrayIndexing;
 import com.dortegau.jq4java.ast.ArrayIteration;
 import com.dortegau.jq4java.ast.ArraySlicing;
+import com.dortegau.jq4java.ast.Builtins;
 import com.dortegau.jq4java.ast.Comma;
 import com.dortegau.jq4java.ast.Comparison;
 import com.dortegau.jq4java.ast.Expression;
@@ -243,6 +244,11 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
   @Override
   public Expression visitLengthExpr(JqGrammarParser.LengthExprContext ctx) {
     return new Length();
+  }
+
+  @Override
+  public Expression visitBuiltinsExpr(JqGrammarParser.BuiltinsExprContext ctx) {
+    return new Builtins();
   }
 
   @Override

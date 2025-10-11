@@ -190,6 +190,20 @@ class JqTest {
 
     @ParameterizedTest
     @CsvSource({
+        "builtins, null, array",
+        "'builtins | length > 0', null, true"
+    })
+    void testBuiltins(String program, String input, String expected) {
+        String result = Jq.execute(program, input);
+        if (expected.equals("array")) {
+            assertEquals(true, result.startsWith("[") && result.endsWith("]"));
+        } else {
+            assertEquals(expected, result);
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource({
         "'[1,2,3] | length', null, 3",
         "'[] | length', null, 0",
         "'{\"a\":1,\"b\":2} | length', null, 2",
