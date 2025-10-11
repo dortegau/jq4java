@@ -120,7 +120,9 @@ class JqTest {
     @CsvSource(value = {
         "'{a: .x}' ; '{\"x\":1}' ; '{\"a\":1}'",
         "'{a: .x, b: .y}' ; '{\"x\":1, \"y\":2}' ; '{\"a\":1,\"b\":2}'",
-        "'{foo: .bar}' ; '{\"bar\":42}' ; '{\"foo\":42}'"
+        "'{foo: .bar}' ; '{\"bar\":42}' ; '{\"foo\":42}'",
+        "'{\"user-id\": .id}' ; '{\"id\":1}' ; '{\"user-id\":1}'",
+        "'{\"my-key\": .x, \"other-key\": .y}' ; '{\"x\":1, \"y\":2}' ; '{\"my-key\":1,\"other-key\":2}'"
     }, delimiter = ';')
     void testObjectConstruction(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));

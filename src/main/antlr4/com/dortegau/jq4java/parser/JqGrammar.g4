@@ -46,6 +46,7 @@ primary
 
 objectField
     : IDENTIFIER COLON expression
+    | STRING COLON expression
     ;
 
 // Lexer rules

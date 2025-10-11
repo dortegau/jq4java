@@ -223,7 +223,12 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
   public Expression visitObjectConstructor(JqGrammarParser.ObjectConstructorContext ctx) {
     Map<String, Expression> fields = new LinkedHashMap<>();
     for (JqGrammarParser.ObjectFieldContext fieldCtx : ctx.objectField()) {
-      String key = fieldCtx.IDENTIFIER().getText();
+      String key;
+      if (fieldCtx.IDENTIFIER() != null) {
+        key = fieldCtx.IDENTIFIER().getText();
+      } else {
+        key = unquoteString(fieldCtx.STRING().getText());
+      }
       Expression value = visit(fieldCtx.expression());
       fields.put(key, value);
     }

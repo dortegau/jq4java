@@ -175,14 +175,46 @@ public class OrgJsonValue implements JqValue {
    * @return a new JqValue representing the object
    */
   public static JqValue object(Map<String, JqValue> fields) {
-    JSONObject obj = new JSONObject();
+    Map<String, Object> rawFields = new java.util.LinkedHashMap<>();
     for (Map.Entry<String, JqValue> entry : fields.entrySet()) {
       String key = entry.getKey();
       JqValue val = entry.getValue();
       if (val instanceof OrgJsonValue) {
-        obj.put(key, ((OrgJsonValue) val).value);
+        rawFields.put(key, ((OrgJsonValue) val).value);
       }
     }
-    return new OrgJsonValue(obj);
+    return new OrgJsonValue(new OrderedJSONObject(rawFields));
+  }
+
+  private static class OrderedJSONObject extends JSONObject {
+    private final Map<String, Object> orderedMap;
+
+    OrderedJSONObject(Map<String, Object> map) {
+      super(map);
+      this.orderedMap = new java.util.LinkedHashMap<>(map);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("{");
+      boolean first = true;
+      for (Map.Entry<String, Object> entry : orderedMap.entrySet()) {
+        if (!first) {
+          sb.append(",");
+        }
+        first = false;
+        sb.append("\"").append(entry.getKey()).append("\":");
+        Object val = entry.getValue();
+        if (val == null || val == JSONObject.NULL) {
+          sb.append("null");
+        } else if (val instanceof String) {
+          sb.append("\"").append(val).append("\"");
+        } else {
+          sb.append(val.toString());
+        }
+      }
+      sb.append("}");
+      return sb.toString();
+    }
   }
 }
