@@ -233,6 +233,16 @@ public class OrgJsonValue implements JqValue {
     }
     OrgJsonValue otherValue = (OrgJsonValue) other;
     
+    if (value == JSONObject.NULL && otherValue.value == JSONObject.NULL) {
+      return 0;
+    }
+    if (value == JSONObject.NULL) {
+      return -1;
+    }
+    if (otherValue.value == JSONObject.NULL) {
+      return 1;
+    }
+    
     if (value instanceof Number && otherValue.value instanceof Number) {
       double thisNum = ((Number) value).doubleValue();
       double otherNum = ((Number) otherValue.value).doubleValue();

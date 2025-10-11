@@ -165,7 +165,16 @@ class JqTest {
         "'[.primary // .secondary, .tertiary]' ; '{\"secondary\":2,\"tertiary\":3}' ; '[2,3]'",
         "'.[\"user-name\"] // .username // \"guest\"' ; '{\"username\":\"bob\"}' ; '\"bob\"'",
         "'{\"user-info\": {\"full-name\": .name}}' ; '{\"name\":\"Alice\"}' ; '{\"user-info\":{\"full-name\":\"Alice\"}}'",
-        "'.a // .b, .c // .d' ; '{\"b\":2,\"c\":3}' ; '2\n3'"
+        "'.a // .b, .c // .d' ; '{\"b\":2,\"c\":3}' ; '2\n3'",
+        "'[.a > .b, .c == .d]' ; '{\"a\":10,\"b\":5,\"c\":3,\"d\":3}' ; '[true,true]'",
+        "'{adult: .age >= 18, minor: .age < 18}' ; '{\"age\":25}' ; '{\"adult\":true,\"minor\":false}'",
+        "'.age > 18 // false' ; '{\"age\":null}' ; 'false'",
+        "'.age > 18 // false' ; '{\"age\":25}' ; 'true'",
+        "'null < 10' ; 'null' ; 'true'",
+        "'null > 10' ; 'null' ; 'false'",
+        "'.price < 100, .stock > 0' ; '{\"price\":50,\"stock\":10}' ; 'true\ntrue'",
+        "'[.[] > 5]' ; '[1,10,3,8]' ; '[false,true,false,true]'",
+        "'.users[] | {name: .name, adult: .age >= 18}' ; '{\"users\":[{\"name\":\"Alice\",\"age\":25},{\"name\":\"Bob\",\"age\":15}]}' ; '{\"name\":\"Alice\",\"adult\":true}\n{\"name\":\"Bob\",\"adult\":false}'"
     }, delimiter = ';')
     void testCombinedOperations(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
