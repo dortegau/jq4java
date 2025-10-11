@@ -6,6 +6,23 @@
 
 A Java 8 port of [jq](https://jqlang.github.io/jq/), the command-line JSON processor.
 
+## Why jq4java?
+
+**Use jq's powerful query language directly in your Java applications:**
+
+- **Familiar syntax** - If you know jq, you already know how to use it
+- **Embeddable** - No need to shell out to external jq binary
+- **Type-safe** - Compile-time checking of your Java code (runtime checking of jq expressions)
+- **Lightweight** - Minimal dependencies, works with Java 8+
+- **Testable** - Easy to unit test your JSON transformations
+
+**Perfect for:**
+- Processing JSON APIs responses in Java applications
+- ETL pipelines that need complex JSON transformations
+- Testing tools that validate JSON structures
+- Microservices that manipulate JSON configurations
+- Any Java app that needs more than simple JSON parsing
+
 ## Modules
 
 - **[jq4java-core](jq4java-core/)** - Core library for embedding in Java applications
