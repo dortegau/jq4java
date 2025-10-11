@@ -32,4 +32,53 @@ class JqErrorTest {
         () -> Jq.execute("|", "null"));
     assertTrue(ex.getMessage().contains("Parse error"));
   }
+
+  @Test
+  void testUnclosedString() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("\"hello", "null"));
+    assertTrue(ex.getMessage().contains("Parse error") || ex.getMessage().contains("token"));
+  }
+
+  @Test
+  void testUnclosedBracketWithString() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute(".[\"foo\"", "{}"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testStringWithoutQuotesInBracket() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute(".[foo]", "{}"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testObjectKeyWithoutValue() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("{\"key\":}", "{}"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testObjectTrailingComma() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("{\"a\": 1,}", "{}"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testAlternativeWithoutRight() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute(".foo //", "{}"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testAlternativeWithoutLeft() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("// \"default\"", "{}"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
 }
