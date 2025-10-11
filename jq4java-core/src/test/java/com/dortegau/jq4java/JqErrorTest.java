@@ -81,4 +81,47 @@ class JqErrorTest {
         () -> Jq.execute("// \"default\"", "{}"));
     assertTrue(ex.getMessage().contains("Parse error"));
   }
+
+  @Test
+  void testCompareIncompatibleTypes() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("\"hello\" < 5", "null"));
+    assertTrue(ex.getMessage().contains("Cannot compare"));
+  }
+
+  @Test
+  void testCompareArrays() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("[1,2] < [3,4]", "null"));
+    assertTrue(ex.getMessage().contains("Cannot compare"));
+  }
+
+  @Test
+  void testCompareObjects() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("{\"a\":1} < {\"b\":2}", "null"));
+    assertTrue(ex.getMessage().contains("Cannot compare"));
+  }
+
+  @Test
+  void testComparisonWithoutRight() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("5 >", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testComparisonWithoutLeft() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("< 5", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testMultipleComparisonsWithoutParens() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("1 < 2 < 3", "null"));
+    assertTrue(ex.getMessage().contains("Parse error") 
+        || ex.getMessage().contains("Cannot compare"));
+  }
 }
