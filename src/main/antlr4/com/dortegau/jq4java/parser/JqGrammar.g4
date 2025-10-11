@@ -11,7 +11,11 @@ expression
     ;
 
 commaExpr
-    : postfix (COMMA postfix)*
+    : alternativeExpr (COMMA alternativeExpr)*
+    ;
+
+alternativeExpr
+    : postfix (ALT postfix)*
     ;
 
 postfix
@@ -54,6 +58,7 @@ DOT         : '.' ;
 PIPE        : '|' ;
 COMMA       : ',' ;
 COLON       : ':' ;
+ALT         : '//' ;
 LBRACKET    : '[' ;
 RBRACKET    : ']' ;
 LBRACE      : '{' ;

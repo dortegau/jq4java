@@ -140,6 +140,21 @@ class JqTest {
     }
 
     @ParameterizedTest
+    @CsvSource({
+        "'null // 3', null, 3",
+        "'false // 3', null, 3",
+        "'42 // 3', null, 42",
+        "'0 // 3', null, 0",
+        "'\"\" // \"default\"', null, '\"\"'",
+        "'.name // \"Unknown\"', '{\"name\": null}', '\"Unknown\"'",
+        "'.name // \"Unknown\"', '{}', '\"Unknown\"'",
+        "'.name // \"Unknown\"', '{\"name\": \"Alice\"}', '\"Alice\"'"
+    })
+    void testAlternativeOperator(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
     @CsvSource(value = {
         "'.users[1:] | .[].email' ; '{\"users\":[{\"name\":\"Alice\",\"email\":\"alice@example.com\"},{\"name\":\"Bob\",\"email\":\"bob@example.com\"},{\"name\":\"Charlie\",\"email\":\"charlie@example.com\"}]}' ; '\"bob@example.com\"\n\"charlie@example.com\"'",
         "'.products[-1].name' ; '{\"products\":[{\"name\":\"Laptop\",\"price\":999},{\"name\":\"Mouse\",\"price\":25}]}' ; '\"Mouse\"'",

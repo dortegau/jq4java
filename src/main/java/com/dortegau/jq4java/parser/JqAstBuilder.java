@@ -1,5 +1,6 @@
 package com.dortegau.jq4java.parser;
 
+import com.dortegau.jq4java.ast.Alternative;
 import com.dortegau.jq4java.ast.ArrayConstruction;
 import com.dortegau.jq4java.ast.ArrayIndexing;
 import com.dortegau.jq4java.ast.ArrayIteration;
@@ -38,15 +39,28 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
 
   @Override
   public Expression visitCommaExpr(JqGrammarParser.CommaExprContext ctx) {
+    List<JqGrammarParser.AlternativeExprContext> altExprs = ctx.alternativeExpr();
+    if (altExprs.size() == 1) {
+      return visitAlternativeExpr(altExprs.get(0));
+    }
+    List<Expression> expressions = new ArrayList<>();
+    for (JqGrammarParser.AlternativeExprContext altExpr : altExprs) {
+      expressions.add(visitAlternativeExpr(altExpr));
+    }
+    return new Comma(expressions);
+  }
+
+  @Override
+  public Expression visitAlternativeExpr(JqGrammarParser.AlternativeExprContext ctx) {
     List<JqGrammarParser.PostfixContext> postfixes = ctx.postfix();
     if (postfixes.size() == 1) {
       return visit(postfixes.get(0));
     }
-    List<Expression> expressions = new ArrayList<>();
-    for (JqGrammarParser.PostfixContext postfix : postfixes) {
-      expressions.add(visit(postfix));
+    Expression result = visit(postfixes.get(0));
+    for (int i = 1; i < postfixes.size(); i++) {
+      result = new Alternative(result, visit(postfixes.get(i)));
     }
-    return new Comma(expressions);
+    return result;
   }
 
   @Override
