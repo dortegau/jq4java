@@ -4,14 +4,12 @@
 [![Java Version](https://img.shields.io/badge/Java-8%2B-blue)](https://www.oracle.com/java/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A Java 8 port of [jq](https://jqlang.github.io/jq/), the lightweight and flexible command-line JSON processor.
+A Java 8 port of [jq](https://jqlang.github.io/jq/), the command-line JSON processor.
 
 ## Features
 
 - ✅ **Java 8 compatible** - Works with Java 8+
-- ✅ **Zero dependencies** (except org.json for JSON parsing)
-- ✅ **Clean architecture** - JSON library isolated and replaceable
-- ✅ **TDD approach**
+- ✅ **ANTLR-based parser** - Formal grammar for robust parsing
 - ✅ **CI/CD** - Automated testing on GitHub Actions
 
 ## Implemented
@@ -37,13 +35,34 @@ String result = Jq.execute(".foo", "{\"foo\": 42}");
 
 String result = Jq.execute("[.a, .b]", "{\"a\":1, \"b\":2}");
 // result: "[1,2]"
+
+String result = Jq.execute(".users[0].email", "{\"users\":[{\"email\":\"test@example.com\"}]}");
+// result: "\"test@example.com\""
 ```
 
-## Build
+## Development
+
+Requires Maven 3+ and Java 8+. ANTLR4 grammar is automatically compiled during build.
 
 ```bash
+# Generate parser and run tests
 mvn clean test
+
+# Generate parser only
+mvn generate-sources
 ```
+
+## Architecture
+
+```
+com.dortegau.jq4java/
+├── ast/              # AST nodes (Expression implementations)
+├── parser/           # ANTLR grammar and AST builder
+├── json/             # JSON abstraction (JqValue interface + implementations)
+└── Jq.java           # Public API
+```
+
+The parser uses ANTLR4 to generate a formal grammar parser, then `JqAstBuilder` converts the parse tree into AST nodes. All JSON library usage is isolated in the `json` package, making it easy to swap implementations.
 
 ## Status
 

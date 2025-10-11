@@ -3,7 +3,7 @@ package com.dortegau.jq4java;
 import com.dortegau.jq4java.ast.Expression;
 import com.dortegau.jq4java.json.JqValue;
 import com.dortegau.jq4java.json.OrgJsonValue;
-import com.dortegau.jq4java.parser.Parser;
+import com.dortegau.jq4java.parser.JqParser;
 
 /**
  * Main entry point for jq4java library.
@@ -17,7 +17,7 @@ public class Jq {
    * @return the result as a JSON string
    */
   public static String execute(String program, String input) {
-    Expression expr = Parser.parse(program);
+    Expression expr = JqParser.parse(program);
     JqValue inputValue = OrgJsonValue.parse(input);
     return expr.evaluate(inputValue)
         .map(JqValue::toJson)

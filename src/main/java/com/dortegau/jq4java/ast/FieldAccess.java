@@ -10,11 +10,6 @@ public class FieldAccess implements Expression {
   private final String fieldName;
   private final Expression base;
 
-  public FieldAccess(String fieldName) {
-    this.fieldName = fieldName;
-    this.base = new Identity();
-  }
-
   public FieldAccess(String fieldName, Expression base) {
     this.fieldName = fieldName;
     this.base = base;

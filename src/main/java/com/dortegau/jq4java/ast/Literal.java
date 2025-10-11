@@ -13,6 +13,10 @@ public class Literal implements Expression {
     this.value = value;
   }
 
+  public String getValue() {
+    return value;
+  }
+
   @Override
   public Stream<JqValue> evaluate(JqValue input) {
     return Stream.of(JqValue.literal(value));

@@ -100,32 +100,43 @@ class JqTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-        "'[.a, .b]' | '{\"a\":1, \"b\":2}' | '[1,2]'",
-        "'[.x]' | '{\"x\":42}' | '[42]'",
-        "'[.a, .b, .c]' | '{\"a\":1, \"b\":2, \"c\":3}' | '[1,2,3]'"
-    }, delimiter = '|')
+        "'[.a, .b]' ; '{\"a\":1, \"b\":2}' ; '[1,2]'",
+        "'[.x]' ; '{\"x\":42}' ; '[42]'",
+        "'[.a, .b, .c]' ; '{\"a\":1, \"b\":2, \"c\":3}' ; '[1,2,3]'"
+    }, delimiter = ';')
     void testArrayConstruction(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
 
     @ParameterizedTest
     @CsvSource(value = {
-        "'{a: .x}' | '{\"x\":1}' | '{\"a\":1}'",
-        "'{a: .x, b: .y}' | '{\"x\":1, \"y\":2}' | '{\"a\":1,\"b\":2}'",
-        "'{foo: .bar}' | '{\"bar\":42}' | '{\"foo\":42}'"
-    }, delimiter = '|')
+        "'{a: .x}' ; '{\"x\":1}' ; '{\"a\":1}'",
+        "'{a: .x, b: .y}' ; '{\"x\":1, \"y\":2}' ; '{\"a\":1,\"b\":2}'",
+        "'{foo: .bar}' ; '{\"bar\":42}' ; '{\"foo\":42}'"
+    }, delimiter = ';')
     void testObjectConstruction(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
 
     @ParameterizedTest
     @CsvSource(value = {
-        "'.a, .b' | '{\"a\":1, \"b\":2}' | '1\n2'",
-        "'.foo, .bar' | '{\"foo\":42, \"bar\":43}' | '42\n43'",
-        "'., .' | '5' | '5\n5'",
-        "'.a, .b, .a' | '{\"a\":1, \"b\":2}' | '1\n2\n1'"
-    }, delimiter = '|')
+        "'.a, .b' ; '{\"a\":1, \"b\":2}' ; '1\n2'",
+        "'.foo, .bar' ; '{\"foo\":42, \"bar\":43}' ; '42\n43'",
+        "'., .' ; '5' ; '5\n5'",
+        "'.a, .b, .a' ; '{\"a\":1, \"b\":2}' ; '1\n2\n1'"
+    }, delimiter = ';')
     void testCommaOperator(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'.users[1:] | .[].email' ; '{\"users\":[{\"name\":\"Alice\",\"email\":\"alice@example.com\"},{\"name\":\"Bob\",\"email\":\"bob@example.com\"},{\"name\":\"Charlie\",\"email\":\"charlie@example.com\"}]}' ; '\"bob@example.com\"\n\"charlie@example.com\"'",
+        "'.products[-1].name' ; '{\"products\":[{\"name\":\"Laptop\",\"price\":999},{\"name\":\"Mouse\",\"price\":25}]}' ; '\"Mouse\"'",
+        "'.items[0:2] | .[].data.value' ; '{\"items\":[{\"data\":{\"value\":10}},{\"data\":{\"value\":20}},{\"data\":{\"value\":30}}]}' ; '10\n20'",
+        "'.records[-2].status' ; '{\"records\":[{\"status\":\"pending\"},{\"status\":\"active\"},{\"status\":\"done\"}]}' ; '\"active\"'"
+    }, delimiter = ';')
+    void testCombinedOperations(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
 }
