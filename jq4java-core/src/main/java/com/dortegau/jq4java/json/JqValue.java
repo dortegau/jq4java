@@ -43,4 +43,6 @@ public interface JqValue extends Comparable<JqValue> {
   static JqValue fromBoolean(boolean value) {
     return OrgJsonValue.fromBoolean(value);
   }
+
+  JqValue length();
 }

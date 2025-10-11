@@ -174,9 +174,34 @@ class JqTest {
         "'null > 10' ; 'null' ; 'false'",
         "'.price < 100, .stock > 0' ; '{\"price\":50,\"stock\":10}' ; 'true\ntrue'",
         "'[.[] > 5]' ; '[1,10,3,8]' ; '[false,true,false,true]'",
-        "'.users[] | {name: .name, adult: .age >= 18}' ; '{\"users\":[{\"name\":\"Alice\",\"age\":25},{\"name\":\"Bob\",\"age\":15}]}' ; '{\"name\":\"Alice\",\"adult\":true}\n{\"name\":\"Bob\",\"adult\":false}'"
+        "'.users[] | {name: .name, adult: .age >= 18}' ; '{\"users\":[{\"name\":\"Alice\",\"age\":25},{\"name\":\"Bob\",\"age\":15}]}' ; '{\"name\":\"Alice\",\"adult\":true}\n{\"name\":\"Bob\",\"adult\":false}'",
+        "'.items | length' ; '{\"items\":[1,2,3]}' ; '3'",
+        "'[.a, .b] | length' ; '{\"a\":1,\"b\":2}' ; '2'",
+        "'.name | length' ; '{\"name\":\"Alice\"}' ; '5'",
+        "'.[] | length' ; '[\"hi\",\"bye\"]' ; '2\n3'",
+        "'{count: .items | length}' ; '{\"items\":[1,2,3,4]}' ; '{\"count\":4}'",
+        "'.items | length > 2' ; '{\"items\":[1,2,3]}' ; 'true'",
+        "'.name | length == 5' ; '{\"name\":\"Alice\"}' ; 'true'",
+        "'[.[] | length]' ; '[\"a\",\"bb\",\"ccc\"]' ; '[1,2,3]'"
     }, delimiter = ';')
     void testCombinedOperations(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "'[1,2,3] | length', null, 3",
+        "'[] | length', null, 0",
+        "'{\"a\":1,\"b\":2} | length', null, 2",
+        "'{} | length', null, 0",
+        "'\"hello\" | length', null, 5",
+        "'\"\" | length', null, 0",
+        "'null | length', null, 0",
+        "'5 | length', null, 5",
+        "'0 | length', null, 0",
+        "'-3 | length', null, 3"
+    })
+    void testLength(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
 

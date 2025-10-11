@@ -280,4 +280,27 @@ public class OrgJsonValue implements JqValue {
   public int hashCode() {
     return value == null ? 0 : value.hashCode();
   }
+
+  @Override
+  public JqValue length() {
+    if (value == JSONObject.NULL) {
+      return new OrgJsonValue(0);
+    }
+    if (value instanceof JSONArray) {
+      return new OrgJsonValue(((JSONArray) value).length());
+    }
+    if (value instanceof JSONObject) {
+      return new OrgJsonValue(((JSONObject) value).length());
+    }
+    if (value instanceof String) {
+      return new OrgJsonValue(((String) value).length());
+    }
+    if (value instanceof Number) {
+      return new OrgJsonValue(Math.abs(((Number) value).intValue()));
+    }
+    if (value instanceof Boolean) {
+      throw new RuntimeException("boolean (" + value + ") has no length");
+    }
+    throw new RuntimeException("length not supported for type: " + value.getClass());
+  }
 }

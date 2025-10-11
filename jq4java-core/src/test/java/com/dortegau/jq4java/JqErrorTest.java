@@ -124,4 +124,18 @@ class JqErrorTest {
     assertTrue(ex.getMessage().contains("Parse error") 
         || ex.getMessage().contains("Cannot compare"));
   }
+
+  @Test
+  void testLengthOnBoolean() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("true | length", "null"));
+    assertTrue(ex.getMessage().contains("has no length"));
+  }
+
+  @Test
+  void testLengthOnBooleanFalse() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("false | length", "null"));
+    assertTrue(ex.getMessage().contains("has no length"));
+  }
 }

@@ -10,6 +10,7 @@ import com.dortegau.jq4java.ast.Comparison;
 import com.dortegau.jq4java.ast.Expression;
 import com.dortegau.jq4java.ast.FieldAccess;
 import com.dortegau.jq4java.ast.Identity;
+import com.dortegau.jq4java.ast.Length;
 import com.dortegau.jq4java.ast.Literal;
 import com.dortegau.jq4java.ast.ObjectConstruction;
 import com.dortegau.jq4java.ast.Pipe;
@@ -237,6 +238,11 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
   @Override
   public Expression visitStringLiteral(JqGrammarParser.StringLiteralContext ctx) {
     return new Literal(ctx.STRING().getText());
+  }
+
+  @Override
+  public Expression visitLengthExpr(JqGrammarParser.LengthExprContext ctx) {
+    return new Length();
   }
 
   @Override
