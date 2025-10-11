@@ -101,9 +101,26 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
   }
 
   @Override
+  public Expression visitFieldAccessStringExpr(JqGrammarParser.FieldAccessStringExprContext ctx) {
+    Expression base = visit(ctx.postfix());
+    String fieldName = unquoteString(ctx.STRING().getText());
+    return new FieldAccess(fieldName, base);
+  }
+
+  @Override
   public Expression visitRootFieldAccess(JqGrammarParser.RootFieldAccessContext ctx) {
     String fieldName = ctx.IDENTIFIER().getText();
     return new FieldAccess(fieldName, new Identity());
+  }
+
+  @Override
+  public Expression visitRootFieldAccessString(JqGrammarParser.RootFieldAccessStringContext ctx) {
+    String fieldName = unquoteString(ctx.STRING().getText());
+    return new FieldAccess(fieldName, new Identity());
+  }
+
+  private String unquoteString(String quoted) {
+    return quoted.substring(1, quoted.length() - 1);
   }
 
   @Override
@@ -174,6 +191,11 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
   @Override
   public Expression visitNumberLiteral(JqGrammarParser.NumberLiteralContext ctx) {
     return new Literal(ctx.NUMBER().getText());
+  }
+
+  @Override
+  public Expression visitStringLiteral(JqGrammarParser.StringLiteralContext ctx) {
+    return new Literal(ctx.STRING().getText());
   }
 
   @Override

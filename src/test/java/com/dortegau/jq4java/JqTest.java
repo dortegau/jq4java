@@ -11,7 +11,9 @@ class JqTest {
         "false, null, false",
         "null,  42,   null",
         "1,     null, 1",
-        "-1,    null, -1"
+        "-1,    null, -1",
+        "'\"hello\"', null, '\"hello\"'",
+        "'\"byte order mark\"', null, '\"byte order mark\"'"
     })
     void testLiterals(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
@@ -39,7 +41,9 @@ class JqTest {
         ".foo.bar, '{\"foo\": {\"bar\": 42}, \"bar\": \"badvalue\"}', 42",
         ".bar, '{\"foo\": {\"bar\": 42}, \"bar\": \"goodvalue\"}', '\"goodvalue\"'",
         ".a.b.c.d.e.f.g.h.i.j, '{\"a\":{\"b\":{\"c\":{\"d\":{\"e\":{\"f\":{\"g\":{\"h\":{\"i\":{\"j\":999}}}}}}}}}}', 999",
-        ".missing, '{\"foo\": 1}', null"
+        ".missing, '{\"foo\": 1}', null",
+        "'.\"foo\"', '{\"foo\": 20}', 20",
+        "'.\"foo\".\"bar\"', '{\"foo\": {\"bar\": 20}}', 20"
     })
     void testFieldAccess(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
