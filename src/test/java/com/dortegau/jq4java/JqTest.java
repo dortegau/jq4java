@@ -159,7 +159,13 @@ class JqTest {
         "'.users[1:] | .[].email' ; '{\"users\":[{\"name\":\"Alice\",\"email\":\"alice@example.com\"},{\"name\":\"Bob\",\"email\":\"bob@example.com\"},{\"name\":\"Charlie\",\"email\":\"charlie@example.com\"}]}' ; '\"bob@example.com\"\n\"charlie@example.com\"'",
         "'.products[-1].name' ; '{\"products\":[{\"name\":\"Laptop\",\"price\":999},{\"name\":\"Mouse\",\"price\":25}]}' ; '\"Mouse\"'",
         "'.items[0:2] | .[].data.value' ; '{\"items\":[{\"data\":{\"value\":10}},{\"data\":{\"value\":20}},{\"data\":{\"value\":30}}]}' ; '10\n20'",
-        "'.records[-2].status' ; '{\"records\":[{\"status\":\"pending\"},{\"status\":\"active\"},{\"status\":\"done\"}]}' ; '\"active\"'"
+        "'.records[-2].status' ; '{\"records\":[{\"status\":\"pending\"},{\"status\":\"active\"},{\"status\":\"done\"}]}' ; '\"active\"'",
+        "'.user.name // .profile.displayName // \"Anonymous\"' ; '{\"profile\":{\"displayName\":\"John\"}}' ; '\"John\"'",
+        "'{name: .name // \"Unknown\", age: .age // 0}' ; '{\"name\":\"Alice\"}' ; '{\"name\":\"Alice\",\"age\":0}'",
+        "'[.primary // .secondary, .tertiary]' ; '{\"secondary\":2,\"tertiary\":3}' ; '[2,3]'",
+        "'.[\"user-name\"] // .username // \"guest\"' ; '{\"username\":\"bob\"}' ; '\"bob\"'",
+        "'{\"user-info\": {\"full-name\": .name}}' ; '{\"name\":\"Alice\"}' ; '{\"user-info\":{\"full-name\":\"Alice\"}}'",
+        "'.a // .b, .c // .d' ; '{\"b\":2,\"c\":3}' ; '2\n3'"
     }, delimiter = ';')
     void testCombinedOperations(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
