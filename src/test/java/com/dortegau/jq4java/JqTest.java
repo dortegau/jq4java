@@ -43,7 +43,11 @@ class JqTest {
         ".a.b.c.d.e.f.g.h.i.j, '{\"a\":{\"b\":{\"c\":{\"d\":{\"e\":{\"f\":{\"g\":{\"h\":{\"i\":{\"j\":999}}}}}}}}}}', 999",
         ".missing, '{\"foo\": 1}', null",
         "'.\"foo\"', '{\"foo\": 20}', 20",
-        "'.\"foo\".\"bar\"', '{\"foo\": {\"bar\": 20}}', 20"
+        "'.\"foo\".\"bar\"', '{\"foo\": {\"bar\": 20}}', 20",
+        "'.[\"foo\"]', '{\"foo\": 42}', 42",
+        "'.[\"my-key\"]', '{\"my-key\": 99}', 99",
+        "'.[\"foo\"][\"bar\"]', '{\"foo\": {\"bar\": 42}}', 42",
+        "'.[\"foo\"].bar', '{\"foo\": {\"bar\": 42}}', 42"
     })
     void testFieldAccess(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));

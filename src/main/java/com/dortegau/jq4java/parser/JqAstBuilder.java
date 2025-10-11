@@ -86,11 +86,17 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
     Expression indexExpr = visit(ctx.expression());
     
     if (indexExpr instanceof Literal) {
-      int index = Integer.parseInt(((Literal) indexExpr).getValue());
-      return new ArrayIndexing(index, base);
+      String value = ((Literal) indexExpr).getValue();
+      if (value.startsWith("\"")) {
+        String fieldName = unquoteString(value);
+        return new FieldAccess(fieldName, base);
+      } else {
+        int index = Integer.parseInt(value);
+        return new ArrayIndexing(index, base);
+      }
     }
     
-    throw new RuntimeException("Array index must be a number literal");
+    throw new RuntimeException("Array/object index must be a literal");
   }
 
   @Override
@@ -156,11 +162,17 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
     Expression indexExpr = visit(ctx.expression());
     
     if (indexExpr instanceof Literal) {
-      int index = Integer.parseInt(((Literal) indexExpr).getValue());
-      return new ArrayIndexing(index, new Identity());
+      String value = ((Literal) indexExpr).getValue();
+      if (value.startsWith("\"")) {
+        String fieldName = unquoteString(value);
+        return new FieldAccess(fieldName, new Identity());
+      } else {
+        int index = Integer.parseInt(value);
+        return new ArrayIndexing(index, new Identity());
+      }
     }
     
-    throw new RuntimeException("Array index must be a number literal");
+    throw new RuntimeException("Array/object index must be a literal");
   }
 
   @Override
