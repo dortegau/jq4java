@@ -182,7 +182,12 @@ class JqTest {
         "'{count: .items | length}' ; '{\"items\":[1,2,3,4]}' ; '{\"count\":4}'",
         "'.items | length > 2' ; '{\"items\":[1,2,3]}' ; 'true'",
         "'.name | length == 5' ; '{\"name\":\"Alice\"}' ; 'true'",
-        "'[.[] | length]' ; '[\"a\",\"bb\",\"ccc\"]' ; '[1,2,3]'"
+        "'[.[] | length]' ; '[\"a\",\"bb\",\"ccc\"]' ; '[1,2,3]'",
+        "'.a + .b > 10' ; '{\"a\":5,\"b\":8}' ; 'true'",
+        "'[.a * 2, .b - 1]' ; '{\"a\":5,\"b\":3}' ; '[10,2]'",
+        "'{sum: .a + .b, diff: .a - .b}' ; '{\"a\":10,\"b\":3}' ; '{\"sum\":13,\"diff\":7}'",
+        "'.[] | . * 2' ; '[1,2,3]' ; '2\n4\n6'",
+        "'.price * .quantity' ; '{\"price\":10,\"quantity\":5}' ; '50'"
     }, delimiter = ';')
     void testCombinedOperations(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
@@ -216,6 +221,26 @@ class JqTest {
         "'-3 | length', null, 3"
     })
     void testLength(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "'5 + 3', null, 8",
+        "'5 - 3', null, 2",
+        "'5 * 3', null, 15",
+        "'10 / 4', null, 2.5",
+        "'10 % 3', null, 1",
+        "'0 + 0', null, 0",
+        "'-5 + 3', null, -2",
+        "'10 / 2', null, 5",
+        "'.a + .b', '{\"a\":5,\"b\":3}', 8",
+        "'.a - .b', '{\"a\":5,\"b\":3}', 2",
+        "'.a * .b', '{\"a\":5,\"b\":3}', 15",
+        "'\"hello\" + \" world\"', null, '\"hello world\"'",
+        "'[1,2] + [3,4]', null, '[1,2,3,4]'"
+    })
+    void testArithmeticOperators(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
 

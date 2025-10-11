@@ -19,7 +19,11 @@ alternativeExpr
     ;
 
 comparisonExpr
-    : postfix ((EQ | NE | LT | LE | GT | GE) postfix)*
+    : arithmeticExpr ((EQ | NE | LT | LE | GT | GE) arithmeticExpr)*
+    ;
+
+arithmeticExpr
+    : postfix ((PLUS | MINUS | MULT | DIV | MOD) postfix)*
     ;
 
 postfix
@@ -65,6 +69,11 @@ PIPE        : '|' ;
 COMMA       : ',' ;
 COLON       : ':' ;
 ALT         : '//' ;
+PLUS        : '+' ;
+MINUS       : '-' ;
+MULT        : '*' ;
+DIV         : '/' ;
+MOD         : '%' ;
 EQ          : '==' ;
 NE          : '!=' ;
 LT          : '<' ;

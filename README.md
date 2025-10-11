@@ -49,6 +49,7 @@ A Java 8 port of [jq](https://jqlang.github.io/jq/), the command-line JSON proce
 - Comma operator: `.a, .b` (multiple outputs)
 - Alternative operator: `.foo // "default"` (null/false coalescing)
 - Comparison operators: `==`, `!=`, `<`, `<=`, `>`, `>=`
+- Arithmetic operators: `+`, `-`, `*`, `/`, `%` (also string/array concatenation with `+`)
 - Built-in functions: `length`, `builtins`
 
 ## Usage

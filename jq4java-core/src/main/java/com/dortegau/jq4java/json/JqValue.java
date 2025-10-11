@@ -45,4 +45,14 @@ public interface JqValue extends Comparable<JqValue> {
   }
 
   JqValue length();
+
+  JqValue add(JqValue other);
+
+  JqValue subtract(JqValue other);
+
+  JqValue multiply(JqValue other);
+
+  JqValue divide(JqValue other);
+
+  JqValue modulo(JqValue other);
 }

@@ -1,6 +1,7 @@
 package com.dortegau.jq4java.parser;
 
 import com.dortegau.jq4java.ast.Alternative;
+import com.dortegau.jq4java.ast.Arithmetic;
 import com.dortegau.jq4java.ast.ArrayConstruction;
 import com.dortegau.jq4java.ast.ArrayIndexing;
 import com.dortegau.jq4java.ast.ArrayIteration;
@@ -68,6 +69,20 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
 
   @Override
   public Expression visitComparisonExpr(JqGrammarParser.ComparisonExprContext ctx) {
+    List<JqGrammarParser.ArithmeticExprContext> arithmeticExprs = ctx.arithmeticExpr();
+    if (arithmeticExprs.size() == 1) {
+      return visitArithmeticExpr(arithmeticExprs.get(0));
+    }
+    Expression result = visitArithmeticExpr(arithmeticExprs.get(0));
+    for (int i = 1; i < arithmeticExprs.size(); i++) {
+      String operator = ctx.getChild(i * 2 - 1).getText();
+      result = new Comparison(result, operator, visitArithmeticExpr(arithmeticExprs.get(i)));
+    }
+    return result;
+  }
+
+  @Override
+  public Expression visitArithmeticExpr(JqGrammarParser.ArithmeticExprContext ctx) {
     List<JqGrammarParser.PostfixContext> postfixes = ctx.postfix();
     if (postfixes.size() == 1) {
       return visit(postfixes.get(0));
@@ -75,7 +90,7 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
     Expression result = visit(postfixes.get(0));
     for (int i = 1; i < postfixes.size(); i++) {
       String operator = ctx.getChild(i * 2 - 1).getText();
-      result = new Comparison(result, operator, visit(postfixes.get(i)));
+      result = new Arithmetic(result, operator, visit(postfixes.get(i)));
     }
     return result;
   }

@@ -303,4 +303,121 @@ public class OrgJsonValue implements JqValue {
     }
     throw new RuntimeException("length not supported for type: " + value.getClass());
   }
+
+  @Override
+  public JqValue add(JqValue other) {
+    if (!(other instanceof OrgJsonValue)) {
+      throw new IllegalArgumentException("Cannot add non-OrgJsonValue");
+    }
+    OrgJsonValue otherValue = (OrgJsonValue) other;
+
+    if (value instanceof Number && otherValue.value instanceof Number) {
+      double result = ((Number) value).doubleValue() + ((Number) otherValue.value).doubleValue();
+      if (result == (long) result) {
+        return new OrgJsonValue((long) result);
+      }
+      return new OrgJsonValue(result);
+    }
+
+    if (value instanceof String && otherValue.value instanceof String) {
+      return new OrgJsonValue((String) value + (String) otherValue.value);
+    }
+
+    if (value instanceof JSONArray && otherValue.value instanceof JSONArray) {
+      JSONArray result = new JSONArray();
+      JSONArray arr1 = (JSONArray) value;
+      JSONArray arr2 = (JSONArray) otherValue.value;
+      for (int i = 0; i < arr1.length(); i++) {
+        result.put(arr1.get(i));
+      }
+      for (int i = 0; i < arr2.length(); i++) {
+        result.put(arr2.get(i));
+      }
+      return new OrgJsonValue(result);
+    }
+
+    throw new RuntimeException("Cannot add values of these types");
+  }
+
+  @Override
+  public JqValue subtract(JqValue other) {
+    if (!(other instanceof OrgJsonValue)) {
+      throw new IllegalArgumentException("Cannot subtract non-OrgJsonValue");
+    }
+    OrgJsonValue otherValue = (OrgJsonValue) other;
+
+    if (value instanceof Number && otherValue.value instanceof Number) {
+      double result = ((Number) value).doubleValue() - ((Number) otherValue.value).doubleValue();
+      if (result == (long) result) {
+        return new OrgJsonValue((long) result);
+      }
+      return new OrgJsonValue(result);
+    }
+
+    String type1 = value instanceof String ? "string" : value.getClass().getSimpleName();
+    String type2 = otherValue.value instanceof String ? "string" : otherValue.value.getClass().getSimpleName();
+    throw new RuntimeException(type1 + " (" + this + ") and " + type2 + " (" + other + ") cannot be subtracted");
+  }
+
+  @Override
+  public JqValue multiply(JqValue other) {
+    if (!(other instanceof OrgJsonValue)) {
+      throw new IllegalArgumentException("Cannot multiply non-OrgJsonValue");
+    }
+    OrgJsonValue otherValue = (OrgJsonValue) other;
+
+    if (value instanceof Number && otherValue.value instanceof Number) {
+      double result = ((Number) value).doubleValue() * ((Number) otherValue.value).doubleValue();
+      if (result == (long) result) {
+        return new OrgJsonValue((long) result);
+      }
+      return new OrgJsonValue(result);
+    }
+
+    throw new RuntimeException("Cannot multiply values of these types");
+  }
+
+  @Override
+  public JqValue divide(JqValue other) {
+    if (!(other instanceof OrgJsonValue)) {
+      throw new IllegalArgumentException("Cannot divide non-OrgJsonValue");
+    }
+    OrgJsonValue otherValue = (OrgJsonValue) other;
+
+    if (value instanceof Number && otherValue.value instanceof Number) {
+      double divisor = ((Number) otherValue.value).doubleValue();
+      if (divisor == 0) {
+        throw new RuntimeException("number (" + value + ") and number (0) cannot be divided because the divisor is zero");
+      }
+      double result = ((Number) value).doubleValue() / divisor;
+      if (result == (long) result) {
+        return new OrgJsonValue((long) result);
+      }
+      return new OrgJsonValue(result);
+    }
+
+    throw new RuntimeException("Cannot divide values of these types");
+  }
+
+  @Override
+  public JqValue modulo(JqValue other) {
+    if (!(other instanceof OrgJsonValue)) {
+      throw new IllegalArgumentException("Cannot modulo non-OrgJsonValue");
+    }
+    OrgJsonValue otherValue = (OrgJsonValue) other;
+
+    if (value instanceof Number && otherValue.value instanceof Number) {
+      double divisor = ((Number) otherValue.value).doubleValue();
+      if (divisor == 0) {
+        throw new RuntimeException("number (" + value + ") and number (0) cannot be divided because the divisor is zero");
+      }
+      double result = ((Number) value).doubleValue() % divisor;
+      if (result == (long) result) {
+        return new OrgJsonValue((long) result);
+      }
+      return new OrgJsonValue(result);
+    }
+
+    throw new RuntimeException("Cannot modulo values of these types");
+  }
 }

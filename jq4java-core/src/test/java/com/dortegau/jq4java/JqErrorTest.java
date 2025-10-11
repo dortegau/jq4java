@@ -138,4 +138,25 @@ class JqErrorTest {
         () -> Jq.execute("false | length", "null"));
     assertTrue(ex.getMessage().contains("has no length"));
   }
+
+  @Test
+  void testSubtractStrings() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("\"hello\" - \"world\"", "null"));
+    assertTrue(ex.getMessage().contains("cannot be subtracted"));
+  }
+
+  @Test
+  void testDivideByZero() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("5 / 0", "null"));
+    assertTrue(ex.getMessage().contains("divisor is zero") || ex.getMessage().contains("divide by zero"));
+  }
+
+  @Test
+  void testModuloByZero() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("5 % 0", "null"));
+    assertTrue(ex.getMessage().contains("divisor is zero") || ex.getMessage().contains("divide by zero"));
+  }
 }
