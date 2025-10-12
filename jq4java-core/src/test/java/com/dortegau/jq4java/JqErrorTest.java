@@ -159,4 +159,18 @@ class JqErrorTest {
         () -> Jq.execute("5 % 0", "null"));
     assertTrue(ex.getMessage().contains("divisor is zero") || ex.getMessage().contains("divide by zero"));
   }
+
+  @Test
+  void testKeysOnNull() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("null | keys", "null"));
+    assertTrue(ex.getMessage().contains("has no keys"));
+  }
+
+  @Test
+  void testKeysOnNumber() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("5 | keys", "null"));
+    assertTrue(ex.getMessage().contains("has no keys"));
+  }
 }

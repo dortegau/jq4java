@@ -191,7 +191,10 @@ class JqTest {
         "'.a > 5 and .b < 10' ; '{\"a\":8,\"b\":3}' ; 'true'",
         "'.a > 5 or .b > 10' ; '{\"a\":2,\"b\":15}' ; 'true'",
         "'.active and .verified' ; '{\"active\":true,\"verified\":false}' ; 'false'",
-        "'[.[] > 5] | .[0] and .[1]' ; '[10,8]' ; 'true'"
+        "'[.[] > 5] | .[0] and .[1]' ; '[10,8]' ; 'true'",
+        "'{a:1,b:2} | keys | length' ; 'null' ; '2'",
+        "'{a:1,b:2} | keys | .[0]' ; 'null' ; '\"a\"'",
+        "'[1,2,3] | keys | .[]' ; 'null' ; '0\n1\n2'"
     }, delimiter = ';')
     void testCombinedOperations(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
@@ -245,6 +248,17 @@ class JqTest {
         "'[1,2] + [3,4]', null, '[1,2,3,4]'"
     })
     void testArithmeticOperators(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'{\"b\":2,\"a\":1,\"c\":3} | keys' ; 'null' ; '[\"a\",\"b\",\"c\"]'",
+        "'[42,3,35] | keys' ; 'null' ; '[0,1,2]'",
+        "'{} | keys' ; 'null' ; '[]'",
+        "'[] | keys' ; 'null' ; '[]'"
+    }, delimiter = ';')
+    void testKeys(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
 

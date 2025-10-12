@@ -13,6 +13,7 @@ import com.dortegau.jq4java.ast.Comparison;
 import com.dortegau.jq4java.ast.Expression;
 import com.dortegau.jq4java.ast.FieldAccess;
 import com.dortegau.jq4java.ast.Identity;
+import com.dortegau.jq4java.ast.Keys;
 import com.dortegau.jq4java.ast.Length;
 import com.dortegau.jq4java.ast.Literal;
 import com.dortegau.jq4java.ast.Not;
@@ -291,6 +292,11 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
   @Override
   public Expression visitNotExpr(JqGrammarParser.NotExprContext ctx) {
     return new Not();
+  }
+
+  @Override
+  public Expression visitKeysExpr(JqGrammarParser.KeysExprContext ctx) {
+    return new Keys();
   }
 
   @Override

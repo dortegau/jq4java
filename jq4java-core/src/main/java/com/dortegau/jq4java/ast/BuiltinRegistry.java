@@ -10,6 +10,7 @@ public class BuiltinRegistry {
   static {
     try {
       Class.forName("com.dortegau.jq4java.ast.Length");
+      Class.forName("com.dortegau.jq4java.ast.Keys");
     } catch (ClassNotFoundException e) {
       // Ignore
     }

@@ -89,5 +89,31 @@ hyperfine \
 cat /tmp/bench4.md >> "$RESULTS"
 echo "" >> "$RESULTS"
 
+if [ -f "$SCRIPT_DIR/50MB.json" ]; then
+    echo "## Large file (50MB): .[0].name" | tee -a "$RESULTS"
+    echo "" >> "$RESULTS"
+    hyperfine \
+        --warmup 2 \
+        --runs 5 \
+        --export-markdown /tmp/bench5.md \
+        "jq '.[0].name' $SCRIPT_DIR/50MB.json > /dev/null" \
+        "java -jar $JQ4JAVA_JAR '.[0].name' $SCRIPT_DIR/50MB.json > /dev/null"
+    cat /tmp/bench5.md >> "$RESULTS"
+    echo "" >> "$RESULTS"
+fi
+
+if [ -f "$SCRIPT_DIR/100MB.json" ]; then
+    echo "## Large file (100MB): .[0].name" | tee -a "$RESULTS"
+    echo "" >> "$RESULTS"
+    hyperfine \
+        --warmup 2 \
+        --runs 5 \
+        --export-markdown /tmp/bench6.md \
+        "jq '.[0].name' $SCRIPT_DIR/100MB.json > /dev/null" \
+        "java -jar $JQ4JAVA_JAR '.[0].name' $SCRIPT_DIR/100MB.json > /dev/null"
+    cat /tmp/bench6.md >> "$RESULTS"
+    echo "" >> "$RESULTS"
+fi
+
 echo
 echo "Results saved to: $SCRIPT_DIR/results.md"

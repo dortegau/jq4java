@@ -57,6 +57,7 @@ primary
     | STRING                                        # StringLiteral
     | LENGTH                                        # LengthExpr
     | BUILTINS                                      # BuiltinsExpr
+    | KEYS                                          # KeysExpr
     | NOT                                           # NotExpr
     | LBRACKET (expression (COMMA expression)*)? RBRACKET  # ArrayConstructor
     | LBRACE (objectField (COMMA objectField)*)? RBRACE    # ObjectConstructor
@@ -97,6 +98,7 @@ FALSE       : 'false' ;
 NULL        : 'null' ;
 LENGTH      : 'length' ;
 BUILTINS    : 'builtins' ;
+KEYS        : 'keys' ;
 NOT         : 'not' ;
 AND         : 'and' ;
 OR          : 'or' ;

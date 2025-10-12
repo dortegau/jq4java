@@ -407,4 +407,31 @@ public class OrgJsonValue implements JqValue {
     }
     return true;
   }
+
+  @Override
+  public JqValue keys() {
+    if (value instanceof JSONObject) {
+      JSONObject obj = (JSONObject) value;
+      JSONArray result = new JSONArray();
+      List<String> keys = new java.util.ArrayList<>(obj.keySet());
+      java.util.Collections.sort(keys);
+      for (String key : keys) {
+        result.put(key);
+      }
+      return new OrgJsonValue(result);
+    }
+    if (value instanceof JSONArray) {
+      JSONArray arr = (JSONArray) value;
+      JSONArray result = new JSONArray();
+      for (int i = 0; i < arr.length(); i++) {
+        result.put(i);
+      }
+      return new OrgJsonValue(result);
+    }
+    String type = value == JSONObject.NULL ? "null" : 
+                  value instanceof Number ? "number" :
+                  value instanceof String ? "string" :
+                  value instanceof Boolean ? "boolean" : "unknown";
+    throw new RuntimeException(type + " (" + this + ") has no keys");
+  }
 }
