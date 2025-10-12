@@ -37,6 +37,7 @@ A Java 8 port of [jq](https://jqlang.github.io/jq/), the command-line JSON proce
 
 ## Implemented
 
+**jq compatibility: 27/595 tests passing (4%)**
 - Literals: `true`, `false`, `null`, numbers, strings (`"hello"`)
 - Identity: `.`
 - Field access: `.foo`, `.foo.bar`, `."my-key"`, `.["foo"]`
@@ -97,6 +98,12 @@ mvn clean package
 
 # Run tests
 mvn test
+
+# Run jq-reference test suite
+java -jar jq4java-cli/target/jq4java.jar --run-tests jq-reference/tests/jq.test
+
+# Install git hooks (auto-updates README stats on push)
+bash scripts/install-hooks.sh
 
 # Build only core library
 cd jq4java-core && mvn clean package

@@ -3,6 +3,7 @@ package com.dortegau.jq4java.cli;
 import com.dortegau.jq4java.Jq;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
@@ -25,7 +26,10 @@ public final class JqCli {
 
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
-            if (arg.equals("-n") || arg.equals("--null-input")) {
+            if (arg.equals("--run-tests")) {
+                runTests(args.length > i + 1 ? args[i + 1] : "../jq-reference/tests/jq.test");
+                System.exit(0);
+            } else if (arg.equals("-n") || arg.equals("--null-input")) {
                 nullInput = true;
             } else if (arg.equals("-h") || arg.equals("--help")) {
                 showHelp();
@@ -79,6 +83,69 @@ public final class JqCli {
         }
     }
 
+    private static void runTests(final String testFile) {
+        int passed = 0;
+        int failed = 0;
+        int skipped = 0;
+        int total = 0;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(testFile))) {
+            String line;
+            String filter = null;
+            String input = null;
+            int lineNumber = 0;
+
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
+
+                if (line.trim().isEmpty() || line.trim().startsWith("#")) {
+                    continue;
+                }
+
+                if (filter == null) {
+                    filter = line;
+                } else if (input == null) {
+                    input = line;
+                } else {
+                    String expected = line;
+                    total++;
+
+                    try {
+                        String result = Jq.execute(filter, input);
+                        if (result.equals(expected)) {
+                            passed++;
+                        } else {
+                            failed++;
+                            if (failed <= 10) {
+                                System.out.println("FAIL (line " + (lineNumber - 2) + "): " + filter);
+                                System.out.println("  Input:    " + input);
+                                System.out.println("  Expected: " + expected);
+                                System.out.println("  Got:      " + result);
+                            }
+                        }
+                    } catch (Exception e) {
+                        skipped++;
+                        if (skipped <= 5) {
+                            System.out.println("SKIP (line " + (lineNumber - 2) + "): " + filter + " - " + e.getMessage());
+                        }
+                    }
+
+                    filter = null;
+                    input = null;
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading test file: " + e.getMessage());
+            System.exit(1);
+        }
+
+        System.out.println("\n=== Test Results ===");
+        System.out.println("Total:   " + total);
+        System.out.println("Passed:  " + passed + " (" + (total > 0 ? (passed * 100 / total) : 0) + "%)");
+        System.out.println("Failed:  " + failed);
+        System.out.println("Skipped: " + skipped);
+    }
+
     private static void showHelp() {
         System.out.println(
             "jq4java - commandline JSON processor [version 1.0]");
@@ -100,6 +167,7 @@ public final class JqCli {
         System.out.println();
         System.out.println("Some of the options include:");
         System.out.println("  -n, --null-input         Use null as input");
+        System.out.println("  --run-tests [file]       Run jq test suite");
         System.out.println("  -h, --help               Show this help");
         System.out.println("  -V, --version            Show version");
         System.out.println();
