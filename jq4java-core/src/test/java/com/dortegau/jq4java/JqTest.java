@@ -198,9 +198,9 @@ class JqTest {
         "'. | type' ; '[1,2,3]' ; '\"array\"'",
         "'.[] | type' ; '[1,\"a\",true]' ; '\"number\"\n\"string\"\n\"boolean\"'",
         "'. | type == \"array\"' ; '[1,2]' ; 'true'",
-        "'[1,2,3] | map(. * 2) | .[0]' ; 'null' ; '2'",
-        "'[{\"a\":1},{\"a\":2}] | map(.a) | length' ; 'null' ; '2'",
-        "'[1,2,3] | map(. + 1) | map(. * 2)' ; 'null' ; '[4,6,8]'"
+        "'map(. * 2) | .[0]' ; '[1,2,3]' ; '2'",
+        "'map(.a) | length' ; '[{\"a\":1},{\"a\":2}]' ; '2'",
+        "'map(. + 1) | map(. * 2)' ; '[1,2,3]' ; '[4,6,8]'"
     }, delimiter = ';')
     void testCombinedOperations(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
@@ -259,10 +259,10 @@ class JqTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-        "'[1,2,3] | map(. * 2)' ; 'null' ; '[2,4,6]'",
-        "'[1,2,3] | map(. + 1)' ; 'null' ; '[2,3,4]'",
-        "'[{\"a\":1},{\"a\":2}] | map(.a)' ; 'null' ; '[1,2]'",
-        "'[] | map(. * 2)' ; 'null' ; '[]'"
+        "'map(. * 2)' ; '[1,2,3]' ; '[2,4,6]'",
+        "'map(. + 1)' ; '[1,2,3]' ; '[2,3,4]'",
+        "'map(.a)' ; '[{\"a\":1},{\"a\":2}]' ; '[1,2]'",
+        "'map(. * 2)' ; '[]' ; '[]'"
     }, delimiter = ';')
     void testMap(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
