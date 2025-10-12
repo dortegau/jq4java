@@ -52,7 +52,7 @@ A Java 8+ port of [jq](https://jqlang.github.io/jq/), the lightweight command-li
 - Comparison operators: `==`, `!=`, `<`, `<=`, `>`, `>=`
 - Arithmetic operators: `+`, `-`, `*`, `/`, `%` (also string/array concatenation with `+`)
 - Logical operators: `and`, `or`, `not`
-- Built-in functions: `length`, `keys`, `type`, `map(expr)`, `builtins`
+- Built-in functions: `length`, `keys`, `type`, `map(expr)`, `select(expr)`, `builtins`
 
 ## Usage
 

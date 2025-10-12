@@ -30,3 +30,7 @@ dependency-reduced-pom.xml
 *.war
 *.ear
 hs_err_pid*
+
+# Claude Code agents and commands (user-specific)
+.claude/
+CLAUDE.md
