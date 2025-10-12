@@ -173,4 +173,11 @@ class JqErrorTest {
         () -> Jq.execute("5 | keys", "null"));
     assertTrue(ex.getMessage().contains("has no keys"));
   }
+
+  @Test
+  void testMapOnNonArray() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("5 | map(. * 2)", "null"));
+    assertTrue(ex.getMessage().contains("Cannot iterate"));
+  }
 }

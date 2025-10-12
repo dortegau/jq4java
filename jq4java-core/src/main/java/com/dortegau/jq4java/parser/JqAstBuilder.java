@@ -16,6 +16,7 @@ import com.dortegau.jq4java.ast.Identity;
 import com.dortegau.jq4java.ast.Keys;
 import com.dortegau.jq4java.ast.Length;
 import com.dortegau.jq4java.ast.Literal;
+import com.dortegau.jq4java.ast.MapFunction;
 import com.dortegau.jq4java.ast.Not;
 import com.dortegau.jq4java.ast.ObjectConstruction;
 import com.dortegau.jq4java.ast.Or;
@@ -303,6 +304,19 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
   @Override
   public Expression visitTypeExpr(JqGrammarParser.TypeExprContext ctx) {
     return new Type();
+  }
+
+  @Override
+  public Expression visitFunctionCall(JqGrammarParser.FunctionCallContext ctx) {
+    String functionName = ctx.IDENTIFIER().getText();
+    Expression arg = visit(ctx.expression());
+
+    switch (functionName) {
+      case "map":
+        return new MapFunction(arg);
+      default:
+        throw new RuntimeException("Unknown function: " + functionName);
+    }
   }
 
   @Override

@@ -60,6 +60,7 @@ primary
     | KEYS                                          # KeysExpr
     | TYPE                                          # TypeExpr
     | NOT                                           # NotExpr
+    | IDENTIFIER LPAREN expression RPAREN           # FunctionCall
     | LBRACKET (expression (COMMA expression)*)? RBRACKET  # ArrayConstructor
     | LBRACE (objectField (COMMA objectField)*)? RBRACE    # ObjectConstructor
     | LPAREN expression RPAREN                      # ParenExpr
