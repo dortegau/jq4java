@@ -130,6 +130,30 @@ class JqTest {
 
     @ParameterizedTest
     @CsvSource(value = {
+        "'{a}' ; '{\"a\":1, \"b\":2}' ; '{\"a\":1}'",
+        "'{a,b}' ; '{\"a\":1, \"b\":2}' ; '{\"a\":1,\"b\":2}'",
+        "'{a,b,c}' ; '{\"a\":1, \"b\":2, \"c\":3}' ; '{\"a\":1,\"b\":2,\"c\":3}'",
+        "'{foo}' ; '{\"foo\":42, \"bar\":43}' ; '{\"foo\":42}'",
+        "'{x,y}' ; '{\"x\":10, \"y\":20, \"z\":30}' ; '{\"x\":10,\"y\":20}'",
+        "'{nonexistent}' ; '{\"missing\":999}' ; '{\"nonexistent\":null}'"
+    }, delimiter = ';')
+    void testObjectShorthandSyntax(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'{a, b: .x}' ; '{\"a\":1, \"x\":2}' ; '{\"a\":1,\"b\":2}'",
+        "'{a, b: .y, c}' ; '{\"a\":1, \"y\":2, \"c\":3}' ; '{\"a\":1,\"b\":2,\"c\":3}'",
+        "'{foo, \"bar\": .baz}' ; '{\"foo\":1, \"baz\":2}' ; '{\"foo\":1,\"bar\":2}'",
+        "'{a, b, c: .x + .y}' ; '{\"a\":1, \"b\":2, \"x\":3, \"y\":4}' ; '{\"a\":1,\"b\":2,\"c\":7}'"
+    }, delimiter = ';')
+    void testObjectMixedSyntax(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
         "'.a, .b' ; '{\"a\":1, \"b\":2}' ; '1\n2'",
         "'.foo, .bar' ; '{\"foo\":42, \"bar\":43}' ; '42\n43'",
         "'., .' ; '5' ; '5\n5'",

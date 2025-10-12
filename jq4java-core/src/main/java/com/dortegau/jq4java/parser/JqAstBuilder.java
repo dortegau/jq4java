@@ -333,12 +333,24 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
     Map<String, Expression> fields = new LinkedHashMap<>();
     for (JqGrammarParser.ObjectFieldContext fieldCtx : ctx.objectField()) {
       String key;
-      if (fieldCtx.IDENTIFIER() != null) {
-        key = fieldCtx.IDENTIFIER().getText();
+      Expression value;
+
+      if (fieldCtx instanceof JqGrammarParser.ExplicitFieldContext) {
+        JqGrammarParser.ExplicitFieldContext explicitCtx = (JqGrammarParser.ExplicitFieldContext) fieldCtx;
+        key = explicitCtx.IDENTIFIER().getText();
+        value = visit(explicitCtx.expression());
+      } else if (fieldCtx instanceof JqGrammarParser.StringFieldContext) {
+        JqGrammarParser.StringFieldContext stringCtx = (JqGrammarParser.StringFieldContext) fieldCtx;
+        key = unquoteString(stringCtx.STRING().getText());
+        value = visit(stringCtx.expression());
+      } else if (fieldCtx instanceof JqGrammarParser.ShorthandFieldContext) {
+        JqGrammarParser.ShorthandFieldContext shorthandCtx = (JqGrammarParser.ShorthandFieldContext) fieldCtx;
+        key = shorthandCtx.IDENTIFIER().getText();
+        value = new FieldAccess(key, new Identity());
       } else {
-        key = unquoteString(fieldCtx.STRING().getText());
+        throw new RuntimeException("Unknown object field type: " + fieldCtx.getClass().getName());
       }
-      Expression value = visit(fieldCtx.expression());
+
       fields.put(key, value);
     }
     return new ObjectConstruction(fields);
