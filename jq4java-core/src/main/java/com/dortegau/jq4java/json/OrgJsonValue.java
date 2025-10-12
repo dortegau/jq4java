@@ -90,30 +90,6 @@ public class OrgJsonValue implements JqValue {
     this.value = value;
   }
 
-  private static String formatKey(String key) {
-    StringBuilder sb = new StringBuilder();
-    for (char c : key.toCharArray()) {
-      if (c == '"') {
-        sb.append("\\\"");
-      } else {
-        sb.append(c);
-      }
-    }
-    return sb.toString();
-  }
-
-  private static String formatValue(JqValue value) {
-    StringBuilder sb = new StringBuilder();
-    for (char c : value.toString().toCharArray()) {
-      if (c == '"') {
-        sb.append("\\\"");
-      } else {
-        sb.append(c);
-      }
-    }
-    return sb.toString();
-  }
-
   @Override
   public String toString() {
     if (value == JSONObject.NULL) {
