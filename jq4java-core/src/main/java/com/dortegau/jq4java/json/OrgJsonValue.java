@@ -34,6 +34,17 @@ public class OrgJsonValue implements JqValue {
         Object result = obj.get(key);
         return new OrgJsonValue(result);
       }
+      return nullValue();
+    } else if (value instanceof JSONArray) {
+      throw new RuntimeException("Cannot index array with string \"" + key + "\"");
+    } else if (value instanceof String) {
+      throw new RuntimeException("Cannot index string with string \"" + key + "\"");
+    } else if (value instanceof Number) {
+      throw new RuntimeException("Cannot index number with string \"" + key + "\"");
+    } else if (value == JSONObject.NULL) {
+      return nullValue(); // Native jq returns null when accessing field on null
+    } else if (value instanceof Boolean) {
+      throw new RuntimeException("Cannot index boolean with string \"" + key + "\"");
     }
     return nullValue();
   }

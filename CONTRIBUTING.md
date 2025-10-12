@@ -1,53 +1,110 @@
 # Contributing to jq4java
 
-Thanks for your interest in contributing! This project follows a simple workflow.
+Thank you for your interest in contributing to jq4java!
 
-## Development Setup
+## Development Workflow
 
-1. Fork the repository
-2. Clone your fork: `git clone https://github.com/YOUR_USERNAME/jq4java.git`
-3. Ensure you have Java 8+ and Maven installed
-4. Run tests: `mvn test`
+### 1. Create an Issue First
+
+Before starting work on a new feature or bug fix:
+- Create a GitHub Issue describing what you want to implement
+- Discuss the approach if it's a significant change
+- Reference the issue number in your commits and PR
+
+### 2. Work in a Branch
+
+The `main` branch is protected. All changes must go through Pull Requests.
+
+```bash
+# Create a new branch from main
+git checkout main
+git pull
+git checkout -b feature/your-feature-name
+
+# Or for bug fixes
+git checkout -b fix/issue-number-description
+```
+
+### 3. Follow TDD (Test-Driven Development)
+
+**Always write tests before implementing features:**
+
+1. Add failing tests in `JqTest` (happy path) or `JqErrorTest` (error cases)
+2. Run tests to verify they fail: `mvn test`
+3. Implement the feature to make tests pass
+4. Add combined tests mixing the new feature with existing ones
+5. Update documentation (README.md, IMPLEMENTATION_STATUS.md if exists)
+
+### 4. Test Organization
+
+- `JqTest` - ALL integration/happy path tests using `Jq.execute()` API
+- `JqErrorTest` - ALL error/failure tests using `Jq.execute()` API
+- NO separate test classes for individual features
+- Group tests by feature using method names (e.g., `testFieldAccess`, `testAlternativeOperator`)
+
+### 5. Commit and Push
+
+```bash
+# Make your changes
+git add .
+git commit -m "Add feature X (#issue-number)"
+
+# Push your branch
+git push origin feature/your-feature-name
+```
+
+### 6. Create a Pull Request
+
+- Go to GitHub and create a PR from your branch to `main`
+- Reference the issue number in the PR description
+- Wait for CI checks to pass
+- Merge the PR (no approval required for now)
+
+## Architecture Rules
+
+### Core Principles
+
+1. **No external dependencies in AST layer**
+   - Classes in `com.dortegau.jq4java.ast` MUST NOT import any external libraries
+   - AST nodes should only depend on `JqValue` interface, never concrete implementations
+
+2. **JSON library isolation**
+   - ALL usage of external JSON libraries (org.json, Gson, Jackson, etc.) MUST be contained in `com.dortegau.jq4java.json` package
+   - Only `JqValue` implementations can use external JSON libraries
+   - The rest of the codebase interacts only through `JqValue` interface
+
+3. **Dependency direction**
+   ```
+   AST → JqValue (interface) ← JsonAdapter (implementation)
+   ```
+
+### Built-in Functions
+
+Every built-in function MUST register itself in `BuiltinRegistry`:
+
+```java
+static {
+    BuiltinRegistry.register("functionName", arity);
+}
+```
 
 ## Code Style
 
-- We use **Google Java Style Guide** enforced by Checkstyle
-- Run `mvn checkstyle:check` before committing
-- All code, comments, and documentation must be in **English**
+- **Language**: ALL code, comments, and documentation MUST be in English
+- **Comments**: Be surgical - only add when absolutely necessary
+- **Self-documenting code**: Prefer clear code over comments
+- Comments should explain WHY, not WHAT
 
-## Development Process
+## Running Tests
 
-1. **Test-Driven Development (TDD)**:
-   - Write failing tests first
-   - Implement the minimal code to make tests pass
-   - Refactor if needed
+```bash
+# Run unit tests
+mvn test
 
-2. **Architecture**:
-   - Keep JSON library usage isolated in `com.dortegau.jq4java.json` package
-   - AST nodes should only depend on `JqValue` interface
-   - No external dependencies in AST layer
-
-3. **Documentation**:
-   - Update `README.md` when adding new features
-   - Keep examples simple and working
-
-## Submitting Changes
-
-1. Create a feature branch: `git checkout -b feature/your-feature`
-2. Make your changes following TDD
-3. Ensure all tests pass: `mvn test`
-4. Ensure code style compliance: `mvn checkstyle:check`
-5. Update documentation if needed
-6. Commit with clear messages
-7. Push and create a Pull Request
-
-## What to Contribute
-
-Check the README "Implemented" section to see what's missing. Good first contributions:
-- Basic jq functions (`length`, `keys`, `type`)
-- More test cases for existing features
-- Documentation improvements
+# Run jq-reference test suite
+java -jar jq4java-cli/target/jq4java.jar --run-tests jq-reference/tests/jq.test
+```
 
 ## Questions?
 
-Open an issue for discussion before starting major features.
+Open an issue for questions or discussions about contributing.

@@ -4,7 +4,7 @@
 [![Java Version](https://img.shields.io/badge/Java-8%2B-blue)](https://www.oracle.com/java/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A Java 8+ port of [jq](https://jqlang.github.io/jq/), the command-line JSON processor.
+A Java 8+ port of [jq](https://jqlang.github.io/jq/), the lightweight command-line JSON processor.
 
 ## Why jq4java?
 
@@ -46,7 +46,7 @@ A Java 8+ port of [jq](https://jqlang.github.io/jq/), the command-line JSON proc
 - Array indexing: `.[0]`, `.[-1]`
 - Array slicing: `.[1:3]`, `.[:2]`, `.[2:]`
 - Array construction: `[.a, .b]`
-- Object construction: `{a: .x, b: .y}`, `{"my-key": .value}`
+- Object construction: `{a: .x, b: .y}`, `{"my-key": .value}`, `{a, b}` (shorthand)
 - Comma operator: `.a, .b` (multiple outputs)
 - Alternative operator: `.foo // "default"` (null/false coalescing)
 - Comparison operators: `==`, `!=`, `<`, `<=`, `>`, `>=`
@@ -66,6 +66,9 @@ String result = Jq.execute(".foo", "{\"foo\": 42}");
 
 String result = Jq.execute("[.a, .b]", "{\"a\":1, \"b\":2}");
 // result: "[1,2]"
+
+String result = Jq.execute("{a, b}", "{\"a\":1, \"b\":2, \"c\":3}");
+// result: "{\"a\":1,\"b\":2}"
 
 String result = Jq.execute(".users[0].email", "{\"users\":[{\"email\":\"test@example.com\"}]}");
 // result: "\"test@example.com\""

@@ -67,8 +67,9 @@ primary
     ;
 
 objectField
-    : IDENTIFIER COLON expression
-    | STRING COLON expression
+    : IDENTIFIER COLON expression    # ExplicitField
+    | STRING COLON expression        # StringField
+    | IDENTIFIER                     # ShorthandField
     ;
 
 // Lexer rules
