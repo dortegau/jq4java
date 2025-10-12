@@ -83,7 +83,6 @@ echo '{"a":1}' | java -jar jq4java-cli/target/jq4java.jar '.a'
 
 # Or use the wrapper script
 ./jq4java-cli/jq4java '.name' data.json
-./jq4java-cli/jq4java --benchmark '.' large.json
 ```
 
 See [jq4java-cli/README.md](jq4java-cli/README.md) for more CLI options.
