@@ -30,12 +30,12 @@ echo "Tests: $PASSED/$TOTAL ($PERCENT%)"
 # Update README.md - replace existing compatibility line or add after "## Implemented"
 if grep -q "jq compatibility:" README.md; then
     # Update existing line
-    sed -i.bak "s/\*\*jq compatibility:.*/**jq compatibility: $PASSED\/$TOTAL tests passing ($PERCENT%)**/" README.md
+    sed -i.bak "s/\*\*jq compatibility:.*/**jq compatibility: $PASSED\/$TOTAL official jq tests passing ($PERCENT%)**/" README.md
 else
     # Add new line after "## Implemented"
     sed -i.bak "/## Implemented/a\\
 \\
-**jq compatibility: $PASSED/$TOTAL tests passing ($PERCENT%)**" README.md
+**jq compatibility: $PASSED/$TOTAL official jq tests passing ($PERCENT%)**" README.md
 fi
 
 rm -f README.md.bak
