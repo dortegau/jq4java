@@ -224,7 +224,15 @@ class JqTest {
         "'. | type == \"array\"' ; '[1,2]' ; 'true'",
         "'map(. * 2) | .[0]' ; '[1,2,3]' ; '2'",
         "'map(.a) | length' ; '[{\"a\":1},{\"a\":2}]' ; '2'",
-        "'map(. + 1) | map(. * 2)' ; '[1,2,3]' ; '[4,6,8]'"
+        "'map(. + 1) | map(. * 2)' ; '[1,2,3]' ; '[4,6,8]'",
+        "'{a,b} | keys' ; '{\"a\":1,\"b\":2,\"c\":3}' ; '[\"a\",\"b\"]'",
+        "'{a,b} | length' ; '{\"a\":1,\"b\":2,\"c\":3}' ; '2'",
+        "'{name: .user.name, age} | .name' ; '{\"user\":{\"name\":\"Alice\"},\"age\":30}' ; '\"Alice\"'",
+        "'[{a},{b,c}]' ; '{\"a\":1,\"b\":2,\"c\":3}' ; '[{\"a\":1},{\"b\":2,\"c\":3}]'",
+        "'{a,b} // {\"default\":true}' ; '{\"a\":1,\"b\":2}' ; '{\"a\":1,\"b\":2}'",
+        "'{x} // {\"default\":true}' ; '{\"y\":1}' ; '{\"x\":null}'",
+        "'map({a})' ; '[{\"a\":1,\"b\":2},{\"a\":3,\"b\":4}]' ; '[{\"a\":1},{\"a\":3}]'",
+        "'{a,b}.a + {c,d}.c' ; '{\"a\":5,\"b\":10,\"c\":3,\"d\":7}' ; '8'"
     }, delimiter = ';')
     void testCombinedOperations(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));

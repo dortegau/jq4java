@@ -180,4 +180,32 @@ class JqErrorTest {
         () -> Jq.execute("5 | map(. * 2)", "null"));
     assertTrue(ex.getMessage().contains("Cannot iterate"));
   }
+
+  @Test
+  void testObjectShorthandOnArray() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("{a}", "[1,2,3]"));
+    assertTrue(ex.getMessage().contains("Cannot index array with string"));
+  }
+
+  @Test
+  void testObjectShorthandOnNumber() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("{a}", "42"));
+    assertTrue(ex.getMessage().contains("Cannot index number with string"));
+  }
+
+  @Test
+  void testObjectShorthandOnString() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("{a}", "\"hello\""));
+    assertTrue(ex.getMessage().contains("Cannot index string with string"));
+  }
+
+  @Test
+  void testObjectMixedShorthandOnArray() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("{a, b: .x}", "[1,2,3]"));
+    assertTrue(ex.getMessage().contains("Cannot index array with string"));
+  }
 }
