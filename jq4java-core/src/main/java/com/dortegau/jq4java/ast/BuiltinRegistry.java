@@ -13,6 +13,7 @@ public class BuiltinRegistry {
       Class.forName("com.dortegau.jq4java.ast.Keys");
       Class.forName("com.dortegau.jq4java.ast.Type");
       Class.forName("com.dortegau.jq4java.ast.MapFunction");
+      Class.forName("com.dortegau.jq4java.ast.Select");
     } catch (ClassNotFoundException e) {
       // Ignore
     }

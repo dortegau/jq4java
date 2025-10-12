@@ -232,7 +232,16 @@ class JqTest {
         "'{a,b} // {\"default\":true}' ; '{\"a\":1,\"b\":2}' ; '{\"a\":1,\"b\":2}'",
         "'{x} // {\"default\":true}' ; '{\"y\":1}' ; '{\"x\":null}'",
         "'map({a})' ; '[{\"a\":1,\"b\":2},{\"a\":3,\"b\":4}]' ; '[{\"a\":1},{\"a\":3}]'",
-        "'{a,b}.a + {c,d}.c' ; '{\"a\":5,\"b\":10,\"c\":3,\"d\":7}' ; '8'"
+        "'{a,b}.a + {c,d}.c' ; '{\"a\":5,\"b\":10,\"c\":3,\"d\":7}' ; '8'",
+        "'map(select(. > 2))' ; '[1,2,3,4,5]' ; '[3,4,5]'",
+        "'map(select(.age >= 18))' ; '[{\"name\":\"Alice\",\"age\":25},{\"name\":\"Bob\",\"age\":15},{\"name\":\"Charlie\",\"age\":30}]' ; '[{\"name\":\"Alice\",\"age\":25},{\"name\":\"Charlie\",\"age\":30}]'",
+        "'map(select(length > 2))' ; '[\"a\",\"bb\",\"ccc\",\"dddd\"]' ; '[\"ccc\",\"dddd\"]'",
+        "'map(select(type == \"number\"))' ; '[1,\"a\",2,true,3]' ; '[1,2,3]'",
+        "'.users | map(select(.active))' ; '{\"users\":[{\"name\":\"Alice\",\"active\":true},{\"name\":\"Bob\",\"active\":false},{\"name\":\"Charlie\",\"active\":true}]}' ; '[{\"name\":\"Alice\",\"active\":true},{\"name\":\"Charlie\",\"active\":true}]'",
+        "'map(select(. > 0) | . * 2)' ; '[-1,2,-3,4]' ; '[4,8]'",
+        "'.items | map(select(.price < 100)) | length' ; '{\"items\":[{\"price\":50},{\"price\":150},{\"price\":30}]}' ; '2'",
+        "'[.[] | select(. % 2 == 0)]' ; '[1,2,3,4,5,6]' ; '[2,4,6]'",
+        "'map(select(.status == \"active\") | .name)' ; '[{\"name\":\"Alice\",\"status\":\"active\"},{\"name\":\"Bob\",\"status\":\"inactive\"},{\"name\":\"Charlie\",\"status\":\"active\"}]' ; '[\"Alice\",\"Charlie\"]'"
     }, delimiter = ';')
     void testCombinedOperations(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
@@ -344,6 +353,30 @@ class JqTest {
         "'null | not', null, true"
     })
     void testLogicalOperators(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'map(select(. > 3))' ; '[1,2,3,4,5]' ; '[4,5]'",
+        "'map(select(. > 10))' ; '[1,2,3,4,5]' ; '[]'",
+        "'map(select(.a > 1))' ; '[{\"a\":1},{\"a\":2},{\"a\":3}]' ; '[{\"a\":2},{\"a\":3}]'",
+        "'select(. == \"hello\")' ; '\"hello\"' ; '\"hello\"'",
+        "'select(. == \"world\")' ; '\"hello\"' ; ''",
+        "'select(.)' ; 'true' ; 'true'",
+        "'select(.)' ; 'false' ; ''",
+        "'select(.)' ; 'null' ; ''",
+        "'select(.)' ; '0' ; '0'",
+        "'select(.)' ; '\"\"' ; '\"\"'",
+        "'select(.)' ; '[]' ; '[]'",
+        "'select(.)' ; '{}' ; '{}'",
+        "'select(.name == \"Alice\")' ; '{\"name\":\"Alice\",\"age\":25}' ; '{\"name\":\"Alice\",\"age\":25}'",
+        "'select(.name == \"Bob\")' ; '{\"name\":\"Alice\",\"age\":25}' ; ''",
+        "'select(length > 2)' ; '\"hello\"' ; '\"hello\"'",
+        "'select(length > 10)' ; '\"hello\"' ; ''",
+        "'map(select(type == \"string\"))' ; '[1,\"a\",true,\"b\"]' ; '[\"a\",\"b\"]'"
+    }, delimiter = ';')
+    void testSelect(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
 

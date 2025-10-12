@@ -21,6 +21,7 @@ import com.dortegau.jq4java.ast.Not;
 import com.dortegau.jq4java.ast.ObjectConstruction;
 import com.dortegau.jq4java.ast.Or;
 import com.dortegau.jq4java.ast.Pipe;
+import com.dortegau.jq4java.ast.Select;
 import com.dortegau.jq4java.ast.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -314,6 +315,8 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
     switch (functionName) {
       case "map":
         return new MapFunction(arg);
+      case "select":
+        return new Select(arg);
       default:
         throw new RuntimeException("Unknown function: " + functionName);
     }

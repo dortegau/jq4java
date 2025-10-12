@@ -208,4 +208,18 @@ class JqErrorTest {
         () -> Jq.execute("{a, b: .x}", "[1,2,3]"));
     assertTrue(ex.getMessage().contains("Cannot index array with string"));
   }
+
+  @Test
+  void testSelectWithoutArguments() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("select", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testSelectWithInvalidExpression() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("select(.nonexistent > 10)", "42"));
+    assertTrue(ex.getMessage().contains("Cannot index number with string"));
+  }
 }
