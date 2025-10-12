@@ -96,12 +96,35 @@ public class OrgJsonValue implements JqValue {
       return "null";
     }
     if (value instanceof String) {
-      return "\"" + value + "\"";
+      return "\"" + escapeString((String) value) + "\"";
     }
     if (value instanceof JSONArray) {
       return toCompactString((JSONArray) value);
     }
     return value.toString();
+  }
+
+  private static String escapeString(String str) {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < str.length(); i++) {
+      char c = str.charAt(i);
+      switch (c) {
+        case '\\': sb.append("\\\\"); break;
+        case '"': sb.append("\\\""); break;
+        case '\b': sb.append("\\b"); break;
+        case '\f': sb.append("\\f"); break;
+        case '\n': sb.append("\\n"); break;
+        case '\r': sb.append("\\r"); break;
+        case '\t': sb.append("\\t"); break;
+        default:
+          if (c < 0x20) {
+            sb.append(String.format("\\u%04x", (int) c));
+          } else {
+            sb.append(c);
+          }
+      }
+    }
+    return sb.toString();
   }
 
   private String toCompactString(JSONArray arr) {
@@ -114,7 +137,7 @@ public class OrgJsonValue implements JqValue {
       if (item == null || item == JSONObject.NULL) {
         sb.append("null");
       } else if (item instanceof String) {
-        sb.append("\"").append(item).append("\"");
+        sb.append("\"").append(escapeString((String) item)).append("\"");
       } else if (item instanceof JSONArray) {
         sb.append(toCompactString((JSONArray) item));
       } else if (item instanceof JSONObject) {
@@ -209,12 +232,12 @@ public class OrgJsonValue implements JqValue {
           sb.append(",");
         }
         first = false;
-        sb.append("\"").append(entry.getKey()).append("\":");
+        sb.append("\"").append(escapeString(entry.getKey())).append("\":");
         Object val = entry.getValue();
         if (val == null || val == JSONObject.NULL) {
           sb.append("null");
         } else if (val instanceof String) {
-          sb.append("\"").append(val).append("\"");
+          sb.append("\"").append(escapeString((String) val)).append("\"");
         } else {
           sb.append(val.toString());
         }

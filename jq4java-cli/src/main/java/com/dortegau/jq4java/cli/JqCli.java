@@ -150,7 +150,11 @@ public final class JqCli {
         try {
             String normA = Jq.execute(".", a);
             String normB = Jq.execute(".", b);
-            return normA.equals(normB);
+            if (normA.equals(normB)) {
+                return true;
+            }
+            String compareResult = Jq.execute(". == " + b, a);
+            return "true".equals(compareResult);
         } catch (Exception e) {
             return a.equals(b);
         }

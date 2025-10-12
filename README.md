@@ -133,7 +133,7 @@ The CLI is a separate module that depends on the core library, keeping the libra
 
 ## Status
 
-This is a work in progress.
+This is a work in progress. Known bugs and issues are tracked in [GitHub Issues](https://github.com/dortegau/jq4java/issues).
 
 ## License
 
