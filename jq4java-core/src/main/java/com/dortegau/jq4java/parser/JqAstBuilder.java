@@ -20,6 +20,7 @@ import com.dortegau.jq4java.ast.Not;
 import com.dortegau.jq4java.ast.ObjectConstruction;
 import com.dortegau.jq4java.ast.Or;
 import com.dortegau.jq4java.ast.Pipe;
+import com.dortegau.jq4java.ast.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -297,6 +298,11 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
   @Override
   public Expression visitKeysExpr(JqGrammarParser.KeysExprContext ctx) {
     return new Keys();
+  }
+
+  @Override
+  public Expression visitTypeExpr(JqGrammarParser.TypeExprContext ctx) {
+    return new Type();
   }
 
   @Override

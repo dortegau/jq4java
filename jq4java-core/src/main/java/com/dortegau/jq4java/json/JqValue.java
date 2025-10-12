@@ -59,4 +59,6 @@ public interface JqValue extends Comparable<JqValue> {
   boolean isTruthy();
 
   JqValue keys();
+
+  JqValue type();
 }

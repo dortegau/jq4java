@@ -434,4 +434,25 @@ public class OrgJsonValue implements JqValue {
                   value instanceof Boolean ? "boolean" : "unknown";
     throw new RuntimeException(type + " (" + this + ") has no keys");
   }
+
+  @Override
+  public JqValue type() {
+    String typeName;
+    if (value == JSONObject.NULL) {
+      typeName = "null";
+    } else if (value instanceof Number) {
+      typeName = "number";
+    } else if (value instanceof String) {
+      typeName = "string";
+    } else if (value instanceof Boolean) {
+      typeName = "boolean";
+    } else if (value instanceof JSONArray) {
+      typeName = "array";
+    } else if (value instanceof JSONObject) {
+      typeName = "object";
+    } else {
+      typeName = "unknown";
+    }
+    return new OrgJsonValue((Object) typeName);
+  }
 }

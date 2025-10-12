@@ -11,6 +11,7 @@ public class BuiltinRegistry {
     try {
       Class.forName("com.dortegau.jq4java.ast.Length");
       Class.forName("com.dortegau.jq4java.ast.Keys");
+      Class.forName("com.dortegau.jq4java.ast.Type");
     } catch (ClassNotFoundException e) {
       // Ignore
     }

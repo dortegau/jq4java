@@ -194,7 +194,10 @@ class JqTest {
         "'[.[] > 5] | .[0] and .[1]' ; '[10,8]' ; 'true'",
         "'{a:1,b:2} | keys | length' ; 'null' ; '2'",
         "'{a:1,b:2} | keys | .[0]' ; 'null' ; '\"a\"'",
-        "'[1,2,3] | keys | .[]' ; 'null' ; '0\n1\n2'"
+        "'[1,2,3] | keys | .[]' ; 'null' ; '0\n1\n2'",
+        "'. | type' ; '[1,2,3]' ; '\"array\"'",
+        "'.[] | type' ; '[1,\"a\",true]' ; '\"number\"\n\"string\"\n\"boolean\"'",
+        "'. | type == \"array\"' ; '[1,2]' ; 'true'"
     }, delimiter = ';')
     void testCombinedOperations(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
@@ -248,6 +251,22 @@ class JqTest {
         "'[1,2] + [3,4]', null, '[1,2,3,4]'"
     })
     void testArithmeticOperators(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "'. | type', 'null', '\"null\"'",
+        "'5 | type', '{}', '\"number\"'",
+        "'\"hello\" | type', '{}', '\"string\"'",
+        "'true | type', '{}', '\"boolean\"'",
+        "'false | type', '{}', '\"boolean\"'",
+        "'[1,2] | type', '{}', '\"array\"'",
+        "'{\"a\":1} | type', '{}', '\"object\"'",
+        "'. | type', '5', '\"number\"'",
+        "'. | type', '\"test\"', '\"string\"'"
+    })
+    void testType(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
 
