@@ -98,7 +98,33 @@ public class OrgJsonValue implements JqValue {
     if (value instanceof String) {
       return "\"" + value + "\"";
     }
+    if (value instanceof JSONArray) {
+      return toCompactString((JSONArray) value);
+    }
     return value.toString();
+  }
+
+  private String toCompactString(JSONArray arr) {
+    StringBuilder sb = new StringBuilder("[");
+    for (int i = 0; i < arr.length(); i++) {
+      if (i > 0) {
+        sb.append(",");
+      }
+      Object item = arr.get(i);
+      if (item == null || item == JSONObject.NULL) {
+        sb.append("null");
+      } else if (item instanceof String) {
+        sb.append("\"").append(item).append("\"");
+      } else if (item instanceof JSONArray) {
+        sb.append(toCompactString((JSONArray) item));
+      } else if (item instanceof JSONObject) {
+        sb.append(item.toString());
+      } else {
+        sb.append(item.toString());
+      }
+    }
+    sb.append("]");
+    return sb.toString();
   }
 
   public static JqValue nullValue() {
@@ -240,6 +266,10 @@ public class OrgJsonValue implements JqValue {
     
     if (value == JSONObject.NULL && other.value == JSONObject.NULL) return true;
     if (value == JSONObject.NULL || other.value == JSONObject.NULL) return false;
+    
+    if (value instanceof Number && other.value instanceof Number) {
+      return ((Number) value).doubleValue() == ((Number) other.value).doubleValue();
+    }
     
     if (value instanceof JSONArray && other.value instanceof JSONArray) {
       return value.toString().equals(other.value.toString());

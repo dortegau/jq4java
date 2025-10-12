@@ -112,7 +112,7 @@ public final class JqCli {
 
                     try {
                         String result = Jq.execute(filter, input);
-                        if (result.equals(expected)) {
+                        if (jsonEqual(result, expected)) {
                             passed++;
                         } else {
                             failed++;
@@ -144,6 +144,16 @@ public final class JqCli {
         System.out.println("Passed:  " + passed + " (" + (total > 0 ? (passed * 100 / total) : 0) + "%)");
         System.out.println("Failed:  " + failed);
         System.out.println("Skipped: " + skipped);
+    }
+
+    private static boolean jsonEqual(String a, String b) {
+        try {
+            String normA = Jq.execute(".", a);
+            String normB = Jq.execute(".", b);
+            return normA.equals(normB);
+        } catch (Exception e) {
+            return a.equals(b);
+        }
     }
 
     private static void showHelp() {

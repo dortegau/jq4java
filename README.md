@@ -37,7 +37,7 @@ A Java 8 port of [jq](https://jqlang.github.io/jq/), the command-line JSON proce
 
 ## Implemented
 
-**jq compatibility: 27/595 official jq tests passing (4%)**
+**jq compatibility: 34/595 official jq tests passing (5%)**
 - Literals: `true`, `false`, `null`, numbers, strings (`"hello"`)
 - Identity: `.`
 - Field access: `.foo`, `.foo.bar`, `."my-key"`, `.["foo"]`
