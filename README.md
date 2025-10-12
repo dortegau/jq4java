@@ -4,7 +4,7 @@
 [![Java Version](https://img.shields.io/badge/Java-8%2B-blue)](https://www.oracle.com/java/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A Java 8+ port of [jq](https://jqlang.github.io/jq/), the command-line JSON processor.
+A Java 8+ port of [jq](https://jqlang.github.io/jq/), the lightweight command-line JSON processor.
 
 ## Why jq4java?
 
