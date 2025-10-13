@@ -23,6 +23,8 @@ A Java 8+ port of [jq](https://jqlang.github.io/jq/), the lightweight command-li
 - Microservices that manipulate JSON configurations
 - Any Java app that needs more than simple JSON parsing
 
+**Full disclosure:** This project was primarily created as a playground for testing AI-assisted software development, particularly with Claude Code and its subagents, alongside Amazon Q Developer. While the implementation is solid and the tool actually works (surprisingly well!), the real experiment here is seeing how far we can push AI pair programming, automated testing, PR workflows, and systematic feature development. If you find the library useful for real work, that's a delightful bonus! 🤖✨
+
 ## Modules
 
 - **[jq4java-core](jq4java-core/)** - Core library for embedding in Java applications
@@ -85,14 +87,14 @@ String result = Jq.execute("if .active then \"enabled\" else \"disabled\" end", 
 
 ```bash
 # Build
-mvn clean package
+$ mvn clean package
 
 # Run
-java -jar jq4java-cli/target/jq4java.jar '.' input.json
-echo '{"a":1}' | java -jar jq4java-cli/target/jq4java.jar '.a'
+$ java -jar jq4java-cli/target/jq4java.jar '.' input.json
+$ echo '{"a":1}' | java -jar jq4java-cli/target/jq4java.jar '.a'
 
 # Or use the wrapper script
-./jq4java-cli/jq4java '.name' data.json
+$ ./jq4java-cli/jq4java '.name' data.json
 ```
 
 See [jq4java-cli/README.md](jq4java-cli/README.md) for more CLI options.
@@ -103,22 +105,22 @@ Requires Maven 3+ and Java 8+. ANTLR4 grammar is automatically compiled during b
 
 ```bash
 # Build everything
-mvn clean package
+$ mvn clean package
 
 # Run tests
-mvn test
+$ mvn test
 
 # Run jq-reference test suite
-java -jar jq4java-cli/target/jq4java.jar --run-tests jq-reference/tests/jq.test
+$ java -jar jq4java-cli/target/jq4java.jar --run-tests jq-reference/tests/jq.test
 
 # Install git hooks (auto-updates README stats on push)
-bash scripts/install-hooks.sh
+$ bash scripts/install-hooks.sh
 
 # Build only core library
-cd jq4java-core && mvn clean package
+$ cd jq4java-core && mvn clean package
 
 # Build only CLI
-cd jq4java-cli && mvn clean package
+$ cd jq4java-cli && mvn clean package
 ```
 
 ## Architecture
@@ -126,13 +128,22 @@ cd jq4java-cli && mvn clean package
 ```
 jq4java/
 ├── jq4java-core/                    # Core library
-│   └── com.dortegau.jq4java/
+│   ├── src/main/antlr4/             # ANTLR grammar source
+│   │   └── com/dortegau/jq4java/parser/
+│   │       └── JqGrammar.g4         # jq grammar definition
+│   ├── target/generated-sources/antlr4/ # Generated ANTLR files (build-time)
+│   │   └── com/dortegau/jq4java/parser/
+│   │       ├── JqGrammarLexer.java  # Generated lexer
+│   │       └── JqGrammarParser.java # Generated parser
+│   └── src/main/java/com/dortegau/jq4java/
 │       ├── ast/                     # AST nodes (Expression implementations)
-│       ├── parser/                  # ANTLR grammar and AST builder
+│       ├── parser/                  # Parser integration and AST builder
+│       │   ├── JqParser.java        # Parser wrapper
+│       │   └── JqAstBuilder.java    # Converts parse tree to AST
 │       ├── json/                    # JSON abstraction (JqValue interface + implementations)
 │       └── Jq.java                  # Public API
 └── jq4java-cli/                     # Command-line interface
-    └── com.dortegau.jq4java.cli/
+    └── src/main/java/com/dortegau/jq4java/cli/
         └── JqCli.java               # CLI entry point
 ```
 
