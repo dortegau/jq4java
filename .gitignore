@@ -31,9 +31,10 @@ dependency-reduced-pom.xml
 *.ear
 hs_err_pid*
 
-# Claude Code agents and commands (user-specific)
-.claude/
+# Claude Code - General files and personal settings
 CLAUDE.md
-
-# Claude Code - Personal settings
 .claude/settings.local.json
+
+# Claude Code - Allow agents and commands to be committed
+# .claude/agents/
+# .claude/commands/
