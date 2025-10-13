@@ -24,6 +24,7 @@ import com.dortegau.jq4java.ast.Or;
 import com.dortegau.jq4java.ast.Pipe;
 import com.dortegau.jq4java.ast.Select;
 import com.dortegau.jq4java.ast.Type;
+import com.dortegau.jq4java.ast.ZeroArgFunction;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -351,6 +352,12 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
       default:
         throw new RuntimeException("Unknown function: " + functionName);
     }
+  }
+
+  @Override
+  public Expression visitZeroArgFunction(JqGrammarParser.ZeroArgFunctionContext ctx) {
+    String functionName = ctx.IDENTIFIER().getText();
+    return new ZeroArgFunction(functionName);
   }
 
   @Override

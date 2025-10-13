@@ -51,7 +51,7 @@ class JqErrorTest {
   void testStringWithoutQuotesInBracket() {
     RuntimeException ex = assertThrows(RuntimeException.class,
         () -> Jq.execute(".[foo]", "{}"));
-    assertTrue(ex.getMessage().contains("Parse error"));
+    assertTrue(ex.getMessage().contains("foo/0 is not defined"));
   }
 
   @Test
@@ -213,7 +213,7 @@ class JqErrorTest {
   void testSelectWithoutArguments() {
     RuntimeException ex = assertThrows(RuntimeException.class,
         () -> Jq.execute("select", "null"));
-    assertTrue(ex.getMessage().contains("Parse error"));
+    assertTrue(ex.getMessage().contains("select/0 is not defined"));
   }
 
   @Test
@@ -319,5 +319,82 @@ class JqErrorTest {
     RuntimeException ex = assertThrows(RuntimeException.class,
         () -> Jq.execute("if (if true then false end then 1 else 2 end", "null"));
     assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testAddOnNull() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("null | add", "null"));
+    assertTrue(ex.getMessage().contains("Cannot iterate over null"));
+  }
+
+  @Test
+  void testAddOnNumber() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("42 | add", "null"));
+    assertTrue(ex.getMessage().contains("Cannot iterate"));
+  }
+
+  @Test
+  void testSortOnNull() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("null | sort", "null"));
+    assertTrue(ex.getMessage().contains("Cannot iterate") || ex.getMessage().contains("Cannot sort"));
+  }
+
+  @Test
+  void testSortOnObject() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("{\"a\":1} | sort", "null"));
+    assertTrue(ex.getMessage().contains("Cannot iterate") || ex.getMessage().contains("Cannot sort"));
+  }
+
+  @Test
+  void testFlattenOnNull() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("null | flatten", "null"));
+    assertTrue(ex.getMessage().contains("Cannot iterate") || ex.getMessage().contains("Cannot flatten"));
+  }
+
+  @Test
+  void testFlattenOnNumber() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("42 | flatten", "null"));
+    assertTrue(ex.getMessage().contains("Cannot iterate") || ex.getMessage().contains("Cannot flatten"));
+  }
+
+  @Test
+  void testReverseOnNull() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("null | reverse", "null"));
+    assertTrue(ex.getMessage().contains("Cannot iterate") || ex.getMessage().contains("Cannot reverse"));
+  }
+
+  @Test
+  void testReverseOnObject() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("{\"a\":1} | reverse", "null"));
+    assertTrue(ex.getMessage().contains("Cannot iterate") || ex.getMessage().contains("Cannot reverse"));
+  }
+
+  @Test
+  void testUniqueOnNull() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("null | unique", "null"));
+    assertTrue(ex.getMessage().contains("Cannot iterate") || ex.getMessage().contains("Cannot get unique"));
+  }
+
+  @Test
+  void testTransposeOnNull() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("null | transpose", "null"));
+    assertTrue(ex.getMessage().contains("Cannot iterate") || ex.getMessage().contains("Cannot transpose"));
+  }
+
+  @Test
+  void testTransposeOnNumber() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("42 | transpose", "null"));
+    assertTrue(ex.getMessage().contains("Cannot iterate") || ex.getMessage().contains("Cannot transpose"));
   }
 }

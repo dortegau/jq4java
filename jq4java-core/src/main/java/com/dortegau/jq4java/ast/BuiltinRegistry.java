@@ -14,6 +14,12 @@ public class BuiltinRegistry {
       Class.forName("com.dortegau.jq4java.ast.Type");
       Class.forName("com.dortegau.jq4java.ast.MapFunction");
       Class.forName("com.dortegau.jq4java.ast.Select");
+      Class.forName("com.dortegau.jq4java.ast.Flatten");
+      Class.forName("com.dortegau.jq4java.ast.Add");
+      Class.forName("com.dortegau.jq4java.ast.Sort");
+      Class.forName("com.dortegau.jq4java.ast.Reverse");
+      Class.forName("com.dortegau.jq4java.ast.Unique");
+      Class.forName("com.dortegau.jq4java.ast.Transpose");
     } catch (ClassNotFoundException e) {
       // Ignore
     }

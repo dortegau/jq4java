@@ -61,4 +61,18 @@ public interface JqValue extends Comparable<JqValue> {
   JqValue keys();
 
   JqValue type();
+
+  boolean isNull();
+
+  JqValue flatten(int depth);
+
+  JqValue add();
+
+  JqValue sort();
+
+  JqValue reverse();
+
+  JqValue unique();
+
+  JqValue transpose();
 }
