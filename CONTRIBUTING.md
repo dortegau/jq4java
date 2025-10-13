@@ -30,7 +30,7 @@ git checkout -b fix/issue-number-description
 **Always write tests before implementing features:**
 
 1. Add failing tests in `JqTest` (happy path) or `JqErrorTest` (error cases)
-2. Run tests to verify they fail: `mvn test`
+2. Run tests to verify they fail: `./mvnw test`
 3. Implement the feature to make tests pass
 4. Add combined tests mixing the new feature with existing ones
 5. Update documentation (README.md, IMPLEMENTATION_STATUS.md if exists)
@@ -99,7 +99,7 @@ static {
 
 ```bash
 # Run unit tests
-mvn test
+./mvnw test
 
 # Run jq-reference test suite
 java -jar jq4java-cli/target/jq4java.jar --run-tests jq-reference/tests/jq.test

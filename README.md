@@ -87,7 +87,7 @@ String result = Jq.execute("if .active then \"enabled\" else \"disabled\" end", 
 
 ```bash
 # Build
-$ mvn clean package
+$ ./mvnw clean package
 
 # Run
 $ java -jar jq4java-cli/target/jq4java.jar '.' input.json
@@ -101,14 +101,14 @@ See [jq4java-cli/README.md](jq4java-cli/README.md) for more CLI options.
 
 ## Development
 
-Requires Maven 3+ and Java 8+. ANTLR4 grammar is automatically compiled during build.
+Requires Java 8+. No need to install Maven - the project includes Maven Wrapper. ANTLR4 grammar is automatically compiled during build.
 
 ```bash
 # Build everything
-$ mvn clean package
+$ ./mvnw clean package
 
 # Run tests
-$ mvn test
+$ ./mvnw test
 
 # Run jq-reference test suite
 $ java -jar jq4java-cli/target/jq4java.jar --run-tests jq-reference/tests/jq.test
@@ -117,10 +117,10 @@ $ java -jar jq4java-cli/target/jq4java.jar --run-tests jq-reference/tests/jq.tes
 $ bash scripts/install-hooks.sh
 
 # Build only core library
-$ cd jq4java-core && mvn clean package
+$ cd jq4java-core && ../mvnw clean package
 
 # Build only CLI
-$ cd jq4java-cli && mvn clean package
+$ cd jq4java-cli && ../mvnw clean package
 ```
 
 ## Architecture
