@@ -55,7 +55,7 @@ A Java 8+ port of [jq](https://jqlang.github.io/jq/), the lightweight command-li
 - Arithmetic operators: `+`, `-`, `*`, `/`, `%` (also string/array concatenation with `+`)
 - Logical operators: `and`, `or`, `not`
 - Conditional expressions: `if-then-else-end`, `if-then-elif-then-else-end`, `if-then-end` (optional else)
-- Built-in functions: `length`, `keys`, `type`, `map(expr)`, `select(expr)`, `builtins`
+- Built-in functions: `length`, `keys`, `type`, `map(expr)`, `select(expr)`, `builtins`, `flatten`, `add`, `sort`, `reverse`, `unique`, `transpose`
 
 ## Usage
 
@@ -81,6 +81,25 @@ String result = Jq.execute("if .score >= 90 then \"A\" elif .score >= 80 then \"
 
 String result = Jq.execute("if .active then \"enabled\" else \"disabled\" end", "{\"active\": true}");
 // result: "\"enabled\""
+
+// Array manipulation functions
+String result = Jq.execute("flatten", "[[1,2],[3,4]]");
+// result: "[1,2,3,4]"
+
+String result = Jq.execute("add", "[1,2,3,4]");
+// result: "10"
+
+String result = Jq.execute("sort", "[3,1,4,2]");
+// result: "[1,2,3,4]"
+
+String result = Jq.execute("reverse", "[1,2,3]");
+// result: "[3,2,1]"
+
+String result = Jq.execute("unique", "[1,2,2,3,1]");
+// result: "[1,2,3]"
+
+String result = Jq.execute("transpose", "[[1,2],[3,4]]");
+// result: "[[1,3],[2,4]]"
 ```
 
 ### As a CLI
