@@ -222,4 +222,102 @@ class JqErrorTest {
         () -> Jq.execute("select(.nonexistent > 10)", "42"));
     assertTrue(ex.getMessage().contains("Cannot index number with string"));
   }
+
+  @Test
+  void testIncompleteIfStatement() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("if", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testIfWithoutThen() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("if true 3 end", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testIfWithoutEnd() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("if true then 3", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testElifWithoutThen() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("if false then 1 elif true 2 else 3 end", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testElseWithoutEnd() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("if false then 1 else 2", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testNestedIfWithoutEnd() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("if true then (if false then 1 else 2", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testNestedIfMissingClosingParen() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("if true then (if false then 1 else 2 end else 3 end", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testNestedIfWithMismatchedParens() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("if true then ((if false then 1 else 2 end) else 3 end", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testIncompleteNestedIf() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("if true then (if", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testNestedIfMissingThen() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("if true then (if false 1 else 2 end) else 3 end", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testDeeplyNestedIncompleteIf() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("if true then (if false then (if true then 1", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testNestedElifWithoutThen() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("if true then (if false then 1 elif true 2 else 3 end) else 4 end", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testNestedIfWithExtraEnd() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("if true then (if false then 1 else 2 end end) else 3 end", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testNestedIfUnbalancedStructure() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("if (if true then false end then 1 else 2 end", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
 }

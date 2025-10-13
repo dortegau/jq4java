@@ -10,6 +10,7 @@ import com.dortegau.jq4java.ast.ArraySlicing;
 import com.dortegau.jq4java.ast.Builtins;
 import com.dortegau.jq4java.ast.Comma;
 import com.dortegau.jq4java.ast.Comparison;
+import com.dortegau.jq4java.ast.Conditional;
 import com.dortegau.jq4java.ast.Expression;
 import com.dortegau.jq4java.ast.FieldAccess;
 import com.dortegau.jq4java.ast.Identity;
@@ -63,15 +64,45 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
 
   @Override
   public Expression visitAlternativeExpr(JqGrammarParser.AlternativeExprContext ctx) {
-    List<JqGrammarParser.LogicalExprContext> logicalExprs = ctx.logicalExpr();
-    if (logicalExprs.size() == 1) {
-      return visitLogicalExpr(logicalExprs.get(0));
+    List<JqGrammarParser.ConditionalExprContext> conditionalExprs = ctx.conditionalExpr();
+    if (conditionalExprs.size() == 1) {
+      return visit(conditionalExprs.get(0));
     }
-    Expression result = visitLogicalExpr(logicalExprs.get(0));
-    for (int i = 1; i < logicalExprs.size(); i++) {
-      result = new Alternative(result, visitLogicalExpr(logicalExprs.get(i)));
+    Expression result = visit(conditionalExprs.get(0));
+    for (int i = 1; i < conditionalExprs.size(); i++) {
+      result = new Alternative(result, visit(conditionalExprs.get(i)));
     }
     return result;
+  }
+
+  @Override
+  public Expression visitConditionalExpression(JqGrammarParser.ConditionalExpressionContext ctx) {
+    Expression condition = visit(ctx.expression(0));
+    Expression thenExpr = visit(ctx.expression(1));
+
+    List<Conditional.ElifBranch> elifBranches = new ArrayList<>();
+    Expression elseExpr = null;
+
+    // Process elif and else clauses
+    int expressionIndex = 2;
+    for (int i = 0; i < ctx.getChildCount(); i++) {
+      if (ctx.getChild(i).getText().equals("elif")) {
+        Expression elifCondition = visit(ctx.expression(expressionIndex));
+        Expression elifThen = visit(ctx.expression(expressionIndex + 1));
+        elifBranches.add(new Conditional.ElifBranch(elifCondition, elifThen));
+        expressionIndex += 2;
+      } else if (ctx.getChild(i).getText().equals("else")) {
+        elseExpr = visit(ctx.expression(expressionIndex));
+        break;
+      }
+    }
+
+    return new Conditional(condition, thenExpr, elifBranches, elseExpr);
+  }
+
+  @Override
+  public Expression visitNonConditionalExpr(JqGrammarParser.NonConditionalExprContext ctx) {
+    return visitLogicalExpr(ctx.logicalExpr());
   }
 
   @Override

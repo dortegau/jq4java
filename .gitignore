@@ -34,3 +34,6 @@ hs_err_pid*
 # Claude Code agents and commands (user-specific)
 .claude/
 CLAUDE.md
+
+# Claude Code - Personal settings
+.claude/settings.local.json
