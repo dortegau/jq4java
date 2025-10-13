@@ -392,4 +392,67 @@ class JqTest {
     void testComparisonOperators(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
+
+    @ParameterizedTest
+    @CsvSource({
+        "'if .foo then \"yes\" else \"no\" end', '{\"foo\": true}', '\"yes\"'",
+        "'if .foo then \"yes\" else \"no\" end', '{\"foo\": false}', '\"no\"'",
+        "'if .foo then \"yes\" else \"no\" end', '{\"foo\": null}', '\"no\"'",
+        "'if .foo then \"yes\" else \"no\" end', '{\"foo\": 0}', '\"yes\"'",
+        "'if .foo then \"yes\" else \"no\" end', '{\"foo\": \"\"}', '\"yes\"'",
+        "'if .foo then \"yes\" else \"no\" end', '{\"foo\": []}', '\"yes\"'",
+        "'if .foo then \"yes\" else \"no\" end', '{\"foo\": {}}', '\"yes\"'",
+        "'if .foo then \"yes\" else \"no\" end', '{}', '\"no\"'"
+    })
+    void testBasicConditional(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "'if .baz then \"strange\" elif .foo then \"yep\" else \"nope\" end', '{\"foo\": 1, \"bar\": 2}', '\"yep\"'",
+        "'if .baz then \"strange\" elif .foo then \"yep\" else \"nope\" end', '{\"baz\": true, \"foo\": 1}', '\"strange\"'",
+        "'if .baz then \"strange\" elif .foo then \"yep\" else \"nope\" end', '{\"bar\": 2}', '\"nope\"'"
+    })
+    void testElifConditional(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "'if true then 3 end', '7', '3'",
+        "'if false then 3 end', '7', '7'",
+        "'if .foo then \"yes\" end', '{\"foo\": true}', '\"yes\"'",
+        "'if .foo then \"yes\" end', '{\"foo\": false}', '{\"foo\":false}'"
+    })
+    void testOptionalElse(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "'if 1,null,2 then 3 else 4 end', 'null', '3\n4\n3'"
+    })
+    void testMultipleConditions(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'if .a > 5 then \"big\" else \"small\" end' ; '{\"a\": 10}' ; '\"big\"'",
+        "'if .a > 5 then \"big\" else \"small\" end' ; '{\"a\": 3}' ; '\"small\"'",
+        "'if .active and .verified then \"valid\" else \"invalid\" end' ; '{\"active\": true, \"verified\": true}' ; '\"valid\"'",
+        "'if .name then .name else \"anonymous\" end' ; '{\"name\": \"Alice\"}' ; '\"Alice\"'",
+        "'if .name then .name else \"anonymous\" end' ; '{}' ; '\"anonymous\"'",
+        "'[.[] | if . > 2 then . * 2 else . end]' ; '[1,2,3,4]' ; '[1,2,6,8]'",
+        "'{result: if .score >= 90 then \"A\" elif .score >= 80 then \"B\" else \"F\" end}' ; '{\"score\": 95}' ; '{\"result\":\"A\"}'",
+        "'{result: if .score >= 90 then \"A\" elif .score >= 80 then \"B\" else \"F\" end}' ; '{\"score\": 85}' ; '{\"result\":\"B\"}'",
+        "'{result: if .score >= 90 then \"A\" elif .score >= 80 then \"B\" else \"F\" end}' ; '{\"score\": 75}' ; '{\"result\":\"F\"}'",
+        "'if .status == \"active\" then \"enabled\" else \"disabled\" end' ; '{\"status\": \"active\"}' ; '\"enabled\"'",
+        "'if .value // false then \"has value\" else \"no value\" end' ; '{\"value\": null}' ; '\"no value\"'",
+        "'if .items | length > 0 then \"not empty\" else \"empty\" end' ; '{\"items\": [1,2,3]}' ; '\"not empty\"'"
+    }, delimiter = ';')
+    void testConditionalCombinations(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
 }

@@ -222,4 +222,39 @@ class JqErrorTest {
         () -> Jq.execute("select(.nonexistent > 10)", "42"));
     assertTrue(ex.getMessage().contains("Cannot index number with string"));
   }
+
+  @Test
+  void testIncompleteIfStatement() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("if", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testIfWithoutThen() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("if true 3 end", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testIfWithoutEnd() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("if true then 3", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testElifWithoutThen() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("if false then 1 elif true 2 else 3 end", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testElseWithoutEnd() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("if false then 1 else 2", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
 }

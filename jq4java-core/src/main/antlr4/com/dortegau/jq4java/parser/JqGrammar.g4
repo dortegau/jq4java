@@ -15,7 +15,12 @@ commaExpr
     ;
 
 alternativeExpr
-    : logicalExpr (ALT logicalExpr)*
+    : conditionalExpr (ALT conditionalExpr)*
+    ;
+
+conditionalExpr
+    : IF expression THEN expression (ELIF expression THEN expression)* (ELSE expression)? END  # ConditionalExpression
+    | logicalExpr                                                                               # NonConditionalExpr
     ;
 
 logicalExpr
@@ -106,6 +111,11 @@ TYPE        : 'type' ;
 NOT         : 'not' ;
 AND         : 'and' ;
 OR          : 'or' ;
+IF          : 'if' ;
+THEN        : 'then' ;
+ELSE        : 'else' ;
+ELIF        : 'elif' ;
+END         : 'end' ;
 
 NUMBER      : '-'? [0-9]+ ('.' [0-9]+)? ;
 IDENTIFIER  : [a-zA-Z_][a-zA-Z0-9_]* ;

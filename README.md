@@ -37,7 +37,7 @@ A Java 8+ port of [jq](https://jqlang.github.io/jq/), the lightweight command-li
 
 ## Implemented
 
-**jq compatibility: 38/595 official jq tests passing (6%)**
+**jq compatibility: 49/595 official jq tests passing (8%)**
 - Literals: `true`, `false`, `null`, numbers, strings (`"hello"`)
 - Identity: `.`
 - Field access: `.foo`, `.foo.bar`, `."my-key"`, `.["foo"]`
@@ -52,6 +52,7 @@ A Java 8+ port of [jq](https://jqlang.github.io/jq/), the lightweight command-li
 - Comparison operators: `==`, `!=`, `<`, `<=`, `>`, `>=`
 - Arithmetic operators: `+`, `-`, `*`, `/`, `%` (also string/array concatenation with `+`)
 - Logical operators: `and`, `or`, `not`
+- Conditional expressions: `if-then-else-end`, `if-then-elif-then-else-end`, `if-then-end` (optional else)
 - Built-in functions: `length`, `keys`, `type`, `map(expr)`, `select(expr)`, `builtins`
 
 ## Usage
@@ -72,6 +73,12 @@ String result = Jq.execute("{a, b}", "{\"a\":1, \"b\":2, \"c\":3}");
 
 String result = Jq.execute(".users[0].email", "{\"users\":[{\"email\":\"test@example.com\"}]}");
 // result: "\"test@example.com\""
+
+String result = Jq.execute("if .score >= 90 then \"A\" elif .score >= 80 then \"B\" else \"F\" end", "{\"score\": 95}");
+// result: "\"A\""
+
+String result = Jq.execute("if .active then \"enabled\" else \"disabled\" end", "{\"active\": true}");
+// result: "\"enabled\""
 ```
 
 ### As a CLI
