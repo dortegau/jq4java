@@ -455,4 +455,36 @@ class JqTest {
     void testConditionalCombinations(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'if .a > 3 then (if .b > 8 then \"both high\" else \"a high, b low\" end) else \"a low\" end' ; '{\"a\":5,\"b\":10}' ; '\"both high\"'",
+        "'if .a > 3 then (if .b > 8 then \"both high\" else \"a high, b low\" end) else \"a low\" end' ; '{\"a\":5,\"b\":5}' ; '\"a high, b low\"'",
+        "'if .a > 3 then (if .b > 8 then \"both high\" else \"a high, b low\" end) else \"a low\" end' ; '{\"a\":2,\"b\":10}' ; '\"a low\"'",
+        "'if length > 2 then (if .[0] == 1 then \"starts with 1\" else \"starts with other\" end) else \"short array\" end' ; '[1,2,3]' ; '\"starts with 1\"'",
+        "'if length > 2 then (if .[0] == 1 then \"starts with 1\" else \"starts with other\" end) else \"short array\" end' ; '[5,2,3]' ; '\"starts with other\"'",
+        "'if length > 2 then (if .[0] == 1 then \"starts with 1\" else \"starts with other\" end) else \"short array\" end' ; '[5]' ; '\"short array\"'",
+        "'if .user then (if .user.admin then \"admin user\" elif .user.active then \"active user\" else \"inactive user\" end) else \"no user\" end' ; '{\"user\":{\"admin\":true,\"active\":true}}' ; '\"admin user\"'",
+        "'if .user then (if .user.admin then \"admin user\" elif .user.active then \"active user\" else \"inactive user\" end) else \"no user\" end' ; '{\"user\":{\"admin\":false,\"active\":true}}' ; '\"active user\"'",
+        "'if .user then (if .user.admin then \"admin user\" elif .user.active then \"active user\" else \"inactive user\" end) else \"no user\" end' ; '{\"user\":{\"admin\":false,\"active\":false}}' ; '\"inactive user\"'",
+        "'if .user then (if .user.admin then \"admin user\" elif .user.active then \"active user\" else \"inactive user\" end) else \"no user\" end' ; '{}' ; '\"no user\"'",
+        "'if .items | length > 0 then (if .items[0].priority == \"high\" then \"urgent\" else \"normal\" end) else \"empty\" end' ; '{\"items\":[{\"priority\":\"high\",\"task\":\"fix bug\"}]}' ; '\"urgent\"'",
+        "'if .items | length > 0 then (if .items[0].priority == \"high\" then \"urgent\" else \"normal\" end) else \"empty\" end' ; '{\"items\":[{\"priority\":\"low\",\"task\":\"cleanup\"}]}' ; '\"normal\"'",
+        "'if .items | length > 0 then (if .items[0].priority == \"high\" then \"urgent\" else \"normal\" end) else \"empty\" end' ; '{\"items\":[]}' ; '\"empty\"'",
+        "'if . > 0 then (if . > 10 then (if . > 100 then \"very large\" else \"large\" end) else \"small positive\" end) else \"non-positive\" end' ; '150' ; '\"very large\"'",
+        "'if . > 0 then (if . > 10 then (if . > 100 then \"very large\" else \"large\" end) else \"small positive\" end) else \"non-positive\" end' ; '50' ; '\"large\"'",
+        "'if . > 0 then (if . > 10 then (if . > 100 then \"very large\" else \"large\" end) else \"small positive\" end) else \"non-positive\" end' ; '5' ; '\"small positive\"'",
+        "'if . > 0 then (if . > 10 then (if . > 100 then \"very large\" else \"large\" end) else \"small positive\" end) else \"non-positive\" end' ; '-5' ; '\"non-positive\"'",
+        "'[.[] | if .active then (if .priority == \"high\" then .name + \" (urgent)\" else .name end) else \"disabled\" end]' ; '[{\"name\":\"task1\",\"active\":true,\"priority\":\"high\"},{\"name\":\"task2\",\"active\":true,\"priority\":\"low\"},{\"name\":\"task3\",\"active\":false}]' ; '[\"task1 (urgent)\",\"task2\",\"disabled\"]'",
+        "'{status: if .config.enabled then (if .config.debug then \"debug mode\" else \"normal mode\" end) else \"disabled\" end}' ; '{\"config\":{\"enabled\":true,\"debug\":true}}' ; '{\"status\":\"debug mode\"}'",
+        "'{status: if .config.enabled then (if .config.debug then \"debug mode\" else \"normal mode\" end) else \"disabled\" end}' ; '{\"config\":{\"enabled\":true,\"debug\":false}}' ; '{\"status\":\"normal mode\"}'",
+        "'{status: if .config.enabled then (if .config.debug then \"debug mode\" else \"normal mode\" end) else \"disabled\" end}' ; '{\"config\":{\"enabled\":false}}' ; '{\"status\":\"disabled\"}'",
+        "'if .data then (if .data | type == \"array\" then (if .data | length > 0 then \"non-empty array\" else \"empty array\" end) else \"not array\" end) else \"no data\" end' ; '{\"data\":[1,2,3]}' ; '\"non-empty array\"'",
+        "'if .data then (if .data | type == \"array\" then (if .data | length > 0 then \"non-empty array\" else \"empty array\" end) else \"not array\" end) else \"no data\" end' ; '{\"data\":[]}' ; '\"empty array\"'",
+        "'if .data then (if .data | type == \"array\" then (if .data | length > 0 then \"non-empty array\" else \"empty array\" end) else \"not array\" end) else \"no data\" end' ; '{\"data\":\"string\"}' ; '\"not array\"'",
+        "'if .data then (if .data | type == \"array\" then (if .data | length > 0 then \"non-empty array\" else \"empty array\" end) else \"not array\" end) else \"no data\" end' ; '{}' ; '\"no data\"'"
+    }, delimiter = ';')
+    void testNestedConditionals(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
 }
