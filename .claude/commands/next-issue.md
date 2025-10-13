@@ -60,3 +60,13 @@ Each agent uses **GitHub as the shared state store**:
 - **Labels and assignments** track workflow progress
 
 **Early Exit Strategy**: If any step fails, the pipeline stops immediately with clear error reporting and cleanup instructions.
+
+---
+
+Execute the complete workflow for identifying and implementing the next most important jq4java feature:
+
+1. Launch jq-test-prioritizer agent to analyze failing tests and create a prioritized GitHub issue
+2. Launch github-task-executor agent to implement the created issue and create a Pull Request
+3. Launch github-pr-reviewer agent to review the created PR
+
+Execute these agents SEQUENTIALLY with state validation - each must complete successfully before the next begins.

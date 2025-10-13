@@ -519,4 +519,230 @@ public class OrgJsonValue implements JqValue {
     }
     return new OrgJsonValue((Object) typeName);
   }
+
+  @Override
+  public boolean isNull() {
+    return value == JSONObject.NULL;
+  }
+
+  @Override
+  public JqValue flatten(int depth) {
+    if (!isArray()) {
+      throw new RuntimeException("Cannot flatten non-array");
+    }
+
+    JSONArray arr = (JSONArray) value;
+    JSONArray result = new JSONArray();
+
+    for (int i = 0; i < arr.length(); i++) {
+      Object item = arr.get(i);
+      if (depth > 0 && item instanceof JSONArray) {
+        JqValue nestedFlattened = new OrgJsonValue(item).flatten(depth - 1);
+        if (nestedFlattened instanceof OrgJsonValue) {
+          JSONArray nestedArr = (JSONArray) ((OrgJsonValue) nestedFlattened).value;
+          for (int j = 0; j < nestedArr.length(); j++) {
+            result.put(nestedArr.get(j));
+          }
+        }
+      } else {
+        result.put(item);
+      }
+    }
+
+    return new OrgJsonValue(result);
+  }
+
+  @Override
+  public JqValue add() {
+    if (!isArray()) {
+      throw new RuntimeException("Cannot add elements of non-array");
+    }
+
+    JSONArray arr = (JSONArray) value;
+    if (arr.length() == 0) {
+      return nullValue();
+    }
+
+    Object first = arr.get(0);
+
+    // Handle numbers
+    if (first instanceof Number) {
+      double sum = 0;
+      for (int i = 0; i < arr.length(); i++) {
+        Object item = arr.get(i);
+        if (!(item instanceof Number)) {
+          throw new RuntimeException("Cannot add mixed types");
+        }
+        sum += ((Number) item).doubleValue();
+      }
+      if (sum == (long) sum) {
+        return new OrgJsonValue((long) sum);
+      }
+      return new OrgJsonValue(sum);
+    }
+
+    // Handle strings
+    if (first instanceof String) {
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < arr.length(); i++) {
+        Object item = arr.get(i);
+        if (!(item instanceof String)) {
+          throw new RuntimeException("Cannot add mixed types");
+        }
+        sb.append((String) item);
+      }
+      return new OrgJsonValue(sb.toString());
+    }
+
+    // Handle arrays
+    if (first instanceof JSONArray) {
+      JSONArray result = new JSONArray();
+      for (int i = 0; i < arr.length(); i++) {
+        Object item = arr.get(i);
+        if (!(item instanceof JSONArray)) {
+          throw new RuntimeException("Cannot add mixed types");
+        }
+        JSONArray subArr = (JSONArray) item;
+        for (int j = 0; j < subArr.length(); j++) {
+          result.put(subArr.get(j));
+        }
+      }
+      return new OrgJsonValue(result);
+    }
+
+    // Handle objects
+    if (first instanceof JSONObject) {
+      Map<String, Object> result = new java.util.LinkedHashMap<>();
+      for (int i = 0; i < arr.length(); i++) {
+        Object item = arr.get(i);
+        if (!(item instanceof JSONObject)) {
+          throw new RuntimeException("Cannot add mixed types");
+        }
+        JSONObject obj = (JSONObject) item;
+        for (String key : obj.keySet()) {
+          result.put(key, obj.get(key));
+        }
+      }
+      return new OrgJsonValue(new OrderedJSONObject(result));
+    }
+
+    throw new RuntimeException("Cannot add elements of this type");
+  }
+
+  @Override
+  public JqValue sort() {
+    if (!isArray()) {
+      throw new RuntimeException("Cannot sort non-array");
+    }
+
+    JSONArray arr = (JSONArray) value;
+    List<JqValue> items = new java.util.ArrayList<>();
+
+    for (int i = 0; i < arr.length(); i++) {
+      items.add(new OrgJsonValue(arr.get(i)));
+    }
+
+    items.sort(null); // Use natural ordering (compareTo)
+
+    JSONArray result = new JSONArray();
+    for (JqValue item : items) {
+      if (item instanceof OrgJsonValue) {
+        result.put(((OrgJsonValue) item).value);
+      }
+    }
+
+    return new OrgJsonValue(result);
+  }
+
+  @Override
+  public JqValue reverse() {
+    if (!isArray()) {
+      throw new RuntimeException("Cannot reverse non-array");
+    }
+
+    JSONArray arr = (JSONArray) value;
+    JSONArray result = new JSONArray();
+
+    for (int i = arr.length() - 1; i >= 0; i--) {
+      result.put(arr.get(i));
+    }
+
+    return new OrgJsonValue(result);
+  }
+
+  @Override
+  public JqValue unique() {
+    if (!isArray()) {
+      throw new RuntimeException("Cannot get unique elements from non-array");
+    }
+
+    JSONArray arr = (JSONArray) value;
+    List<JqValue> items = new java.util.ArrayList<>();
+
+    for (int i = 0; i < arr.length(); i++) {
+      items.add(new OrgJsonValue(arr.get(i)));
+    }
+
+    // Sort first to match jq behavior
+    items.sort(null);
+
+    // Remove duplicates
+    List<JqValue> unique = new java.util.ArrayList<>();
+    JqValue prev = null;
+    for (JqValue item : items) {
+      if (prev == null || !item.equals(prev)) {
+        unique.add(item);
+      }
+      prev = item;
+    }
+
+    JSONArray result = new JSONArray();
+    for (JqValue item : unique) {
+      if (item instanceof OrgJsonValue) {
+        result.put(((OrgJsonValue) item).value);
+      }
+    }
+
+    return new OrgJsonValue(result);
+  }
+
+  @Override
+  public JqValue transpose() {
+    if (!isArray()) {
+      throw new RuntimeException("Cannot transpose non-array");
+    }
+
+    JSONArray arr = (JSONArray) value;
+    if (arr.length() == 0) {
+      return new OrgJsonValue(new JSONArray());
+    }
+
+    // Find the maximum length of inner arrays
+    int maxLength = 0;
+    for (int i = 0; i < arr.length(); i++) {
+      Object item = arr.get(i);
+      if (item instanceof JSONArray) {
+        maxLength = Math.max(maxLength, ((JSONArray) item).length());
+      }
+    }
+
+    JSONArray result = new JSONArray();
+    for (int col = 0; col < maxLength; col++) {
+      JSONArray column = new JSONArray();
+      for (int row = 0; row < arr.length(); row++) {
+        Object item = arr.get(row);
+        if (item instanceof JSONArray) {
+          JSONArray rowArr = (JSONArray) item;
+          if (col < rowArr.length()) {
+            column.put(rowArr.get(col));
+          }
+        }
+      }
+      if (column.length() > 0) {
+        result.put(column);
+      }
+    }
+
+    return new OrgJsonValue(result);
+  }
 }
