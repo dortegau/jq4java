@@ -65,7 +65,7 @@ primary
     | KEYS                                          # KeysExpr
     | TYPE                                          # TypeExpr
     | NOT                                           # NotExpr
-    | IDENTIFIER LPAREN expression RPAREN           # FunctionCall
+    | IDENTIFIER LPAREN expression (SEMICOLON expression)* RPAREN  # FunctionCall
     | IDENTIFIER                                    # ZeroArgFunction
     | LBRACKET (expression (COMMA expression)*)? RBRACKET  # ArrayConstructor
     | LBRACE (objectField (COMMA objectField)*)? RBRACE    # ObjectConstructor
@@ -83,6 +83,7 @@ DOT         : '.' ;
 PIPE        : '|' ;
 COMMA       : ',' ;
 COLON       : ':' ;
+SEMICOLON   : ';' ;
 ALT         : '//' ;
 PLUS        : '+' ;
 MINUS       : '-' ;

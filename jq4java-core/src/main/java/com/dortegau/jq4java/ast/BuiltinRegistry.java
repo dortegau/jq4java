@@ -20,6 +20,7 @@ public class BuiltinRegistry {
       Class.forName("com.dortegau.jq4java.ast.Reverse");
       Class.forName("com.dortegau.jq4java.ast.Unique");
       Class.forName("com.dortegau.jq4java.ast.Transpose");
+      Class.forName("com.dortegau.jq4java.ast.Range");
     } catch (ClassNotFoundException e) {
       // Ignore
     }

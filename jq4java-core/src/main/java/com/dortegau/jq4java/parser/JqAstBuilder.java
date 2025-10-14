@@ -25,6 +25,7 @@ import com.dortegau.jq4java.ast.Pipe;
 import com.dortegau.jq4java.ast.Select;
 import com.dortegau.jq4java.ast.Type;
 import com.dortegau.jq4java.ast.ZeroArgFunction;
+import com.dortegau.jq4java.ast.Range;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -342,13 +343,26 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
   @Override
   public Expression visitFunctionCall(JqGrammarParser.FunctionCallContext ctx) {
     String functionName = ctx.IDENTIFIER().getText();
-    Expression arg = visit(ctx.expression());
+    List<Expression> arguments = new ArrayList<>();
+
+    // Collect all arguments (first one plus any after semicolons)
+    for (JqGrammarParser.ExpressionContext exprCtx : ctx.expression()) {
+      arguments.add(visit(exprCtx));
+    }
 
     switch (functionName) {
       case "map":
-        return new MapFunction(arg);
+        if (arguments.size() != 1) {
+          throw new RuntimeException("map/" + arguments.size() + " is not defined");
+        }
+        return new MapFunction(arguments.get(0));
       case "select":
-        return new Select(arg);
+        if (arguments.size() != 1) {
+          throw new RuntimeException("select/" + arguments.size() + " is not defined");
+        }
+        return new Select(arguments.get(0));
+      case "range":
+        return new Range(arguments);
       default:
         throw new RuntimeException("Unknown function: " + functionName);
     }

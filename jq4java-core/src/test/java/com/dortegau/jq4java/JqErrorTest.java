@@ -397,4 +397,60 @@ class JqErrorTest {
         () -> Jq.execute("42 | transpose", "null"));
     assertTrue(ex.getMessage().contains("Cannot iterate") || ex.getMessage().contains("Cannot transpose"));
   }
+
+  @Test
+  void testRangeWithZeroStep() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("range(0;5;0)", "null"));
+    assertTrue(ex.getMessage().contains("range step cannot be zero"));
+  }
+
+  @Test
+  void testRangeWithStringArgument() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("range(\"hello\")", "null"));
+    assertTrue(ex.getMessage().contains("range argument must be a number"));
+  }
+
+  @Test
+  void testRangeWithNullArgument() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("range(null)", "null"));
+    assertTrue(ex.getMessage().contains("range argument must be a number"));
+  }
+
+  @Test
+  void testRangeWithArrayArgument() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("range([1,2,3])", "null"));
+    assertTrue(ex.getMessage().contains("range argument must be a number"));
+  }
+
+  @Test
+  void testRangeWithObjectArgument() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("range({\"a\":1})", "null"));
+    assertTrue(ex.getMessage().contains("range argument must be a number"));
+  }
+
+  @Test
+  void testRangeWithBooleanArgument() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("range(true)", "null"));
+    assertTrue(ex.getMessage().contains("range argument must be a number"));
+  }
+
+  @Test
+  void testRangeWithTooManyArguments() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("range(1;2;3;4)", "null"));
+    assertTrue(ex.getMessage().contains("range/4 is not defined"));
+  }
+
+  @Test
+  void testRangeWithNoArguments() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("range", "null"));
+    assertTrue(ex.getMessage().contains("range/0 is not defined"));
+  }
 }
