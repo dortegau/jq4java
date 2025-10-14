@@ -179,6 +179,22 @@ class JqTest {
     }
 
     @ParameterizedTest
+    @CsvSource({
+        // These tests should work but currently fail due to grammar issue
+        "'. // \"default\"', 'null', '\"default\"'",
+        "'. // \"fallback\"', 'false', '\"fallback\"'",
+        "'.missing // \"unknown\"', '{}', '\"unknown\"'",
+        "'null // \"string\"', 'null', '\"string\"'",
+        "'false // \"string\"', 'null', '\"string\"'",
+        // Combined with other operations
+        "'.value // \"N/A\" | length', '{\"value\": null}', '3'",
+        "'(.foo // \"bar\") + \"!\"', '{}', '\"bar!\"'"
+    })
+    void testAlternativeOperatorWithStrings(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
     @CsvSource(value = {
         "'.users[1:] | .[].email' ; '{\"users\":[{\"name\":\"Alice\",\"email\":\"alice@example.com\"},{\"name\":\"Bob\",\"email\":\"bob@example.com\"},{\"name\":\"Charlie\",\"email\":\"charlie@example.com\"}]}' ; '\"bob@example.com\"\n\"charlie@example.com\"'",
         "'.products[-1].name' ; '{\"products\":[{\"name\":\"Laptop\",\"price\":999},{\"name\":\"Mouse\",\"price\":25}]}' ; '\"Mouse\"'",
@@ -552,6 +568,72 @@ class JqTest {
         "transpose, '[[]]', '[]'"
     })
     void testTransposeFunction(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        // Basic interpolation
+        "'\"Hello \\(.name)\"', '{\"name\": \"Alice\"}', '\"Hello Alice\"'",
+        "'\"Array has \\(.items | length) items\"', '{\"items\": [1,2,3]}', '\"Array has 3 items\"'",
+        "'\"\\(.a) + \\(.b) = \\(.a + .b)\"', '{\"a\": 1, \"b\": 2}', '\"1 + 2 = 3\"'",
+
+        // Different types in interpolation
+        "'\"\\(.)\"', 'null', '\"null\"'",
+        "'\"\\(.)\"', '42', '\"42\"'",
+        "'\"\\(.)\"', 'true', '\"true\"'",
+        "'\"\\(.)\"', '[1,2,3]', '\"[1,2,3]\"'",
+        "'\"\\(.x.y)\"', '{\"x\":{\"y\":5}}', '\"5\"'",
+
+        // CRITICAL: Nested strings in interpolation
+        "'\"Value: \\(.value // \"default\")\"', '{\"value\": null}', '\"Value: default\"'",
+        "'\"Value: \\(.value // \"default\")\"', '{\"value\": \"custom\"}', '\"Value: custom\"'",
+        "'\"Name: \\(.name // \"Unknown\")\"', '{}', '\"Name: Unknown\"'",
+        "'\"Name: \\(.name // \"Unknown\")\"', '{\"name\": \"Alice\"}', '\"Name: Alice\"'",
+
+        // Complex expressions with operators
+        "'\"Status: \\(.active and .verified)\"', '{\"active\": true, \"verified\": false}', '\"Status: false\"'",
+        "'\"Status: \\(.active and .verified)\"', '{\"active\": true, \"verified\": true}', '\"Status: true\"'",
+        "'\"Count: \\(.items | length)\"', '{\"items\": [1,2,3,4,5]}', '\"Count: 5\"'",
+
+        // Multiple interpolations in one string
+        "'\"User \\(.name) has \\(.score) points\"', '{\"name\": \"Bob\", \"score\": 95}', '\"User Bob has 95 points\"'",
+        "'\"Result: \\(.x) + \\(.y) = \\(.x + .y)\"', '{\"x\": 10, \"y\": 5}', '\"Result: 10 + 5 = 15\"'",
+
+        // Nested objects and arrays
+        "'\"First item: \\(.items[0])\"', '{\"items\": [\"apple\", \"banana\"]}', '\"First item: apple\"'",
+        "'\"User email: \\(.user.profile.email)\"', '{\"user\": {\"profile\": {\"email\": \"test@example.com\"}}}', '\"User email: test@example.com\"'",
+
+        // Conditional expressions inside interpolation
+        "'\"Grade: \\(if .score >= 90 then \"A\" elif .score >= 80 then \"B\" else \"F\" end)\"', '{\"score\": 95}', '\"Grade: A\"'",
+        "'\"Grade: \\(if .score >= 90 then \"A\" elif .score >= 80 then \"B\" else \"F\" end)\"', '{\"score\": 85}', '\"Grade: B\"'",
+        "'\"Grade: \\(if .score >= 90 then \"A\" elif .score >= 80 then \"B\" else \"F\" end)\"', '{\"score\": 70}', '\"Grade: F\"'"
+    })
+    void testStringInterpolation(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        // Basic escape - \\( should be literal \(
+        "'\"Literal \\\\( not interpolation\"', '{}', '\"Literal \\\\( not interpolation\"'",
+
+        // Mix literal and interpolation
+        "'\"Mix \\\\( literal and \\(.name) interpolation\"', '{\"name\": \"test\"}', '\"Mix \\\\( literal and test interpolation\"'",
+
+        // Double backslash escapes - \\\\( should be literal \\( (not interpolation)
+        "'\"Escaped: \\\\\\(.foo)\"', '{\"foo\": 42}', '\"Escaped: \\\\(.foo)\"'",
+
+        // Standard string escapes within interpolated strings
+        "'\"Line 1\\nLine 2: \\(.value)\"', '{\"value\": \"test\"}', '\"Line 1\\nLine 2: test\"'",
+        "'\"Tab\\t\\(.name)\"', '{\"name\": \"value\"}', '\"Tab\\tvalue\"'",
+        "'\"Quote: \\\"\\(.text)\\\"\"', '{\"text\": \"hello\"}', '\"Quote: \\\"hello\\\"\"'",
+
+        // Complex escaping scenarios
+        "'\"Path: C:\\\\\\(.folder)\\\\file.txt\"', '{\"folder\": \"data\"}', '\"Path: C:\\\\data\\\\file.txt\"'",
+        "'\"Regex: \\\\d+\\\\s+\\(.pattern)\"', '{\"pattern\": \"test\"}', '\"Regex: \\\\d+\\\\s+test\"'"
+    })
+    void testStringInterpolationEscaping(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
 }
