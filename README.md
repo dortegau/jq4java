@@ -55,7 +55,7 @@ A Java 8+ port of [jq](https://jqlang.github.io/jq/), the lightweight command-li
 - Arithmetic operators: `+`, `-`, `*`, `/`, `%` (also string/array concatenation with `+`)
 - Logical operators: `and`, `or`, `not`
 - Conditional expressions: `if-then-else-end`, `if-then-elif-then-else-end`, `if-then-end` (optional else)
-- Built-in functions: `length`, `keys`, `type`, `map(expr)`, `select(expr)`, `builtins`, `flatten`, `add`, `sort`, `reverse`, `unique`, `transpose`
+- Built-in functions: `length`, `keys`, `type`, `map(expr)`, `select(expr)`, `builtins`, `flatten`, `add`, `sort`, `reverse`, `unique`, `transpose`, `range(n)`, `range(from; to)`, `range(from; to; step)`
 
 ## Usage
 
@@ -100,6 +100,16 @@ String result = Jq.execute("unique", "[1,2,2,3,1]");
 
 String result = Jq.execute("transpose", "[[1,2],[3,4]]");
 // result: "[[1,3],[2,4]]"
+
+// Range functions for sequence generation
+String result = Jq.execute("range(5)", "null");
+// result: "0\n1\n2\n3\n4"
+
+String result = Jq.execute("range(2; 7)", "null");
+// result: "2\n3\n4\n5\n6"
+
+String result = Jq.execute("range(0; 10; 2)", "null");
+// result: "0\n2\n4\n6\n8"
 ```
 
 ### As a CLI
