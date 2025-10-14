@@ -344,6 +344,18 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
   }
 
   @Override
+  public Expression visitRangeCall(JqGrammarParser.RangeCallContext ctx) {
+    List<Expression> arguments = new ArrayList<>();
+
+    // Collect all arguments (first one plus any after semicolons)
+    for (JqGrammarParser.ExpressionContext exprCtx : ctx.expression()) {
+      arguments.add(visit(exprCtx));
+    }
+
+    return new Range(arguments);
+  }
+
+  @Override
   public Expression visitFunctionCall(JqGrammarParser.FunctionCallContext ctx) {
     String functionName = ctx.IDENTIFIER().getText();
     List<Expression> arguments = new ArrayList<>();

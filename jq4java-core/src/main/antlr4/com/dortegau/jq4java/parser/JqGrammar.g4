@@ -65,6 +65,7 @@ primary
     | KEYS                                          # KeysExpr
     | TYPE                                          # TypeExpr
     | NOT                                           # NotExpr
+    | RANGE LPAREN expression (SEMICOLON expression)* RPAREN  # RangeCall
     | IDENTIFIER LPAREN expression (SEMICOLON expression)* RPAREN  # FunctionCall
     | IDENTIFIER                                    # ZeroArgFunction
     | LBRACKET (expression (COMMA expression)*)? RBRACKET  # ArrayConstructor
@@ -111,6 +112,7 @@ BUILTINS    : 'builtins' ;
 KEYS        : 'keys' ;
 TYPE        : 'type' ;
 NOT         : 'not' ;
+RANGE       : 'range' ;
 AND         : 'and' ;
 OR          : 'or' ;
 IF          : 'if' ;
