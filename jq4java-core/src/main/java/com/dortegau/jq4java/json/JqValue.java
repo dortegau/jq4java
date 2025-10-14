@@ -64,6 +64,18 @@ public interface JqValue extends Comparable<JqValue> {
 
   boolean isNull();
 
+  boolean isNumber();
+
+  double asNumber();
+
+  static JqValue fromLong(long value) {
+    return OrgJsonValue.fromLong(value);
+  }
+
+  static JqValue fromDouble(double value) {
+    return OrgJsonValue.fromDouble(value);
+  }
+
   JqValue flatten(int depth);
 
   JqValue add();

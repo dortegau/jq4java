@@ -554,4 +554,64 @@ class JqTest {
     void testTransposeFunction(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
+
+    @ParameterizedTest
+    @CsvSource({
+        "'[range(5)]', 'null', '[0,1,2,3,4]'",
+        "'[range(0)]', 'null', '[]'",
+        "'[range(-3)]', 'null', '[]'",
+        "'[range(1)]', 'null', '[0]'",
+        "'[range(3)]', 'null', '[0,1,2]'"
+    })
+    void testRangeFunction(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "'[range(0;5)]', 'null', '[0,1,2,3,4]'",
+        "'[range(2;7)]', 'null', '[2,3,4,5,6]'",
+        "'[range(5;5)]', 'null', '[]'",
+        "'[range(5;3)]', 'null', '[]'",
+        "'[range(-2;3)]', 'null', '[-2,-1,0,1,2]'",
+        "'[range(0;1)]', 'null', '[0]'"
+    })
+    void testRangeTwoArgs(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "'[range(0;10;3)]', 'null', '[0,3,6,9]'",
+        "'[range(0;-5;-1)]', 'null', '[0,-1,-2,-3,-4]'",
+        "'[range(2;8;2)]', 'null', '[2,4,6]'",
+        "'[range(10;0;-2)]', 'null', '[10,8,6,4,2]'",
+        "'[range(1;10;3)]', 'null', '[1,4,7]'",
+        "'[range(5;5;1)]', 'null', '[]'",
+        "'[range(0;5;-1)]', 'null', '[]'",
+        "'[range(5;0;1)]', 'null', '[]'"
+    })
+    void testRangeThreeArgs(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "'[range(1.5;5)]', 'null', '[1.5,2.5,3.5,4.5]'",
+        "'[range(0.5;3.5;0.5)]', 'null', '[0.5,1,1.5,2,2.5,3]'",
+        "'[range(-1.5;1.5;0.5)]', 'null', '[-1.5,-1,-0.5,0,0.5,1]'"
+    })
+    void testRangeFloatingPoint(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'range(3) | . * 2' ; 'null' ; '0\n2\n4'",
+        "'range(2;5) | . + 10' ; 'null' ; '12\n13\n14'",
+        "'[range(1;4) | select(. > 1)]' ; 'null' ; '[2,3]'"
+    }, delimiter = ';')
+    void testRangeCombinations(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
 }

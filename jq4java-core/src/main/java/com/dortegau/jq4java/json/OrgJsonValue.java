@@ -262,6 +262,14 @@ public class OrgJsonValue implements JqValue {
     return value ? TRUE : FALSE;
   }
 
+  public static JqValue fromLong(long value) {
+    return new OrgJsonValue(value);
+  }
+
+  public static JqValue fromDouble(double value) {
+    return new OrgJsonValue(value);
+  }
+
   @Override
   public int compareTo(JqValue other) {
     if (!(other instanceof OrgJsonValue)) {
@@ -523,6 +531,19 @@ public class OrgJsonValue implements JqValue {
   @Override
   public boolean isNull() {
     return value == JSONObject.NULL;
+  }
+
+  @Override
+  public boolean isNumber() {
+    return value instanceof Number;
+  }
+
+  @Override
+  public double asNumber() {
+    if (value instanceof Number) {
+      return ((Number) value).doubleValue();
+    }
+    throw new RuntimeException("Value is not a number: " + value);
   }
 
   @Override

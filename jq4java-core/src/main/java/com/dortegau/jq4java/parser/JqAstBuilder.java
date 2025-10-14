@@ -22,6 +22,7 @@ import com.dortegau.jq4java.ast.Not;
 import com.dortegau.jq4java.ast.ObjectConstruction;
 import com.dortegau.jq4java.ast.Or;
 import com.dortegau.jq4java.ast.Pipe;
+import com.dortegau.jq4java.ast.Range;
 import com.dortegau.jq4java.ast.Select;
 import com.dortegau.jq4java.ast.Type;
 import com.dortegau.jq4java.ast.ZeroArgFunction;
@@ -30,6 +31,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Visitor implementation that builds AST nodes from the parse tree.
+ */
 public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
 
   @Override
@@ -340,15 +344,46 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
   }
 
   @Override
+  public Expression visitRangeNoArgsExpr(JqGrammarParser.RangeNoArgsExprContext ctx) {
+    // Range without arguments should throw an error
+    throw new RuntimeException("range/0 is not defined");
+  }
+
+  @Override
+  public Expression visitRangeCall(JqGrammarParser.RangeCallContext ctx) {
+    List<Expression> arguments = new ArrayList<>();
+
+    // Collect all arguments (first one plus any after semicolons)
+    for (JqGrammarParser.ExpressionContext exprCtx : ctx.expression()) {
+      arguments.add(visit(exprCtx));
+    }
+
+    return new Range(arguments);
+  }
+
+  @Override
   public Expression visitFunctionCall(JqGrammarParser.FunctionCallContext ctx) {
     String functionName = ctx.IDENTIFIER().getText();
-    Expression arg = visit(ctx.expression());
+    List<Expression> arguments = new ArrayList<>();
+
+    // Collect all arguments (first one plus any after semicolons)
+    for (JqGrammarParser.ExpressionContext exprCtx : ctx.expression()) {
+      arguments.add(visit(exprCtx));
+    }
 
     switch (functionName) {
       case "map":
-        return new MapFunction(arg);
+        if (arguments.size() != 1) {
+          throw new RuntimeException("map/" + arguments.size() + " is not defined");
+        }
+        return new MapFunction(arguments.get(0));
       case "select":
-        return new Select(arg);
+        if (arguments.size() != 1) {
+          throw new RuntimeException("select/" + arguments.size() + " is not defined");
+        }
+        return new Select(arguments.get(0));
+      case "range":
+        return new Range(arguments);
       default:
         throw new RuntimeException("Unknown function: " + functionName);
     }
@@ -377,19 +412,23 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
       Expression value;
 
       if (fieldCtx instanceof JqGrammarParser.ExplicitFieldContext) {
-        JqGrammarParser.ExplicitFieldContext explicitCtx = (JqGrammarParser.ExplicitFieldContext) fieldCtx;
+        JqGrammarParser.ExplicitFieldContext explicitCtx =
+            (JqGrammarParser.ExplicitFieldContext) fieldCtx;
         key = explicitCtx.IDENTIFIER().getText();
         value = visit(explicitCtx.expression());
       } else if (fieldCtx instanceof JqGrammarParser.StringFieldContext) {
-        JqGrammarParser.StringFieldContext stringCtx = (JqGrammarParser.StringFieldContext) fieldCtx;
+        JqGrammarParser.StringFieldContext stringCtx =
+            (JqGrammarParser.StringFieldContext) fieldCtx;
         key = unquoteString(stringCtx.STRING().getText());
         value = visit(stringCtx.expression());
       } else if (fieldCtx instanceof JqGrammarParser.ShorthandFieldContext) {
-        JqGrammarParser.ShorthandFieldContext shorthandCtx = (JqGrammarParser.ShorthandFieldContext) fieldCtx;
+        JqGrammarParser.ShorthandFieldContext shorthandCtx =
+            (JqGrammarParser.ShorthandFieldContext) fieldCtx;
         key = shorthandCtx.IDENTIFIER().getText();
         value = new FieldAccess(key, new Identity());
       } else {
-        throw new RuntimeException("Unknown object field type: " + fieldCtx.getClass().getName());
+        throw new RuntimeException(
+            "Unknown object field type: " + fieldCtx.getClass().getName());
       }
 
       fields.put(key, value);
