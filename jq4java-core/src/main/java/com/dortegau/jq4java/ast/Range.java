@@ -3,6 +3,7 @@ package com.dortegau.jq4java.ast;
 import com.dortegau.jq4java.json.JqValue;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -29,7 +30,7 @@ public class Range implements Expression {
 
     List<JqValue> args = new ArrayList<>();
     for (Expression arg : arguments) {
-      List<JqValue> values = arg.evaluate(input).toList();
+      List<JqValue> values = arg.evaluate(input).collect(Collectors.toList());
       if (values.size() != 1) {
         throw new RuntimeException("range arguments must produce exactly one value");
       }
