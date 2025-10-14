@@ -344,6 +344,12 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
   }
 
   @Override
+  public Expression visitRangeNoArgsExpr(JqGrammarParser.RangeNoArgsExprContext ctx) {
+    // Range without arguments should throw an error
+    throw new RuntimeException("range/0 is not defined");
+  }
+
+  @Override
   public Expression visitRangeCall(JqGrammarParser.RangeCallContext ctx) {
     List<Expression> arguments = new ArrayList<>();
 

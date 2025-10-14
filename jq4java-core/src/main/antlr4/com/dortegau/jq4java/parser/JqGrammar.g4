@@ -65,6 +65,7 @@ primary
     | KEYS                                          # KeysExpr
     | TYPE                                          # TypeExpr
     | NOT                                           # NotExpr
+    | RANGE                                         # RangeNoArgsExpr
     | RANGE LPAREN expression (SEMICOLON expression)* RPAREN  # RangeCall
     | IDENTIFIER LPAREN expression (SEMICOLON expression)* RPAREN  # FunctionCall
     | IDENTIFIER                                    # ZeroArgFunction
