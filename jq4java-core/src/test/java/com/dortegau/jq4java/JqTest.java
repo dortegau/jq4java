@@ -614,4 +614,42 @@ class JqTest {
     void testRangeCombinations(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'to_entries' ; '{\"a\": 1, \"b\": 2}' ; '[{\"key\":\"a\",\"value\":1},{\"key\":\"b\",\"value\":2}]'",
+        "'to_entries' ; '{}' ; '[]'",
+        "'to_entries' ; '[\"a\", \"b\", \"c\"]' ; '[{\"key\":0,\"value\":\"a\"},{\"key\":1,\"value\":\"b\"},{\"key\":2,\"value\":\"c\"}]'",
+        "'to_entries' ; '[]' ; '[]'",
+        "'to_entries' ; '{\"x\": {\"nested\": true}, \"y\": [1,2,3]}' ; '[{\"key\":\"x\",\"value\":{\"nested\":true}},{\"key\":\"y\",\"value\":[1,2,3]}]'",
+        "'to_entries' ; '{\"a\": null}' ; '[{\"key\":\"a\",\"value\":null}]'"
+    }, delimiter = ';')
+    void testToEntries(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'from_entries' ; '[{\"key\": \"a\", \"value\": 1}, {\"key\": \"b\", \"value\": 2}]' ; '{\"a\":1,\"b\":2}'",
+        "'from_entries' ; '[]' ; '{}'",
+        "'from_entries' ; '[{\"name\": \"a\", \"value\": 1}, {\"name\": \"b\", \"value\": 2}]' ; '{\"a\":1,\"b\":2}'",
+        "'from_entries' ; '[{\"key\": \"a\"}, {\"key\": \"b\", \"value\": 2}]' ; '{\"a\":null,\"b\":2}'",
+        "'from_entries' ; '[{\"key\": \"x\", \"value\": {\"nested\": true}}]' ; '{\"x\":{\"nested\":true}}'",
+        "'from_entries' ; '[{\"key\": \"numbers\", \"value\": [1,2,3]}]' ; '{\"numbers\":[1,2,3]}'",
+        "'from_entries' ; '[{\"key\": \"test\", \"value\": null}]' ; '{\"test\":null}'"
+    }, delimiter = ';')
+    void testFromEntries(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'to_entries | from_entries' ; '{\"x\": 42, \"y\": 99}' ; '{\"x\":42,\"y\":99}'",
+        "'to_entries | from_entries' ; '[\"hello\", \"world\"]' ; '{\"0\":\"hello\",\"1\":\"world\"}'",
+        "'map(to_entries)' ; '[{\"a\":1},{\"b\":2}]' ; '[[{\"key\":\"a\",\"value\":1}],[{\"key\":\"b\",\"value\":2}]]'",
+        "'[.[] | to_entries]' ; '[{\"x\":1},{\"y\":2}]' ; '[[{\"key\":\"x\",\"value\":1}],[{\"key\":\"y\",\"value\":2}]]'"
+    }, delimiter = ';')
+    void testToFromEntriesCombinations(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
 }
