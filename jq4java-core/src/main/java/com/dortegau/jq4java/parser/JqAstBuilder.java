@@ -286,6 +286,18 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
   }
 
   @Override
+  public Expression visitUnaryExprWrapper(JqGrammarParser.UnaryExprWrapperContext ctx) {
+    return visit(ctx.unaryExpr());
+  }
+
+  @Override
+  public Expression visitUnaryMinusExpr(JqGrammarParser.UnaryMinusExprContext ctx) {
+    Expression operand = visit(ctx.unaryExpr());
+    // Create unary minus as arithmetic operation with 0 - operand
+    return new Arithmetic(new Literal("0"), "-", operand);
+  }
+
+  @Override
   public Expression visitPrimaryExpr(JqGrammarParser.PrimaryExprContext ctx) {
     return visit(ctx.primary());
   }
