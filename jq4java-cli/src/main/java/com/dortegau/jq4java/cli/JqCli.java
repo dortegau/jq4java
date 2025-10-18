@@ -27,7 +27,11 @@ public final class JqCli {
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--run-tests")) {
-                runTests(args.length > i + 1 ? args[i + 1] : "../jq-reference/tests/jq.test");
+                if (args.length <= i + 1) {
+                    System.err.println("Error: --run-tests requires test file path");
+                    System.exit(1);
+                }
+                runTests(args[i + 1]);
                 System.exit(0);
             } else if (arg.equals("-n") || arg.equals("--null-input")) {
                 nullInput = true;
@@ -181,7 +185,7 @@ public final class JqCli {
         System.out.println();
         System.out.println("Some of the options include:");
         System.out.println("  -n, --null-input         Use null as input");
-        System.out.println("  --run-tests [file]       Run jq test suite");
+        System.out.println("  --run-tests <file>       Run jq test suite from file");
         System.out.println("  -h, --help               Show this help");
         System.out.println("  -V, --version            Show version");
         System.out.println();
