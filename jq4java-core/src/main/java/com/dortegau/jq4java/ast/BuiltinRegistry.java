@@ -16,6 +16,7 @@ public class BuiltinRegistry {
       Class.forName("com.dortegau.jq4java.ast.Select");
       Class.forName("com.dortegau.jq4java.ast.Flatten");
       Class.forName("com.dortegau.jq4java.ast.Add");
+      Class.forName("com.dortegau.jq4java.ast.Abs");
       Class.forName("com.dortegau.jq4java.ast.Sort");
       Class.forName("com.dortegau.jq4java.ast.Reverse");
       Class.forName("com.dortegau.jq4java.ast.Unique");

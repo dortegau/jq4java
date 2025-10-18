@@ -20,6 +20,8 @@ public class ZeroArgFunction implements Expression {
         return new Flatten().evaluate(input);
       case "add":
         return new Add().evaluate(input);
+      case "abs":
+        return new Abs().evaluate(input);
       case "sort":
         return new Sort().evaluate(input);
       case "reverse":

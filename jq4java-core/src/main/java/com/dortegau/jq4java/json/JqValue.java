@@ -87,4 +87,6 @@ public interface JqValue extends Comparable<JqValue> {
   JqValue unique();
 
   JqValue transpose();
+
+  JqValue abs();
 }
