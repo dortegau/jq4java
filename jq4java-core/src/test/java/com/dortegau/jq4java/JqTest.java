@@ -690,10 +690,23 @@ class JqTest {
         "'-(-.)' ; '5' ; '5'",
         "'-(-(.))' ; '-3' ; '-3'",
 
-        // The test case from jq.test:39 (with length instead of abs since abs not implemented)
-        "'{x:-1},{x:-.},{x:-.|length}' ; '1' ; '{\"x\":-1}\n{\"x\":-1}\n{\"x\":1}'"
+        // The test case from jq.test:39 involving abs
+        "'{x:-1},{x:-.},{x:-.|abs}' ; '1' ; '{\"x\":-1}\n{\"x\":-1}\n{\"x\":1}'"
     }, delimiter = ';')
     void testUnaryMinusOperator(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'abs' ; '-5' ; '5'",
+        "'abs' ; '5' ; '5'",
+        "'abs' ; '0' ; '0'",
+        "'abs' ; '-3.5' ; '3.5'",
+        "'[.[] | abs]' ; '[-1,0,2]' ; '[1,0,2]'",
+        "'map(abs)' ; '[-1,2,-3]' ; '[1,2,3]'"
+    }, delimiter = ';')
+    void testAbsFunction(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
 }

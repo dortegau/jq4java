@@ -140,6 +140,20 @@ class JqErrorTest {
   }
 
   @Test
+  void testAbsOnString() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("abs", "\"hello\""));
+    assertTrue(ex.getMessage().contains("cannot be used with abs"));
+  }
+
+  @Test
+  void testAbsOnArray() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("abs", "[1,2,3]"));
+    assertTrue(ex.getMessage().contains("cannot be used with abs"));
+  }
+
+  @Test
   void testSubtractStrings() {
     RuntimeException ex = assertThrows(RuntimeException.class,
         () -> Jq.execute("\"hello\" - \"world\"", "null"));

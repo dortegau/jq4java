@@ -766,4 +766,24 @@ public class OrgJsonValue implements JqValue {
 
     return new OrgJsonValue(result);
   }
+
+  @Override
+  public JqValue abs() {
+    if (value instanceof Number) {
+      double result = Math.abs(((Number) value).doubleValue());
+      if (result == (long) result) {
+        return new OrgJsonValue((long) result);
+      }
+      return new OrgJsonValue(result);
+    }
+
+    String type =
+        value == JSONObject.NULL ? "null"
+            : value instanceof String ? "string"
+            : value instanceof Boolean ? "boolean"
+            : value instanceof JSONArray ? "array"
+            : value instanceof JSONObject ? "object"
+            : "unknown";
+    throw new RuntimeException(type + " (" + this + ") cannot be used with abs");
+  }
 }
