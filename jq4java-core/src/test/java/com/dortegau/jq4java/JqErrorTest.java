@@ -516,4 +516,46 @@ class JqErrorTest {
         () -> Jq.execute("[1, 2, 3] | from_entries", "null"));
     assertTrue(ex.getMessage().contains("Cannot index number with string"));
   }
+
+  @Test
+  void testUnaryMinusOnNull() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("-.", "null"));
+    assertTrue(ex.getMessage().contains("cannot be negated") || ex.getMessage().contains("Cannot negate"));
+  }
+
+  @Test
+  void testUnaryMinusOnString() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("-.", "\"hello\""));
+    assertTrue(ex.getMessage().contains("cannot be negated") || ex.getMessage().contains("Cannot negate"));
+  }
+
+  @Test
+  void testUnaryMinusOnBoolean() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("-.", "true"));
+    assertTrue(ex.getMessage().contains("cannot be negated") || ex.getMessage().contains("Cannot negate"));
+  }
+
+  @Test
+  void testUnaryMinusOnBooleanFalse() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("-.", "false"));
+    assertTrue(ex.getMessage().contains("cannot be negated") || ex.getMessage().contains("Cannot negate"));
+  }
+
+  @Test
+  void testUnaryMinusOnArray() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("-.", "[1,2,3]"));
+    assertTrue(ex.getMessage().contains("cannot be negated") || ex.getMessage().contains("Cannot negate"));
+  }
+
+  @Test
+  void testUnaryMinusOnObject() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("-.", "{\"a\":1}"));
+    assertTrue(ex.getMessage().contains("cannot be negated") || ex.getMessage().contains("Cannot negate"));
+  }
 }

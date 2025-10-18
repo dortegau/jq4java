@@ -27,6 +27,7 @@ import com.dortegau.jq4java.ast.Select;
 import com.dortegau.jq4java.ast.FromEntries;
 import com.dortegau.jq4java.ast.ToEntries;
 import com.dortegau.jq4java.ast.Type;
+import com.dortegau.jq4java.ast.UnaryMinus;
 import com.dortegau.jq4java.ast.ZeroArgFunction;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -292,9 +293,8 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
 
   @Override
   public Expression visitUnaryMinusExpr(JqGrammarParser.UnaryMinusExprContext ctx) {
-    Expression operand = visit(ctx.unaryExpr());
-    // Create unary minus as arithmetic operation with 0 - operand
-    return new Arithmetic(new Literal("0"), "-", operand);
+    Expression operand = visit(ctx.postfix());
+    return new UnaryMinus(operand);
   }
 
   @Override

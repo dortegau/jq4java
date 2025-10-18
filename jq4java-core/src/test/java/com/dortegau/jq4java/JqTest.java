@@ -652,4 +652,48 @@ class JqTest {
     void testToFromEntriesCombinations(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        // Basic unary minus with numbers (happy path)
+        "'-.' ; '5' ; '-5'",
+        "'-.' ; '-3' ; '3'",
+        "'-.' ; '0' ; '0'",
+        "'-.' ; '0.5' ; '-0.5'",
+        "'-.' ; '-0.5' ; '0.5'",
+
+        // Object construction with unary minus (the original failing case)
+        "'{x:-1}' ; '1' ; '{\"x\":-1}'",
+        "'{x:-.}' ; '1' ; '{\"x\":-1}'",
+        "'{x:-.}' ; '-5' ; '{\"x\":5}'",
+
+        // Multiple expressions with unary minus
+        "'{x:-1},{x:-.}' ; '5' ; '{\"x\":-1}\n{\"x\":-5}'",
+        "'{a:-., b:-.}' ; '3' ; '{\"a\":-3,\"b\":-3}'",
+
+        // Unary minus with field access
+        "'-.foo' ; '{\"foo\": 10}' ; '-10'",
+        "'-.bar' ; '{\"bar\": -7}' ; '7'",
+
+        // Unary minus with array indexing
+        "'-.[0]' ; '[5, 10]' ; '-5'",
+        "'-.[1]' ; '[3, -8]' ; '8'",
+
+        // Unary minus with complex expressions
+        "'-(.a + .b)' ; '{\"a\": 3, \"b\": 7}' ; '-10'",
+
+        // Array construction with unary minus
+        "'[-., -.]' ; '4' ; '[-4,-4]'",
+        "'[-.a, -.b]' ; '{\"a\": 2, \"b\": 8}' ; '[-2,-8]'",
+
+        // Nested unary minus (double negative)
+        "'-(-.)' ; '5' ; '5'",
+        "'-(-(.))' ; '-3' ; '-3'",
+
+        // The test case from jq.test:39 (with length instead of abs since abs not implemented)
+        "'{x:-1},{x:-.},{x:-.|length}' ; '1' ; '{\"x\":-1}\n{\"x\":-1}\n{\"x\":1}'"
+    }, delimiter = ';')
+    void testUnaryMinusOperator(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
 }

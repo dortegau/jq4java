@@ -50,7 +50,7 @@ postfix
     ;
 
 unaryExpr
-    : MINUS unaryExpr                               # UnaryMinusExpr
+    : MINUS postfix                                 # UnaryMinusExpr
     | primary                                       # PrimaryExpr
     ;
 
