@@ -55,7 +55,7 @@ A Java 8+ port of [jq](https://jqlang.github.io/jq/), the lightweight command-li
 - Arithmetic operators: `+`, `-`, `*`, `/`, `%` (also string/array concatenation with `+`)
 - Logical operators: `and`, `or`, `not`
 - Conditional expressions: `if-then-else-end`, `if-then-elif-then-else-end`, `if-then-end` (optional else)
-- Built-in functions: `length`, `keys`, `type`, `map(expr)`, `select(expr)`, `builtins`, `flatten`, `add`, `sort`, `reverse`, `unique`, `transpose`, `range(n)`, `range(from; to)`, `range(from; to; step)`
+- Built-in functions: `length`, `keys`, `type`, `map(expr)`, `select(expr)`, `builtins`, `flatten`, `add`, `sort`, `reverse`, `unique`, `transpose`, `range(n)`, `range(from; to)`, `range(from; to; step)`, `to_entries`, `from_entries`
 
 ## Usage
 
@@ -110,6 +110,19 @@ String result = Jq.execute("range(2; 7)", "null");
 
 String result = Jq.execute("range(0; 10; 2)", "null");
 // result: "0\n2\n4\n6\n8"
+
+// Object-array transformation functions
+String result = Jq.execute("to_entries", "{\"a\": 1, \"b\": 2}");
+// result: "[{\"key\":\"a\",\"value\":1},{\"key\":\"b\",\"value\":2}]"
+
+String result = Jq.execute("to_entries", "[\"hello\", \"world\"]");
+// result: "[{\"key\":0,\"value\":\"hello\"},{\"key\":1,\"value\":\"world\"}]"
+
+String result = Jq.execute("from_entries", "[{\"key\": \"a\", \"value\": 1}, {\"key\": \"b\", \"value\": 2}]");
+// result: "{\"a\":1,\"b\":2}"
+
+String result = Jq.execute("to_entries | from_entries", "{\"x\": 42, \"y\": 99}");
+// result: "{\"x\":42,\"y\":99}"
 ```
 
 ### As a CLI
