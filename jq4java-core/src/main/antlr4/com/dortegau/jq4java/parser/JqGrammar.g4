@@ -46,6 +46,11 @@ postfix
     | DOT LBRACKET RBRACKET                         # RootArrayIteration
     | DOT LBRACKET slice RBRACKET                   # RootArraySlice
     | DOT LBRACKET expression RBRACKET              # RootArrayIndex
+    | unaryExpr                                     # UnaryExprWrapper
+    ;
+
+unaryExpr
+    : MINUS postfix                                 # UnaryMinusExpr
     | primary                                       # PrimaryExpr
     ;
 

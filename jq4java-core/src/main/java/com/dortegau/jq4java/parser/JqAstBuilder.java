@@ -27,6 +27,7 @@ import com.dortegau.jq4java.ast.Select;
 import com.dortegau.jq4java.ast.FromEntries;
 import com.dortegau.jq4java.ast.ToEntries;
 import com.dortegau.jq4java.ast.Type;
+import com.dortegau.jq4java.ast.UnaryMinus;
 import com.dortegau.jq4java.ast.ZeroArgFunction;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -283,6 +284,17 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
     }
     
     throw new RuntimeException("Array/object index must be a literal");
+  }
+
+  @Override
+  public Expression visitUnaryExprWrapper(JqGrammarParser.UnaryExprWrapperContext ctx) {
+    return visit(ctx.unaryExpr());
+  }
+
+  @Override
+  public Expression visitUnaryMinusExpr(JqGrammarParser.UnaryMinusExprContext ctx) {
+    Expression operand = visit(ctx.postfix());
+    return new UnaryMinus(operand);
   }
 
   @Override
