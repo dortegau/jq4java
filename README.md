@@ -152,8 +152,9 @@ $ ./mvnw clean package
 # Run tests
 $ ./mvnw test
 
-# Run jq-reference test suite
-$ java -jar jq4java-cli/target/jq4java.jar --run-tests jq-reference/tests/jq.test
+# Run jq test suite (first clone jq source code, then run tests)
+$ git clone https://github.com/jqlang/jq.git
+$ java -jar jq4java-cli/target/jq4java.jar --run-tests jq/tests/jq.test
 
 # Install git hooks (auto-updates README stats on push)
 $ bash scripts/install-hooks.sh
