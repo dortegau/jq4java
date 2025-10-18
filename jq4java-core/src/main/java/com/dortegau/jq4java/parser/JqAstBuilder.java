@@ -24,6 +24,8 @@ import com.dortegau.jq4java.ast.Or;
 import com.dortegau.jq4java.ast.Pipe;
 import com.dortegau.jq4java.ast.Range;
 import com.dortegau.jq4java.ast.Select;
+import com.dortegau.jq4java.ast.FromEntries;
+import com.dortegau.jq4java.ast.ToEntries;
 import com.dortegau.jq4java.ast.Type;
 import com.dortegau.jq4java.ast.ZeroArgFunction;
 import java.util.ArrayList;
@@ -359,6 +361,16 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
     }
 
     return new Range(arguments);
+  }
+
+  @Override
+  public Expression visitToEntriesExpr(JqGrammarParser.ToEntriesExprContext ctx) {
+    return new ToEntries();
+  }
+
+  @Override
+  public Expression visitFromEntriesExpr(JqGrammarParser.FromEntriesExprContext ctx) {
+    return new FromEntries();
   }
 
   @Override

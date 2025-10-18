@@ -453,4 +453,67 @@ class JqErrorTest {
         () -> Jq.execute("range", "null"));
     assertTrue(ex.getMessage().contains("range/0 is not defined"));
   }
+
+  @Test
+  void testToEntriesOnNull() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("null | to_entries", "null"));
+    assertTrue(ex.getMessage().contains("has no keys"));
+  }
+
+  @Test
+  void testToEntriesOnString() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("\"string\" | to_entries", "null"));
+    assertTrue(ex.getMessage().contains("has no keys"));
+  }
+
+  @Test
+  void testToEntriesOnNumber() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("42 | to_entries", "null"));
+    assertTrue(ex.getMessage().contains("has no keys"));
+  }
+
+  @Test
+  void testToEntriesOnBoolean() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("true | to_entries", "null"));
+    assertTrue(ex.getMessage().contains("has no keys"));
+  }
+
+  @Test
+  void testFromEntriesOnNull() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("null | from_entries", "null"));
+    assertTrue(ex.getMessage().contains("Cannot iterate"));
+  }
+
+  @Test
+  void testFromEntriesOnObject() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("{\"a\":1} | from_entries", "null"));
+    assertTrue(ex.getMessage().contains("Cannot iterate"));
+  }
+
+  @Test
+  void testFromEntriesOnString() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("\"string\" | from_entries", "null"));
+    assertTrue(ex.getMessage().contains("Cannot iterate"));
+  }
+
+  @Test
+  void testFromEntriesOnInvalidArrayElement() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("[\"invalid\"] | from_entries", "null"));
+    assertTrue(ex.getMessage().contains("Cannot index string with string"));
+  }
+
+  @Test
+  void testFromEntriesOnArrayWithNonObjects() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("[1, 2, 3] | from_entries", "null"));
+    assertTrue(ex.getMessage().contains("Cannot index number with string"));
+  }
 }
