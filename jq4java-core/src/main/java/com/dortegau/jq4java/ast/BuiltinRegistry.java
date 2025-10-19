@@ -24,6 +24,7 @@ public class BuiltinRegistry {
       Class.forName("com.dortegau.jq4java.ast.Range");
       Class.forName("com.dortegau.jq4java.ast.ToEntries");
       Class.forName("com.dortegau.jq4java.ast.FromEntries");
+      Class.forName("com.dortegau.jq4java.ast.WithEntries");
       Class.forName("com.dortegau.jq4java.ast.Base64Encode");
       Class.forName("com.dortegau.jq4java.ast.Base64Decode");
       Class.forName("com.dortegau.jq4java.ast.UrlEncode");
