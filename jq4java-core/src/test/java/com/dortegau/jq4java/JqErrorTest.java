@@ -553,6 +553,34 @@ class JqErrorTest {
   }
 
   @Test
+  void testWithEntriesOnString() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("\"string\" | with_entries(.)", "null"));
+    assertTrue(ex.getMessage().contains("has no keys"));
+  }
+
+  @Test
+  void testWithEntriesOnNumber() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("5 | with_entries(.)", "null"));
+    assertTrue(ex.getMessage().contains("has no keys"));
+  }
+
+  @Test
+  void testWithEntriesWithNonObjectResult() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("{\"a\":1} | with_entries(.value)", "null"));
+    assertTrue(ex.getMessage().contains("Cannot index number with string"));
+  }
+
+  @Test
+  void testWithEntriesMissingKey() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("{\"a\":1} | with_entries({value: .value})", "null"));
+    assertTrue(ex.getMessage().contains("Cannot use null (null) as object key"));
+  }
+
+  @Test
   void testUnaryMinusOnNull() {
     RuntimeException ex = assertThrows(RuntimeException.class,
         () -> Jq.execute("-.", "null"));
