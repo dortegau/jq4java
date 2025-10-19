@@ -572,4 +572,32 @@ class JqErrorTest {
         () -> Jq.execute("-.", "{\"a\":1}"));
     assertTrue(ex.getMessage().contains("cannot be negated") || ex.getMessage().contains("Cannot negate"));
   }
+
+  @Test
+  void testBase64OnObject() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("base64", "{\"a\":1}"));
+    assertTrue(ex.getMessage().contains("Cannot base64 encode"));
+  }
+
+  @Test
+  void testBase64ArrayOutOfRange() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("base64", "[256]"));
+    assertTrue(ex.getMessage().contains("Cannot base64 encode array containing non-byte value"));
+  }
+
+  @Test
+  void testBase64DecodeNonString() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("base64d", "[\"aGVsbG8=\"]"));
+    assertTrue(ex.getMessage().contains("Cannot base64 decode"));
+  }
+
+  @Test
+  void testBase64DecodeInvalidString() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("base64d", "\"not-base64\""));
+    assertTrue(ex.getMessage().contains("Invalid base64"));
+  }
 }

@@ -270,6 +270,10 @@ public class OrgJsonValue implements JqValue {
     return new OrgJsonValue(value);
   }
 
+  public static JqValue fromString(String value) {
+    return new OrgJsonValue(value);
+  }
+
   @Override
   public int compareTo(JqValue other) {
     if (!(other instanceof OrgJsonValue)) {
@@ -544,6 +548,19 @@ public class OrgJsonValue implements JqValue {
       return ((Number) value).doubleValue();
     }
     throw new RuntimeException("Value is not a number: " + value);
+  }
+
+  @Override
+  public boolean isString() {
+    return value instanceof String;
+  }
+
+  @Override
+  public String asString() {
+    if (value instanceof String) {
+      return (String) value;
+    }
+    throw new RuntimeException("Value is not a string: " + this);
   }
 
   @Override
