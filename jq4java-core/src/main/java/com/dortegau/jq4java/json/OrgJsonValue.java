@@ -271,7 +271,7 @@ public class OrgJsonValue implements JqValue {
   }
 
   public static JqValue fromString(String value) {
-    return new OrgJsonValue(value);
+    return new OrgJsonValue((Object) value);
   }
 
   @Override
