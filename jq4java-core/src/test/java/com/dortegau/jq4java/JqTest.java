@@ -762,7 +762,7 @@ class JqTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-        // Test that all refactored builtin functions still work as generic identifiers
+        // Test that all builtin functions work as generic identifiers
         "'length' ; '[1,2,3]' ; '3'",
         "'keys' ; '{\"b\":2,\"a\":1}' ; '[\"a\",\"b\"]'",
         "'type' ; '42' ; '\"number\"'",
@@ -770,7 +770,7 @@ class JqTest {
         "'from_entries' ; '[{\"key\":\"a\",\"value\":1}]' ; '{\"a\":1}'",
         "'builtins | type' ; 'null' ; '\"array\"'",
 
-        // Test combined usage of refactored functions
+        // Test combined usage of builtin functions
         "'{\"data\":[1,2,3]} | .data | length' ; 'null' ; '3'",
         "'{\"users\":{\"alice\":25,\"bob\":30}} | .users | keys | length' ; 'null' ; '2'",
         "'to_entries | map(.key) | length' ; '{\"a\":1,\"b\":2,\"c\":3}' ; '3'",
@@ -786,7 +786,7 @@ class JqTest {
         "'map(type) | unique | length' ; '[1,\"a\",true,2,\"b\"]' ; '3'",
         "'to_entries | map(select(.value > 1)) | from_entries | keys' ; '{\"a\":1,\"b\":2,\"c\":3}' ; '[\"b\",\"c\"]'"
     }, delimiter = ';')
-    void testRefactoredBuiltinFunctions(String program, String input, String expected) {
+    void testBuiltinFunctionsAsGenericIdentifiers(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
 }
