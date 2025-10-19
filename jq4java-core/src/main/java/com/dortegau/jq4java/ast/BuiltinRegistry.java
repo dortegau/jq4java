@@ -30,6 +30,8 @@ public class BuiltinRegistry {
       Class.forName("com.dortegau.jq4java.ast.ToEntries");
       Class.forName("com.dortegau.jq4java.ast.FromEntries");
       Class.forName("com.dortegau.jq4java.ast.WithEntries");
+      Class.forName("com.dortegau.jq4java.ast.ToJson");
+      Class.forName("com.dortegau.jq4java.ast.FromJson");
     } catch (ClassNotFoundException e) {
       // Ignore
     }

@@ -2,9 +2,14 @@ package com.dortegau.jq4java;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.stream.Stream;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class JqTest {
     @ParameterizedTest
@@ -165,6 +170,48 @@ class JqTest {
     }, delimiter = ';')
     void testObjectMixedSyntax(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @MethodSource("toJsonCases")
+    void testToJson(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    private static Stream<Arguments> toJsonCases() {
+        return Stream.of(
+            // Basic tojson functionality - converts values to JSON strings
+            Arguments.of("tojson", "42", "\"42\""),
+            Arguments.of("tojson", "\"hello\"", "\"\\\"hello\\\"\""),
+            Arguments.of("tojson", "true", "\"true\""),
+            Arguments.of("tojson", "null", "\"null\""),
+            Arguments.of("tojson", "[1,2,3]", "\"[1,2,3]\""),
+            Arguments.of("tojson", "{\"a\":1,\"b\":2}", "\"{\\\"a\\\":1,\\\"b\\\":2}\""),
+            // Array of tojson operations
+            Arguments.of("[.[] | tojson]", "[1, \"foo\", true]", "[\"1\",\"\\\"foo\\\"\",\"true\"]")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("fromJsonCases")
+    void testFromJson(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    private static Stream<Arguments> fromJsonCases() {
+        return Stream.of(
+            // Basic fromjson functionality - parses JSON strings back to values
+            Arguments.of("fromjson", "\"42\"", "42"),
+            Arguments.of("fromjson", "\"\\\"hello\\\"\"", "\"hello\""),
+            Arguments.of("fromjson", "\"true\"", "true"),
+            Arguments.of("fromjson", "\"null\"", "null"),
+            Arguments.of("fromjson", "\"[1,2,3]\"", "[1,2,3]"),
+            Arguments.of("fromjson", "\"{\\\"a\\\":1,\\\"b\\\":2}\"", "{\"a\":1,\"b\":2}"),
+            // Test whitespace handling
+            Arguments.of("fromjson", "\"  [1,2]  \"", "[1,2]"),
+            // Roundtrip test
+            Arguments.of("tojson | fromjson", "{\"nested\": [1, {\"k\":\"v\"}]}", "{\"nested\":[1,{\"k\":\"v\"}]}")
+        );
     }
 
     @ParameterizedTest
