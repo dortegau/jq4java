@@ -1,8 +1,12 @@
 package com.dortegau.jq4java;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import com.dortegau.jq4java.json.OrgJsonValue;
+import org.json.JSONArray;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class JqTest {
     @ParameterizedTest
@@ -165,25 +169,49 @@ class JqTest {
         assertEquals(expected, Jq.execute(program, input));
     }
 
-    @ParameterizedTest
-    @CsvSource(value = {
-        "'[.[] | tojson]' ; '[1, \"foo\", [\"foo\"]]' ; '[\\\"1\\\",\\\"\\\\\"foo\\\\\"\\\",\\\"[\\\\\"foo\\\\\"]\\\"]'",
-        "'tojson' ; '{\"a\":1,\"b\":[2,3]}' ; '\\"{\\\\\"a\\\\\":1,\\\\\"b\\\\\":[2,3]}\\"'",
-        "'tojson' ; '\"line\\nbreak\"' ; '\\"\\\\\"line\\nbreak\\\\\"\\"'"
-    }, delimiter = ';')
-    void testToJson(String program, String input, String expected) {
-        assertEquals(expected, Jq.execute(program, input));
+    @Test
+    void testToJsonArrayProducesEscapedStrings() {
+        String result = Jq.execute("[.[] | tojson]", "[1, \"foo\", [\"foo\"]]");
+        JSONArray values = new JSONArray(result);
+        assertEquals("1", values.getString(0));
+        assertEquals("\"foo\"", values.getString(1));
+        assertEquals("[\"foo\"]", values.getString(2));
     }
 
-    @ParameterizedTest
-    @CsvSource(value = {
-        "'fromjson' ; '\"{\"a\":1}\"' ; '{\"a\":1}'",
-        "'fromjson' ; '\"[1,2,3]\"' ; '[1,2,3]'",
-        "'fromjson' ; '\"\"foo\"\"' ; '\"foo\"'",
-        "'tojson | fromjson' ; '{\"nested\": [1, {\"k\":\"v\"}]}' ; '{\"nested\":[1,{\"k\":\"v\"}]}'"
-    }, delimiter = ';')
-    void testFromJson(String program, String input, String expected) {
-        assertEquals(expected, Jq.execute(program, input));
+    @Test
+    void testToJsonObjectProducesJsonText() {
+        String result = Jq.execute("tojson", "{\"a\":1,\"b\":[2,3]}");
+        assertEquals("\"{\\\"a\\\":1,\\\"b\\\":[2,3]}\"", result);
+    }
+
+    @Test
+    void testToJsonStringWithEscapes() {
+        String result = Jq.execute("tojson", "\"line\\nbreak\"");
+        assertEquals("\"line\\nbreak\"", OrgJsonValue.parse(result).asString());
+    }
+
+    @Test
+    void testFromJsonObject() {
+        String result = Jq.execute("fromjson", "\"{\\\"a\\\":1}\"");
+        assertEquals("{\"a\":1}", result);
+    }
+
+    @Test
+    void testFromJsonArray() {
+        String result = Jq.execute("fromjson", "\"[1,2,3]\"");
+        assertEquals("[1,2,3]", result);
+    }
+
+    @Test
+    void testFromJsonString() {
+        String result = Jq.execute("fromjson", "\"\\\"foo\\\"\"");
+        assertEquals("\"foo\"", result);
+    }
+
+    @Test
+    void testToJsonFromJsonRoundTrip() {
+        String result = Jq.execute("tojson | fromjson", "{\"nested\": [1, {\"k\":\"v\"}]}");
+        assertEquals("{\"nested\":[1,{\"k\":\"v\"}]}", result);
     }
 
     @ParameterizedTest
