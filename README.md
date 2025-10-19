@@ -190,6 +190,13 @@ $ cd jq4java-core && ../mvnw clean package
 $ cd jq4java-cli && ../mvnw clean package
 ```
 
+## GitHub Actions workflows
+
+| Workflow | File | Purpose |
+| --- | --- | --- |
+| Tests | `.github/workflows/test.yml` | Runs the Maven build and test suite on every push and pull request to ensure changes remain green. |
+| Deploy Javadoc | `.github/workflows/javadoc-pages.yml` | Generates the aggregated project Javadoc with Maven and publishes the rendered documentation to GitHub Pages. |
+
 ## Architecture
 
 ```
