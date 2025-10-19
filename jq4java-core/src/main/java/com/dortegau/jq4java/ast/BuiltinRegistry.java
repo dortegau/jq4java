@@ -26,6 +26,8 @@ public class BuiltinRegistry {
       Class.forName("com.dortegau.jq4java.ast.FromEntries");
       Class.forName("com.dortegau.jq4java.ast.Base64Encode");
       Class.forName("com.dortegau.jq4java.ast.Base64Decode");
+      Class.forName("com.dortegau.jq4java.ast.UrlEncode");
+      Class.forName("com.dortegau.jq4java.ast.UrlDecode");
     } catch (ClassNotFoundException e) {
       // Ignore
     }
