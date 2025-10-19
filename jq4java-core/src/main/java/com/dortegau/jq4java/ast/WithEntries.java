@@ -10,34 +10,23 @@ public class WithEntries implements Expression {
     BuiltinRegistry.register("with_entries", 1);
   }
 
-  private final Expression expr;
+  private final Expression pipeline;
+
+  // Singleton instances for stateless transformers
+  private static final ToEntries TO_ENTRIES = new ToEntries();
+  private static final FromEntries FROM_ENTRIES = new FromEntries();
 
   public WithEntries(Expression expr) {
-    this.expr = expr;
+    // Compose the pipeline: to_entries | map(expr) | from_entries
+    this.pipeline = new PipeExpression(
+        TO_ENTRIES,
+        new MapFunction(expr),
+        FROM_ENTRIES
+    );
   }
 
   @Override
   public Stream<JqValue> evaluate(JqValue input) {
-    ToEntries toEntries = new ToEntries();
-    JqValue entries =
-        toEntries
-            .evaluate(input)
-            .findFirst()
-            .orElseThrow(
-                () -> new RuntimeException("with_entries could not convert input to entries"));
-
-    if (!entries.isArray()) {
-      throw new RuntimeException("with_entries expects to_entries to produce an array");
-    }
-
-    List<JqValue> mappedEntries =
-        entries.stream()
-            .flatMap(entry -> expr.evaluate(entry))
-            .collect(Collectors.toList());
-
-    JqValue mappedArray = JqValue.array(mappedEntries);
-
-    FromEntries fromEntries = new FromEntries();
-    return fromEntries.evaluate(mappedArray);
+    return pipeline.evaluate(input);
   }
 }
