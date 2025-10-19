@@ -5,6 +5,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.stream.Stream;
 
+/**
+ * Implementation of the @base64d base64 decode function.
+ * Decodes Base64-encoded strings to UTF-8 text.
+ */
 public class Base64Decode implements Expression {
 
   @Override

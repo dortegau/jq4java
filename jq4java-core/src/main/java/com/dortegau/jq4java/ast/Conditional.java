@@ -14,6 +14,9 @@ public class Conditional implements Expression {
   private final List<ElifBranch> elifBranches;
   private final Expression elseExpr; // nullable
 
+  /**
+   * Represents an elif branch in a conditional expression.
+   */
   public static class ElifBranch {
     private final Expression condition;
     private final Expression thenExpr;
@@ -32,6 +35,14 @@ public class Conditional implements Expression {
     }
   }
 
+  /**
+   * Creates a conditional expression with the given branches.
+   *
+   * @param condition the main condition to evaluate
+   * @param thenExpr the expression to evaluate if condition is truthy
+   * @param elifBranches list of elif branches to check if main condition is falsy
+   * @param elseExpr the expression to evaluate if all conditions are falsy (can be null)
+   */
   public Conditional(Expression condition, Expression thenExpr,
                     List<ElifBranch> elifBranches, Expression elseExpr) {
     this.condition = condition;

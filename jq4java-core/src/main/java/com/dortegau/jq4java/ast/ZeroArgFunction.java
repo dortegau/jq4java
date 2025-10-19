@@ -3,9 +3,18 @@ package com.dortegau.jq4java.ast;
 import com.dortegau.jq4java.json.JqValue;
 import java.util.stream.Stream;
 
+/**
+ * Generic implementation for zero-argument builtin functions.
+ * Dispatches function calls to the appropriate specific implementations.
+ */
 public class ZeroArgFunction implements Expression {
   private final String functionName;
 
+  /**
+   * Creates a zero-argument function with the specified name.
+   *
+   * @param functionName the name of the function to call
+   */
   public ZeroArgFunction(String functionName) {
     this.functionName = functionName;
     if (!BuiltinRegistry.list().contains(functionName + "/0")) {

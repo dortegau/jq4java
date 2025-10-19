@@ -95,6 +95,33 @@ static {
 - **Self-documenting code**: Prefer clear code over comments
 - Comments should explain WHY, not WHAT
 
+### Checkstyle Compliance (REQUIRED)
+
+**All code MUST pass checkstyle validation before merging:**
+
+```bash
+# Validate your code against checkstyle rules
+./mvnw checkstyle:check
+
+# This must show: "You have 0 Checkstyle violations"
+```
+
+**Key requirements:**
+- **Javadoc**: All public classes and methods must have comprehensive documentation
+- **Line length**: Maximum 100 characters per line
+- **Import order**: Lexicographic ordering with proper grouping
+- **Method organization**: Group overloaded methods together
+- **Formatting**: Consistent spacing and structure
+
+**CI Integration**: Builds will automatically fail if checkstyle violations are detected. This ensures consistent code quality across all contributions.
+
+**Pre-commit validation** (optional but recommended):
+```bash
+# Run checkstyle before every commit
+cp scripts/pre-commit-checkstyle.sh .git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
+```
+
 ## Running Tests
 
 ```bash

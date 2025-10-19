@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+/**
+ * Implementation of the to_entries function.
+ * Converts objects to arrays of key-value pair objects, or arrays to index-value pairs.
+ */
 public class ToEntries implements Expression {
   static {
     BuiltinRegistry.register("to_entries", 0);

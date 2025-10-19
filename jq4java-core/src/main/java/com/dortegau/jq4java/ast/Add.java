@@ -3,6 +3,10 @@ package com.dortegau.jq4java.ast;
 import com.dortegau.jq4java.json.JqValue;
 import java.util.stream.Stream;
 
+/**
+ * Implementation of the add function.
+ * Adds/concatenates all elements in an array.
+ */
 public class Add implements Expression {
   static {
     BuiltinRegistry.register("add", 0);
