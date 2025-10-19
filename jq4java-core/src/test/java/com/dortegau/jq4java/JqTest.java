@@ -167,6 +167,27 @@ class JqTest {
 
     @ParameterizedTest
     @CsvSource(value = {
+        "'[.[] | tojson]' ; '[1, \"foo\", [\"foo\"]]' ; '[\"1\",\"\"foo\"\",\"[\"foo\"]\"]'",
+        "'tojson' ; '{\"a\":1,\"b\":[2,3]}' ; '\"{\"a\":1,\"b\":[2,3]}\"'",
+        "'tojson' ; '\"line\\nbreak\"' ; '\"\"line\\\\nbreak\"\"'"
+    }, delimiter = ';')
+    void testToJson(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'fromjson' ; '\"{\"a\":1}\"' ; '{\"a\":1}'",
+        "'fromjson' ; '\"[1,2,3]\"' ; '[1,2,3]'",
+        "'fromjson' ; '\"\"foo\"\"' ; '\"foo\"'",
+        "'tojson | fromjson' ; '{\"nested\": [1, {\"k\":\"v\"}]}' ; '{\"nested\":[1,{\"k\":\"v\"}]}'"
+    }, delimiter = ';')
+    void testFromJson(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
         "'.a, .b' ; '{\"a\":1, \"b\":2}' ; '1\n2'",
         "'.foo, .bar' ; '{\"foo\":42, \"bar\":43}' ; '42\n43'",
         "'., .' ; '5' ; '5\n5'",

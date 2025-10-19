@@ -55,7 +55,7 @@ A Java 8+ port of [jq](https://jqlang.github.io/jq/), the lightweight command-li
 - Arithmetic operators: `+`, `-`, `*`, `/`, `%` (also string/array concatenation with `+`)
 - Logical operators: `and`, `or`, `not`
 - Conditional expressions: `if-then-else-end`, `if-then-elif-then-else-end`, `if-then-end` (optional else)
-- Built-in functions: `length`, `keys`, `type`, `map(expr)`, `select(expr)`, `builtins`, `flatten`, `add`, `abs`, `sort`, `reverse`, `unique`, `transpose`, `range(n)`, `range(from; to)`, `range(from; to; step)`, `to_entries`, `from_entries`
+- Built-in functions: `length`, `keys`, `type`, `map(expr)`, `select(expr)`, `builtins`, `flatten`, `add`, `abs`, `sort`, `reverse`, `unique`, `transpose`, `range(n)`, `range(from; to)`, `range(from; to; step)`, `to_entries`, `from_entries`, `tojson`, `fromjson`
 - Format filters: `@base64`, `@base64d`, `@uri`, `@urid`
 
 ## Usage
@@ -140,6 +140,13 @@ String result = Jq.execute("from_entries", "[{\"key\": \"a\", \"value\": 1}, {\"
 
 String result = Jq.execute("to_entries | from_entries", "{\"x\": 42, \"y\": 99}");
 // result: "{\"x\":42,\"y\":99}"
+
+// JSON serialization helpers
+String result = Jq.execute("tojson", "{\"hello\": \"world\"}");
+// result: "\"{\\\"hello\\\":\\\"world\\\"}\""
+
+String result = Jq.execute("fromjson", "\"{\\\"hello\\\":\\\"world\\\"}\"");
+// result: "{\"hello\":\"world\"}"
 ```
 
 #### Reuse precompiled jq expressions

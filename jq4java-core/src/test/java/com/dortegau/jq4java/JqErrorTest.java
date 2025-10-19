@@ -677,4 +677,18 @@ class JqErrorTest {
         () -> Jq.execute("base64d", "\"aGVsbG8=\""));
     assertTrue(ex.getMessage().contains("base64d/0 is not defined"));
   }
+
+  @Test
+  void testFromJsonRequiresString() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("fromjson", "42"));
+    assertTrue(ex.getMessage().contains("fromjson requires string input"));
+  }
+
+  @Test
+  void testFromJsonInvalidJson() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("fromjson", "\"not json\""));
+    assertTrue(ex.getMessage().contains("Invalid JSON text for fromjson"));
+  }
 }
