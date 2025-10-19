@@ -180,6 +180,17 @@ class JqTest {
 
     @ParameterizedTest
     @CsvSource(value = {
+        "'base64' ; '\"hello\"' ; '\"aGVsbG8=\"'",
+        "'base64' ; '[104,101,108,108,111]' ; '\"aGVsbG8=\"'",
+        "'base64d' ; '\"aGVsbG8=\"' ; '\"hello\"'",
+        "'base64d' ; '\"4pyTIMOgIGxhIG1vZGU=\"' ; '\"✓ à la mode\"'"
+    }, delimiter = ';')
+    void testBase64Functions(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
         "'.users[1:] | .[].email' ; '{\"users\":[{\"name\":\"Alice\",\"email\":\"alice@example.com\"},{\"name\":\"Bob\",\"email\":\"bob@example.com\"},{\"name\":\"Charlie\",\"email\":\"charlie@example.com\"}]}' ; '\"bob@example.com\"\n\"charlie@example.com\"'",
         "'.products[-1].name' ; '{\"products\":[{\"name\":\"Laptop\",\"price\":999},{\"name\":\"Mouse\",\"price\":25}]}' ; '\"Mouse\"'",
         "'.items[0:2] | .[].data.value' ; '{\"items\":[{\"data\":{\"value\":10}},{\"data\":{\"value\":20}},{\"data\":{\"value\":30}}]}' ; '10\n20'",

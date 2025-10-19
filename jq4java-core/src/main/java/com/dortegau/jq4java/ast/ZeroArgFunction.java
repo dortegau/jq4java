@@ -30,6 +30,10 @@ public class ZeroArgFunction implements Expression {
         return new Unique().evaluate(input);
       case "transpose":
         return new Transpose().evaluate(input);
+      case "base64":
+        return new Base64Encode().evaluate(input);
+      case "base64d":
+        return new Base64Decode().evaluate(input);
       default:
         throw new RuntimeException("Unknown zero-argument function: " + functionName);
     }

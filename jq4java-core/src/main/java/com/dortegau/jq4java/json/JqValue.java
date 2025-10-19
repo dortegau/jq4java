@@ -68,12 +68,28 @@ public interface JqValue extends Comparable<JqValue> {
 
   double asNumber();
 
+  boolean isString();
+
+  String asString();
+
+  default String typeName() {
+    String typeJson = type().toString();
+    if (typeJson.length() >= 2 && typeJson.startsWith("\"") && typeJson.endsWith("\"")) {
+      return typeJson.substring(1, typeJson.length() - 1);
+    }
+    return typeJson;
+  }
+
   static JqValue fromLong(long value) {
     return OrgJsonValue.fromLong(value);
   }
 
   static JqValue fromDouble(double value) {
     return OrgJsonValue.fromDouble(value);
+  }
+
+  static JqValue fromString(String value) {
+    return OrgJsonValue.fromString(value);
   }
 
   JqValue flatten(int depth);
