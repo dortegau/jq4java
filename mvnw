@@ -160,10 +160,14 @@ fi
 # already available on the PATH we fall back to it so that ./mvnw continues to
 # work without requiring network connectivity.  This mirrors what developers
 # would typically do manually when offline.
-if [ "${MVN_CMD#mvn}" != "$MVN_CMD" ] && command -v mvn >/dev/null 2>&1; then
-  verbose "using existing mvn on PATH"
-  exec "$(command -v mvn)" "$@"
-fi
+case "$MVN_CMD" in
+  mvn*)
+    if command -v mvn >/dev/null 2>&1; then
+      verbose "using existing mvn on PATH"
+      exec "$(command -v mvn)" "$@"
+    fi
+    ;;
+esac
 
 case "${distributionUrl-}" in
 *?-bin.zip | *?maven-mvnd-?*-?*.zip) ;;
