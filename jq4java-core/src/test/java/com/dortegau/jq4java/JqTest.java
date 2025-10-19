@@ -1,8 +1,13 @@
 package com.dortegau.jq4java;
 
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.stream.Stream;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class JqTest {
     @ParameterizedTest
@@ -163,6 +168,36 @@ class JqTest {
     }, delimiter = ';')
     void testObjectMixedSyntax(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @MethodSource("toJsonCases")
+    void testToJson(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    private static Stream<Arguments> toJsonCases() {
+        return Stream.of(
+            Arguments.of("[.[] | tojson]", "[1, \"foo\", [\"foo\"]]", "[\"1\",\"\\\"foo\\\"\",\"[\\\"foo\\\"]\"]"),
+            Arguments.of("tojson", "{\"a\":1,\"b\":[2,3]}", "\"{\\\"a\\\":1,\\\"b\\\":[2,3]}\""),
+            Arguments.of("tojson", "\"line\\nbreak\"", "\"\\\"line\\\\nbreak\\\"\"")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("fromJsonCases")
+    void testFromJson(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    private static Stream<Arguments> fromJsonCases() {
+        return Stream.of(
+            Arguments.of("fromjson", "\"{\\\"a\\\":1}\"", "{\"a\":1}"),
+            Arguments.of("fromjson", "\"[1,2,3]\"", "[1,2,3]"),
+            Arguments.of("fromjson", "\"  [1,2]  \"", "[1,2]"),
+            Arguments.of("fromjson", "\"\\\"foo\\\"\"", "\"foo\""),
+            Arguments.of("tojson | fromjson", "{\"nested\": [1, {\"k\":\"v\"}]}", "{\"nested\":[1,{\"k\":\"v\"}]}")
+        );
     }
 
     @ParameterizedTest
