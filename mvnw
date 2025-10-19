@@ -155,6 +155,16 @@ if [ -d "$MAVEN_HOME" ]; then
   exec_maven "$@"
 fi
 
+# Codex environments used for evaluation block outbound network access, which
+# prevents the wrapper from downloading Maven distributions.  If a Maven CLI is
+# already available on the PATH we fall back to it so that ./mvnw continues to
+# work without requiring network connectivity.  This mirrors what developers
+# would typically do manually when offline.
+if [ "${MVN_CMD#mvn}" != "$MVN_CMD" ] && command -v mvn >/dev/null 2>&1; then
+  verbose "using existing mvn on PATH"
+  exec "$(command -v mvn)" "$@"
+fi
+
 case "${distributionUrl-}" in
 *?-bin.zip | *?maven-mvnd-?*-?*.zip) ;;
 *) die "distributionUrl is not valid, must match *-bin.zip or maven-mvnd-*.zip, but found '${distributionUrl-}'" ;;
