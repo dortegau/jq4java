@@ -691,4 +691,11 @@ class JqErrorTest {
         () -> Jq.execute("fromjson", "\"not json\""));
     assertTrue(ex.getMessage().contains("Invalid JSON text for fromjson"));
   }
+
+  @Test
+  void testFromJsonEmptyString() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("fromjson", "\"\""));
+    assertTrue(ex.getMessage().contains("Invalid JSON text for fromjson"));
+  }
 }

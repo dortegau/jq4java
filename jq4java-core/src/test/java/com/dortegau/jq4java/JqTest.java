@@ -167,9 +167,9 @@ class JqTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-        "'[.[] | tojson]' ; '[1, \"foo\", [\"foo\"]]' ; '[\"1\",\"\"foo\"\",\"[\"foo\"]\"]'",
-        "'tojson' ; '{\"a\":1,\"b\":[2,3]}' ; '\"{\"a\":1,\"b\":[2,3]}\"'",
-        "'tojson' ; '\"line\\nbreak\"' ; '\"\"line\\\\nbreak\"\"'"
+        "'[.[] | tojson]' ; '[1, \"foo\", [\"foo\"]]' ; '[\\\"1\\\",\\\"\\\\\"foo\\\\\"\\\",\\\"[\\\\\"foo\\\\\"]\\\"]'",
+        "'tojson' ; '{\"a\":1,\"b\":[2,3]}' ; '\\"{\\\\\"a\\\\\":1,\\\\\"b\\\\\":[2,3]}\\"'",
+        "'tojson' ; '\"line\\nbreak\"' ; '\\"\\\\\"line\\nbreak\\\\\"\\"'"
     }, delimiter = ';')
     void testToJson(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));

@@ -19,7 +19,17 @@ public class OrgJsonValue implements JqValue {
   private final Object value;
 
   public OrgJsonValue(String jsonString) {
-    this.value = new JSONTokener(jsonString).nextValue();
+    this(parseJson(jsonString));
+  }
+
+  private static Object parseJson(String jsonString) {
+    JSONTokener tokener = new JSONTokener(jsonString);
+    Object parsed = tokener.nextValue();
+    char next = tokener.nextClean();
+    if (next != 0) {
+      throw tokener.syntaxError("Unexpected trailing characters");
+    }
+    return parsed;
   }
 
   public static JqValue parse(String jsonString) {
