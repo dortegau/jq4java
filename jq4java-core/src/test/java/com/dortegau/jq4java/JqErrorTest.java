@@ -639,28 +639,42 @@ class JqErrorTest {
   @Test
   void testBase64OnObject() {
     RuntimeException ex = assertThrows(RuntimeException.class,
-        () -> Jq.execute("base64", "{\"a\":1}"));
+        () -> Jq.execute("@base64", "{\"a\":1}"));
     assertTrue(ex.getMessage().contains("Cannot base64 encode"));
   }
 
   @Test
   void testBase64ArrayOutOfRange() {
     RuntimeException ex = assertThrows(RuntimeException.class,
-        () -> Jq.execute("base64", "[256]"));
+        () -> Jq.execute("@base64", "[256]"));
     assertTrue(ex.getMessage().contains("Cannot base64 encode array containing non-byte value"));
   }
 
   @Test
   void testBase64DecodeNonString() {
     RuntimeException ex = assertThrows(RuntimeException.class,
-        () -> Jq.execute("base64d", "[\"aGVsbG8=\"]"));
+        () -> Jq.execute("@base64d", "[\"aGVsbG8=\"]"));
     assertTrue(ex.getMessage().contains("Cannot base64 decode"));
   }
 
   @Test
   void testBase64DecodeInvalidString() {
     RuntimeException ex = assertThrows(RuntimeException.class,
-        () -> Jq.execute("base64d", "\"not-base64\""));
+        () -> Jq.execute("@base64d", "\"not-base64\""));
     assertTrue(ex.getMessage().contains("Invalid base64"));
+  }
+
+  @Test
+  void testBase64WithoutFormatPrefixIsUndefined() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("base64", "\"hello\""));
+    assertTrue(ex.getMessage().contains("base64/0 is not defined"));
+  }
+
+  @Test
+  void testBase64DecodeWithoutFormatPrefixIsUndefined() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("base64d", "\"aGVsbG8=\""));
+    assertTrue(ex.getMessage().contains("base64d/0 is not defined"));
   }
 }

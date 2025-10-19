@@ -193,12 +193,12 @@ class JqTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-        "'base64' ; '\"hello\"' ; '\"aGVsbG8=\"'",
-        "'base64' ; '[104,101,108,108,111]' ; '\"aGVsbG8=\"'",
-        "'base64d' ; '\"aGVsbG8=\"' ; '\"hello\"'",
-        "'base64d' ; '\"4pyTIMOgIGxhIG1vZGU=\"' ; '\"✓ à la mode\"'"
+        "'@base64' ; '\"hello\"' ; '\"aGVsbG8=\"'",
+        "'@base64' ; '[104,101,108,108,111]' ; '\"aGVsbG8=\"'",
+        "'@base64d' ; '\"aGVsbG8=\"' ; '\"hello\"'",
+        "'@base64d' ; '\"4pyTIMOgIGxhIG1vZGU=\"' ; '\"✓ à la mode\"'"
     }, delimiter = ';')
-    void testBase64Functions(String program, String input, String expected) {
+    void testBase64FormatFilters(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
 
