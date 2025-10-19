@@ -200,6 +200,9 @@ $ ./mvnw clean package
 # Run tests
 $ ./mvnw test
 
+# Run checkstyle validation (REQUIRED before commits)
+$ ./mvnw checkstyle:check
+
 # Run jq test suite (first clone jq source code, then run tests)
 $ git clone https://github.com/jqlang/jq.git
 $ java -jar jq4java-cli/target/jq4java.jar --run-tests jq/tests/jq.test
@@ -207,12 +210,28 @@ $ java -jar jq4java-cli/target/jq4java.jar --run-tests jq/tests/jq.test
 # Install git hooks (auto-updates README stats on push)
 $ bash scripts/install-hooks.sh
 
+# Install checkstyle pre-commit hook (optional but recommended)
+$ cp scripts/pre-commit-checkstyle.sh .git/hooks/pre-commit
+$ chmod +x .git/hooks/pre-commit
+
 # Build only core library
 $ cd jq4java-core && ../mvnw clean package
 
 # Build only CLI
 $ cd jq4java-cli && ../mvnw clean package
 ```
+
+### Code Quality
+
+This project enforces strict **checkstyle compliance**:
+
+- ✅ **All public classes and methods** must have comprehensive Javadoc documentation
+- ✅ **Line length limit**: 100 characters maximum
+- ✅ **Import organization**: Lexicographic ordering with proper grouping
+- ✅ **Method organization**: Overloaded methods must be grouped together
+- ✅ **Consistent formatting**: Proper spacing and code structure
+
+**CI Integration**: All builds automatically fail if checkstyle violations are detected, ensuring consistent code quality across all contributions.
 
 ## GitHub Actions workflows
 

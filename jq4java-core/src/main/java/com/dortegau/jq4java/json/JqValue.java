@@ -48,6 +48,8 @@ public interface JqValue extends Comparable<JqValue> {
 
   JqValue add(JqValue other);
 
+  JqValue add();
+
   JqValue subtract(JqValue other);
 
   JqValue multiply(JqValue other);
@@ -72,6 +74,11 @@ public interface JqValue extends Comparable<JqValue> {
 
   String asString();
 
+  /**
+   * Returns the type name of this value as a string (without quotes).
+   *
+   * @return the type name of this JSON value
+   */
   default String typeName() {
     String typeJson = type().toString();
     if (typeJson.length() >= 2 && typeJson.startsWith("\"") && typeJson.endsWith("\"")) {
@@ -93,8 +100,6 @@ public interface JqValue extends Comparable<JqValue> {
   }
 
   JqValue flatten(int depth);
-
-  JqValue add();
 
   JqValue sort();
 

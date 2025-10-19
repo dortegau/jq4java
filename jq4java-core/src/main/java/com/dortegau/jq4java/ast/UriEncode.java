@@ -6,6 +6,10 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
+/**
+ * Implementation of the @uri URI encode function.
+ * Encodes strings for use in URIs using UTF-8 encoding.
+ */
 public class UriEncode implements Expression {
 
   @Override

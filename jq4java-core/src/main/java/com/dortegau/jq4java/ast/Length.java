@@ -3,6 +3,10 @@ package com.dortegau.jq4java.ast;
 import com.dortegau.jq4java.json.JqValue;
 import java.util.stream.Stream;
 
+/**
+ * Implementation of the length function.
+ * Returns the length/size of arrays, objects, strings, or null.
+ */
 public class Length implements Expression {
   static {
     BuiltinRegistry.register("length", 0);

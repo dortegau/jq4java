@@ -5,6 +5,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+/**
+ * Implementation of the from_entries function.
+ * Converts an array of key-value pair objects into a single object.
+ */
 public class FromEntries implements Expression {
   static {
     BuiltinRegistry.register("from_entries", 0);
@@ -13,7 +17,8 @@ public class FromEntries implements Expression {
   @Override
   public Stream<JqValue> evaluate(JqValue input) {
     if (!input.isArray()) {
-      throw new RuntimeException("Cannot iterate over " + input.type().toString().replace("\"", "") + " (" + input + ")");
+      String typeName = input.type().toString().replace("\"", "");
+      throw new RuntimeException("Cannot iterate over " + typeName + " (" + input + ")");
     }
 
     Map<String, JqValue> resultObject = new LinkedHashMap<>();
