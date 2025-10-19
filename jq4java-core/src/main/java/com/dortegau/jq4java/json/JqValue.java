@@ -48,6 +48,8 @@ public interface JqValue extends Comparable<JqValue> {
 
   JqValue add(JqValue other);
 
+  JqValue add();
+
   JqValue subtract(JqValue other);
 
   JqValue multiply(JqValue other);
@@ -98,8 +100,6 @@ public interface JqValue extends Comparable<JqValue> {
   }
 
   JqValue flatten(int depth);
-
-  JqValue add();
 
   JqValue sort();
 
