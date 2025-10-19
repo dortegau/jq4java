@@ -1,5 +1,7 @@
 package com.dortegau.jq4java;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.stream.Stream;
@@ -262,6 +264,176 @@ class JqTest {
     }, delimiter = ';')
     void testUrlEncodingFunctions(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'@text' ; 'null' ; '\"null\"'",
+        "'@text' ; '42' ; '\"42\"'",
+        "'@text' ; '\"café\"' ; '\"café\"'",
+        "'@text' ; '[1,2]' ; '\"[1,2]\"'",
+        "'@text' ; '{\"a\":[1,2]}' ; '\"{\\\"a\\\":[1,2]}\"'"
+    }, delimiter = ';')
+    void testTextFormat(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'@json' ; '\"hello\"' ; '\"\\\"hello\\\"\"'",
+        "'@json' ; '[1,2,3]' ; '\"[1,2,3]\"'",
+        "'@json' ; '{\"nested\": [1,{\"x\":\"y\"}]}' ; '\"{\\\"nested\\\":[1,{\\\"x\\\":\\\"y\\\"}]}\"'",
+        "'@json' ; 'true' ; '\"true\"'",
+        "'@json' ; 'null' ; '\"null\"'"
+    }, delimiter = ';')
+    void testJsonFormat(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'@html' ; '\"<tag>&\"' ; '\"&lt;tag&gt;&amp;\"'",
+        "'@html' ; '\"O\\u0027Reilly\"' ; '\"O&#39;Reilly\"'",
+        "'@html' ; '42' ; '\"42\"'",
+        "'@html' ; '[1,2]' ; '\"[1,2]\"'"
+    }, delimiter = ';')
+    void testHtmlFormat(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "^@csv^ ; ^CSV_INPUT_MIXED^ ; ^CSV_MIXED^",
+        "^@csv^ ; ^CSV_INPUT_NULLS^ ; ^CSV_NULLS^",
+        "^@csv^ ; ^CSV_INPUT_QUOTES^ ; ^CSV_QUOTES^",
+        "^@csv^ ; ^CSV_INPUT_UNICODE^ ; ^CSV_UNICODE^"
+    }, delimiter = ';', quoteCharacter = '^')
+    void testCsvFormat(String program, String inputKey, String expectedKey) {
+        assertEquals(resolveCsvExpected(expectedKey), Jq.execute(program, resolveCsvInput(inputKey)));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "^@tsv^ ; ^TSV_INPUT_MIXED^ ; ^TSV_MIXED^",
+        "^@tsv^ ; ^TSV_INPUT_NULLS^ ; ^TSV_NULLS^",
+        "^@tsv^ ; ^TSV_INPUT_ESCAPES^ ; ^TSV_ESCAPES^"
+    }, delimiter = ';', quoteCharacter = '^')
+    void testTsvFormat(String program, String inputKey, String expectedKey) {
+        assertEquals(resolveTsvExpected(expectedKey), Jq.execute(program, resolveTsvInput(inputKey)));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "^@sh^ ; ^SHELL_INPUT_SINGLE^ ; ^SHELL_SINGLE^",
+        "^@sh^ ; ^SHELL_INPUT_ARRAY^ ; ^SHELL_ARRAY^",
+        "^@sh^ ; ^SHELL_INPUT_APOSTROPHE^ ; ^SHELL_APOSTROPHE^",
+        "^@sh^ ; ^SHELL_INPUT_NUMBER^ ; ^SHELL_NUMBER^",
+        "^@sh^ ; ^SHELL_INPUT_EMPTY^ ; ^SHELL_EMPTY^"
+    }, delimiter = ';', quoteCharacter = '^')
+    void testShellFormat(String program, String inputKey, String expectedKey) {
+        assertEquals(resolveShellExpected(expectedKey), Jq.execute(program, resolveShellInput(inputKey)));
+    }
+
+    private static String resolveShellExpected(String key) {
+        switch (key) {
+            case "SHELL_SINGLE":
+                return "\"'hello world'\"";
+            case "SHELL_ARRAY":
+                return "\"'foo' 'bar baz'\"";
+            case "SHELL_APOSTROPHE":
+                return "\"'O'\\\\''Reilly' 'unicode 雪'\"";
+            case "SHELL_NUMBER":
+                return "\"'42'\"";
+            case "SHELL_EMPTY":
+                return "\"''\"";
+            default:
+                throw new IllegalArgumentException("Unknown shell expected key: " + key);
+        }
+    }
+
+    private static String resolveShellInput(String key) {
+        switch (key) {
+            case "SHELL_INPUT_SINGLE":
+                return jsonString("hello world");
+            case "SHELL_INPUT_ARRAY":
+                return jsonArray("foo", "bar baz");
+            case "SHELL_INPUT_APOSTROPHE":
+                return jsonArray("O\u0027Reilly", "unicode 雪");
+            case "SHELL_INPUT_NUMBER":
+                return "42";
+            case "SHELL_INPUT_EMPTY":
+                return jsonString("");
+            default:
+                throw new IllegalArgumentException("Unknown shell input key: " + key);
+        }
+    }
+
+    private static String resolveCsvExpected(String key) {
+        switch (key) {
+            case "CSV_MIXED":
+                return jsonString("a,\"b, c\",d");
+            case "CSV_NULLS":
+                return jsonString("1,true,");
+            case "CSV_QUOTES":
+                return jsonString("\"\"\"quote\"\"\",\"line\nbreak\"");
+            case "CSV_UNICODE":
+                return jsonString("雪,emoji");
+            default:
+                throw new IllegalArgumentException("Unknown csv expected key: " + key);
+        }
+    }
+
+    private static String resolveCsvInput(String key) {
+        switch (key) {
+            case "CSV_INPUT_MIXED":
+                return jsonArray("a", "b, c", "d");
+            case "CSV_INPUT_NULLS":
+                return jsonArray(1, true, JSONObject.NULL);
+            case "CSV_INPUT_QUOTES":
+                return jsonArray("\"quote\"", "line\nbreak");
+            case "CSV_INPUT_UNICODE":
+                return jsonArray("雪", "emoji");
+            default:
+                throw new IllegalArgumentException("Unknown csv input key: " + key);
+        }
+    }
+
+    private static String resolveTsvExpected(String key) {
+        switch (key) {
+            case "TSV_MIXED":
+                return jsonString("a\tb c\tline\\nbreak");
+            case "TSV_NULLS":
+                return jsonString("1\ttrue\t");
+            case "TSV_ESCAPES":
+                return jsonString("tab\\tseparated\tback\\\\slash");
+            default:
+                throw new IllegalArgumentException("Unknown tsv expected key: " + key);
+        }
+    }
+
+    private static String resolveTsvInput(String key) {
+        switch (key) {
+            case "TSV_INPUT_MIXED":
+                return jsonArray("a", "b c", "line\nbreak");
+            case "TSV_INPUT_NULLS":
+                return jsonArray(1, true, JSONObject.NULL);
+            case "TSV_INPUT_ESCAPES":
+                return jsonArray("tab\tseparated", "back\\slash");
+            default:
+                throw new IllegalArgumentException("Unknown tsv input key: " + key);
+        }
+    }
+
+    private static String jsonArray(Object... values) {
+        JSONArray array = new JSONArray();
+        for (Object value : values) {
+            array.put(value);
+        }
+        return array.toString();
+    }
+
+    private static String jsonString(String value) {
+        return JSONObject.quote(value);
     }
 
     @ParameterizedTest
