@@ -3,6 +3,10 @@ package com.dortegau.jq4java.ast;
 import com.dortegau.jq4java.json.JqValue;
 import java.util.stream.Stream;
 
+/**
+ * Implementation of the unary minus operator.
+ * Negates numeric values by subtracting them from zero.
+ */
 public class UnaryMinus implements Expression {
   private final Expression operand;
 

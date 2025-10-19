@@ -3,11 +3,22 @@ package com.dortegau.jq4java.ast;
 import com.dortegau.jq4java.json.JqValue;
 import java.util.stream.Stream;
 
+/**
+ * Represents arithmetic operations between two expressions.
+ * Supports +, -, *, /, % operators.
+ */
 public class Arithmetic implements Expression {
   private final Expression left;
   private final String operator;
   private final Expression right;
 
+  /**
+   * Creates a new Arithmetic expression.
+   *
+   * @param left the left-hand side expression
+   * @param operator the arithmetic operator (+, -, *, /, %)
+   * @param right the right-hand side expression
+   */
   public Arithmetic(Expression left, String operator, Expression right) {
     this.left = left;
     this.operator = operator;

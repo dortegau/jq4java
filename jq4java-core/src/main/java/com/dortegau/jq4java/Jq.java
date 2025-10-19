@@ -22,16 +22,6 @@ public class Jq {
   }
 
   /**
-   * Compiles a jq expression for reuse across multiple executions.
-   *
-   * @param program the jq expression to compile
-   * @return the compiled expression AST
-   */
-  public static Expression compile(String program) {
-    return JqParser.parse(program);
-  }
-
-  /**
    * Executes a precompiled jq expression on JSON input.
    *
    * @param expression the precompiled jq expression
@@ -59,5 +49,15 @@ public class Jq {
       sb.append(value.toJson());
     });
     return sb.toString();
+  }
+
+  /**
+   * Compiles a jq expression for reuse across multiple executions.
+   *
+   * @param program the jq expression to compile
+   * @return the compiled expression AST
+   */
+  public static Expression compile(String program) {
+    return JqParser.parse(program);
   }
 }
