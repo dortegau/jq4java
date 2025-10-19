@@ -56,6 +56,7 @@ A Java 8+ port of [jq](https://jqlang.github.io/jq/), the lightweight command-li
 - Logical operators: `and`, `or`, `not`
 - Conditional expressions: `if-then-else-end`, `if-then-elif-then-else-end`, `if-then-end` (optional else)
 - Built-in functions: `length`, `keys`, `type`, `map(expr)`, `select(expr)`, `builtins`, `flatten`, `add`, `abs`, `sort`, `reverse`, `unique`, `transpose`, `range(n)`, `range(from; to)`, `range(from; to; step)`, `to_entries`, `from_entries`, `base64`, `base64d`
+- Format filters: `@base64`, `@base64d`, `@uri`, `@urid`
 
 ## Usage
 
@@ -81,6 +82,15 @@ String result = Jq.execute("if .score >= 90 then \"A\" elif .score >= 80 then \"
 
 String result = Jq.execute("if .active then \"enabled\" else \"disabled\" end", "{\"active\": true}");
 // result: "\"enabled\""
+
+// Format filters for percent-encoding strings
+String result = Jq.execute("@uri", "\"μ\"");
+// result: "\"%CE%BC\""
+
+String result = Jq.execute("@urid", "\"%CE%BC\"");
+// result: "\"μ\""
+
+// Note: Like jq, the bare names `uri`/`urid` are not valid functions.
 
 // Array manipulation functions
 String result = Jq.execute("flatten", "[[1,2],[3,4]]");
