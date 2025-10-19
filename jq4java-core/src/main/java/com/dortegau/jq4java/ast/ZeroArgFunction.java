@@ -39,6 +39,21 @@ public class ZeroArgFunction implements Expression {
         return new Unique().evaluate(input);
       case "transpose":
         return new Transpose().evaluate(input);
+      case "length":
+        return new Length().evaluate(input);
+      case "keys":
+        return new Keys().evaluate(input);
+      case "type":
+        return new Type().evaluate(input);
+      case "builtins":
+        return new Builtins().evaluate(input);
+      case "to_entries":
+        return new ToEntries().evaluate(input);
+      case "from_entries":
+        return new FromEntries().evaluate(input);
+      case "range":
+        // Range without arguments should throw an error
+        throw new RuntimeException("range/0 is not defined");
       default:
         throw new RuntimeException("Unknown zero-argument function: " + functionName);
     }
