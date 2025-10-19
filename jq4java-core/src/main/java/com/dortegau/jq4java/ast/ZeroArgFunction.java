@@ -34,10 +34,6 @@ public class ZeroArgFunction implements Expression {
         return new Base64Encode().evaluate(input);
       case "base64d":
         return new Base64Decode().evaluate(input);
-      case "urlencode":
-        return new UrlEncode().evaluate(input);
-      case "urldecode":
-        return new UrlDecode().evaluate(input);
       default:
         throw new RuntimeException("Unknown zero-argument function: " + functionName);
     }

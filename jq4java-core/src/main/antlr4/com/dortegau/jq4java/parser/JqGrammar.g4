@@ -76,6 +76,7 @@ primary
     | RANGE LPAREN expression (SEMICOLON expression)* RPAREN  # RangeCall
     | IDENTIFIER LPAREN expression (SEMICOLON expression)* RPAREN  # FunctionCall
     | IDENTIFIER                                    # ZeroArgFunction
+    | AT IDENTIFIER                                 # FormatFunction
     | LBRACKET (expression (COMMA expression)*)? RBRACKET  # ArrayConstructor
     | LBRACE (objectField (COMMA objectField)*)? RBRACE    # ObjectConstructor
     | LPAREN expression RPAREN                      # ParenExpr
@@ -111,6 +112,7 @@ LBRACE      : '{' ;
 RBRACE      : '}' ;
 LPAREN      : '(' ;
 RPAREN      : ')' ;
+AT          : '@' ;
 
 TRUE        : 'true' ;
 FALSE       : 'false' ;

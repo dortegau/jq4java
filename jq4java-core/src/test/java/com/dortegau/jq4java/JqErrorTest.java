@@ -189,24 +189,38 @@ class JqErrorTest {
   }
 
   @Test
-  void testUrlencodeOnNonString() {
+  void testUriFormatOnNonString() {
     RuntimeException ex = assertThrows(RuntimeException.class,
-        () -> Jq.execute("urlencode", "42"));
-    assertTrue(ex.getMessage().contains("Cannot url encode number"));
+        () -> Jq.execute("@uri", "42"));
+    assertTrue(ex.getMessage().contains("Cannot uri encode number"));
   }
 
   @Test
-  void testUrldecodeOnNonString() {
+  void testUriDecodeOnNonString() {
     RuntimeException ex = assertThrows(RuntimeException.class,
-        () -> Jq.execute("urldecode", "42"));
-    assertTrue(ex.getMessage().contains("Cannot url decode number"));
+        () -> Jq.execute("@urid", "42"));
+    assertTrue(ex.getMessage().contains("Cannot uri decode number"));
   }
 
   @Test
   void testUrldecodeWithInvalidPercentSequence() {
     RuntimeException ex = assertThrows(RuntimeException.class,
-        () -> Jq.execute("urldecode", "\"%ZZ\""));
+        () -> Jq.execute("@urid", "\"%ZZ\""));
     assertTrue(ex.getMessage().contains("Invalid percent-encoded string"));
+  }
+
+  @Test
+  void testUriWithoutFormatPrefixIsUndefined() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("uri", "\"hello\""));
+    assertTrue(ex.getMessage().contains("uri/0 is not defined"));
+  }
+
+  @Test
+  void testUridWithoutFormatPrefixIsUndefined() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("urid", "\"hello%20world\""));
+    assertTrue(ex.getMessage().contains("urid/0 is not defined"));
   }
 
   @Test

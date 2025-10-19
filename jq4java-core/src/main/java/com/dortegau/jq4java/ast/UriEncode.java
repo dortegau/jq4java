@@ -6,16 +6,13 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
-public class UrlEncode implements Expression {
-  static {
-    BuiltinRegistry.register("urlencode", 0);
-  }
+public class UriEncode implements Expression {
 
   @Override
   public Stream<JqValue> evaluate(JqValue input) {
     if (!input.isString()) {
       throw new RuntimeException(
-          "Cannot url encode " + input.typeName() + " (" + input + ")");
+          "Cannot uri encode " + input.typeName() + " (" + input + ")");
     }
 
     try {
@@ -23,7 +20,7 @@ public class UrlEncode implements Expression {
       encoded = encoded.replace("+", "%20");
       return Stream.of(JqValue.fromString(encoded));
     } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException("Failed to url encode string", e);
+      throw new RuntimeException("Failed to uri encode string", e);
     }
   }
 }
