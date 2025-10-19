@@ -19,7 +19,7 @@ public class UrlEncode implements Expression {
     }
 
     try {
-      String encoded = URLEncoder.encode(input.asString(), StandardCharsets.UTF_8.toString());
+      String encoded = URLEncoder.encode(input.asString(), StandardCharsets.UTF_8);
       encoded = encoded.replace("+", "%20");
       return Stream.of(JqValue.fromString(encoded));
     } catch (UnsupportedEncodingException e) {
