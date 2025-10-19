@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Implementation of the @base64 base64 encode function.
+ * Encodes strings or byte arrays to Base64 format.
+ */
 public class Base64Encode implements Expression {
 
   @Override

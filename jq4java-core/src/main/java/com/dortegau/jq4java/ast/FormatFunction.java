@@ -3,9 +3,18 @@ package com.dortegau.jq4java.ast;
 import com.dortegau.jq4java.json.JqValue;
 import java.util.stream.Stream;
 
+/**
+ * Represents format functions like @base64, @base64d, @uri, @urid.
+ * These functions transform string values according to the specified format.
+ */
 public class FormatFunction implements Expression {
   private final String formatName;
 
+  /**
+   * Creates a new FormatFunction with the specified format name.
+   *
+   * @param formatName the name of the format (base64, base64d, uri, urid)
+   */
   public FormatFunction(String formatName) {
     this.formatName = formatName;
   }

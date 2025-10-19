@@ -25,7 +25,8 @@ public class JqParser {
                               Object offendingSymbol,
                               int line, int charPositionInLine,
                               String msg, org.antlr.v4.runtime.RecognitionException e) {
-        throw new RuntimeException("Parse error at " + line + ":" + charPositionInLine + ": " + msg);
+        throw new RuntimeException(
+            "Parse error at " + line + ":" + charPositionInLine + ": " + msg);
       }
     });
     JqGrammarParser.ProgramContext tree = grammarParser.program();

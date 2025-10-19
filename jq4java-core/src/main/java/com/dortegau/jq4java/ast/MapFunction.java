@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Implementation of the map function.
+ * Applies an expression to each element of an array and returns the results as a new array.
+ */
 public class MapFunction implements Expression {
   static {
     BuiltinRegistry.register("map", 1);
@@ -19,7 +23,8 @@ public class MapFunction implements Expression {
   @Override
   public Stream<JqValue> evaluate(JqValue input) {
     if (!input.isArray()) {
-      throw new RuntimeException("Cannot iterate over " + input.type().toString().replace("\"", "") + " (" + input + ")");
+      String typeName = input.type().toString().replace("\"", "");
+      throw new RuntimeException("Cannot iterate over " + typeName + " (" + input + ")");
     }
 
     List<JqValue> results = input.stream()
