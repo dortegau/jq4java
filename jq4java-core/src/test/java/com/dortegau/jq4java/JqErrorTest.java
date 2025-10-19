@@ -1,6 +1,10 @@
 package com.dortegau.jq4java;
 
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -676,5 +680,22 @@ class JqErrorTest {
     RuntimeException ex = assertThrows(RuntimeException.class,
         () -> Jq.execute("base64d", "\"aGVsbG8=\""));
     assertTrue(ex.getMessage().contains("base64d/0 is not defined"));
+  }
+
+  @ParameterizedTest
+  @MethodSource("fromJsonErrorCases")
+  void testFromJsonErrors(String input, String expectedMessage) {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("fromjson", input));
+    assertTrue(ex.getMessage().contains(expectedMessage));
+  }
+
+  private static Stream<Arguments> fromJsonErrorCases() {
+    return Stream.of(
+        Arguments.of("42", "fromjson requires string input"),
+        Arguments.of("\"not json\"", "Invalid JSON text for fromjson"),
+        Arguments.of("\"  not json\"", "Invalid JSON text for fromjson"),
+        Arguments.of("\"\"", "Invalid JSON text for fromjson")
+    );
   }
 }

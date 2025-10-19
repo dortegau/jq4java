@@ -55,7 +55,7 @@ A Java 8+ port of [jq](https://jqlang.github.io/jq/), the lightweight command-li
 - Arithmetic operators: `+`, `-`, `*`, `/`, `%` (also string/array concatenation with `+`)
 - Logical operators: `and`, `or`, `not`
 - Conditional expressions: `if-then-else-end`, `if-then-elif-then-else-end`, `if-then-end` (optional else)
-- Built-in functions: `length`, `keys`, `type`, `map(expr)`, `select(expr)`, `builtins`, `flatten`, `add`, `abs`, `sort`, `reverse`, `unique`, `transpose`, `range(n)`, `range(from; to)`, `range(from; to; step)`, `to_entries`, `from_entries`, `with_entries(expr)`
+- Built-in functions: `length`, `keys`, `type`, `map(expr)`, `select(expr)`, `builtins`, `flatten`, `add`, `abs`, `sort`, `reverse`, `unique`, `transpose`, `range(n)`, `range(from; to)`, `range(from; to; step)`, `to_entries`, `from_entries`, `tojson`, `fromjson`, `with_entries(expr)`
 - Format filters: `@base64`, `@base64d`, `@uri`, `@urid`
 
 ## Usage
@@ -150,6 +150,13 @@ String result = Jq.execute("with_entries(select(.key == \"b\"))", "{\"a\": 1, \"
 
 String result = Jq.execute("with_entries({key: (\"prefix_\" + .key), value: .value})", "{\"name\": \"Alice\", \"age\": 30}");
 // result: "{\"prefix_name\":\"Alice\",\"prefix_age\":30}"
+
+// JSON serialization helpers
+String result = Jq.execute("tojson", "{\"hello\": \"world\"}");
+// result: "\"{\\\"hello\\\":\\\"world\\\"}\""
+
+String result = Jq.execute("fromjson", "\"{\\\"hello\\\":\\\"world\\\"}\"");
+// result: "{\"hello\":\"world\"}"
 ```
 
 #### Reuse precompiled jq expressions
