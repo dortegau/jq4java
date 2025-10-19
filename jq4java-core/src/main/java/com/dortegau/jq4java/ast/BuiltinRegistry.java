@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Registry for builtin function names and their arities.
+ * This class manages the registration and listing of all available builtin functions.
+ */
 public class BuiltinRegistry {
   private static final List<String> BUILTINS = new ArrayList<>();
 
@@ -32,6 +36,12 @@ public class BuiltinRegistry {
     }
   }
 
+  /**
+   * Registers a builtin function with its name and arity.
+   *
+   * @param name the function name
+   * @param arity the number of arguments the function takes
+   */
   public static void register(String name, int arity) {
     String entry = name + "/" + arity;
     if (!BUILTINS.contains(entry)) {

@@ -3,6 +3,10 @@ package com.dortegau.jq4java.ast;
 import com.dortegau.jq4java.json.JqValue;
 import java.util.stream.Stream;
 
+/**
+ * Implementation of the abs function.
+ * Returns the absolute value of a number.
+ */
 public class Abs implements Expression {
   static {
     BuiltinRegistry.register("abs", 0);

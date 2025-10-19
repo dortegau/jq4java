@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Implementation of the builtins function that returns an array
+ * of all available builtin function names.
+ */
 public class Builtins implements Expression {
   @Override
   public Stream<JqValue> evaluate(JqValue input) {
