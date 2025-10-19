@@ -142,7 +142,7 @@ String first = Jq.execute(projection, "{\"user\":{\"email\":\"a@example.com\"}}"
 String second = Jq.execute(projection, "{\"user\":{\"email\":\"b@example.com\"}}");
 
 // You can also reuse parsed JSON inputs
-JqValue input = OrgJsonValue.parse("{\"user\":{\"email\":\"c@example.com\"}}" );
+JqValue input = OrgJsonValue.parse("{\"user\":{\"email\":\"c@example.com\"}}");
 String third = Jq.execute(projection, input);
 ```
 
