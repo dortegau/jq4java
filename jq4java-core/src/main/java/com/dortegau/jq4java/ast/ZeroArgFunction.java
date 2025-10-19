@@ -30,6 +30,10 @@ public class ZeroArgFunction implements Expression {
         return new Unique().evaluate(input);
       case "transpose":
         return new Transpose().evaluate(input);
+      case "tojson":
+        return new ToJson().evaluate(input);
+      case "fromjson":
+        return new FromJson().evaluate(input);
       default:
         throw new RuntimeException("Unknown zero-argument function: " + functionName);
     }

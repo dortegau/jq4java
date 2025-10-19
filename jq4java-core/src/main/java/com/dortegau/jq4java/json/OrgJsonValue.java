@@ -19,7 +19,27 @@ public class OrgJsonValue implements JqValue {
   private final Object value;
 
   public OrgJsonValue(String jsonString) {
-    this.value = new JSONTokener(jsonString).nextValue();
+    this(parseJson(jsonString));
+  }
+
+  private static Object parseJson(String jsonString) {
+    JSONTokener tokener = new JSONTokener(jsonString);
+    Object parsed = tokener.nextValue();
+    char next = tokener.nextClean();
+    if (next != 0) {
+      throw tokener.syntaxError("Unexpected trailing characters");
+    }
+
+    if (parsed instanceof String) {
+      String trimmed = jsonString.trim();
+      if (trimmed.isEmpty()
+          || trimmed.charAt(0) != '"'
+          || trimmed.charAt(trimmed.length() - 1) != '"') {
+        throw tokener.syntaxError("Invalid JSON string literal");
+      }
+    }
+
+    return parsed;
   }
 
   public static JqValue parse(String jsonString) {
@@ -187,7 +207,12 @@ public class OrgJsonValue implements JqValue {
             return new OrgJsonValue(Integer.parseInt(literalValue));
           }
         } catch (NumberFormatException e) {
-          return new OrgJsonValue(literalValue);
+          if (literalValue.length() >= 2
+              && literalValue.charAt(0) == '"'
+              && literalValue.charAt(literalValue.length() - 1) == '"') {
+            return new OrgJsonValue(literalValue);
+          }
+          return OrgJsonValue.fromString(literalValue);
         }
     }
   }
@@ -372,7 +397,7 @@ public class OrgJsonValue implements JqValue {
     }
 
     if (value instanceof String && otherValue.value instanceof String) {
-      return new OrgJsonValue((String) value + (String) otherValue.value);
+      return OrgJsonValue.fromString((String) value + (String) otherValue.value);
     }
 
     if (value instanceof JSONArray && otherValue.value instanceof JSONArray) {
@@ -629,7 +654,7 @@ public class OrgJsonValue implements JqValue {
         }
         sb.append((String) item);
       }
-      return new OrgJsonValue(sb.toString());
+      return OrgJsonValue.fromString(sb.toString());
     }
 
     // Handle arrays
