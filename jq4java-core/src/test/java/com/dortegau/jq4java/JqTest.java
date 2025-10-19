@@ -67,6 +67,19 @@ class JqTest {
 
     @ParameterizedTest
     @CsvSource({
+        ".foo.bar, .foo | .bar, '{\"foo\": {\"bar\": 42}}'",
+        ".foo.bar, .foo | .bar, '{\"foo\": {\"bar\": {\"baz\": 1}}}'",
+        ".foo.bar, .foo | .bar, '{\"foo\": {\"bar\": [1,2,3]}}'"
+    })
+    void testFieldAccessPipeEquivalence(String composedFilter, String pipedFilter, String input) {
+        assertEquals(
+            Jq.execute(composedFilter, input),
+            Jq.execute(pipedFilter, input)
+        );
+    }
+
+    @ParameterizedTest
+    @CsvSource({
         ".[], '[1,2,3]', '1\n2\n3'",
         ".[] | .[], '[[1,2],[3,4]]', '1\n2\n3\n4'",
         ".[], '[]', ''",
