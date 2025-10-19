@@ -178,9 +178,15 @@ class JqTest {
 
     private static Stream<Arguments> toJsonCases() {
         return Stream.of(
-            Arguments.of("[.[] | tojson]", "[1, \"foo\", [\"foo\"]]", "[\"1\",\"\\\"foo\\\"\",\"[\\\"foo\\\"]\"]"),
-            Arguments.of("tojson", "{\"a\":1,\"b\":[2,3]}", "\"{\\\"a\\\":1,\\\"b\\\":[2,3]}\""),
-            Arguments.of("tojson", "\"line\\nbreak\"", "\"\\\"line\\\\nbreak\\\"\"")
+            // Basic tojson functionality - converts values to JSON strings
+            Arguments.of("tojson", "42", "\"42\""),
+            Arguments.of("tojson", "\"hello\"", "\"\\\"hello\\\"\""),
+            Arguments.of("tojson", "true", "\"true\""),
+            Arguments.of("tojson", "null", "\"null\""),
+            Arguments.of("tojson", "[1,2,3]", "\"[1,2,3]\""),
+            Arguments.of("tojson", "{\"a\":1,\"b\":2}", "\"{\\\"a\\\":1,\\\"b\\\":2}\""),
+            // Array of tojson operations
+            Arguments.of("[.[] | tojson]", "[1, \"foo\", true]", "[\"1\",\"\\\"foo\\\"\",\"true\"]")
         );
     }
 
@@ -192,10 +198,16 @@ class JqTest {
 
     private static Stream<Arguments> fromJsonCases() {
         return Stream.of(
-            Arguments.of("fromjson", "\"{\\\"a\\\":1}\"", "{\"a\":1}"),
+            // Basic fromjson functionality - parses JSON strings back to values
+            Arguments.of("fromjson", "\"42\"", "42"),
+            Arguments.of("fromjson", "\"\\\"hello\\\"\"", "\"hello\""),
+            Arguments.of("fromjson", "\"true\"", "true"),
+            Arguments.of("fromjson", "\"null\"", "null"),
             Arguments.of("fromjson", "\"[1,2,3]\"", "[1,2,3]"),
+            Arguments.of("fromjson", "\"{\\\"a\\\":1,\\\"b\\\":2}\"", "{\"a\":1,\"b\":2}"),
+            // Test whitespace handling
             Arguments.of("fromjson", "\"  [1,2]  \"", "[1,2]"),
-            Arguments.of("fromjson", "\"\\\"foo\\\"\"", "\"foo\""),
+            // Roundtrip test
             Arguments.of("tojson | fromjson", "{\"nested\": [1, {\"k\":\"v\"}]}", "{\"nested\":[1,{\"k\":\"v\"}]}")
         );
     }

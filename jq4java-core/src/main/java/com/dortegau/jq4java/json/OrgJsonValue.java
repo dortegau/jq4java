@@ -484,7 +484,7 @@ public class OrgJsonValue implements JqValue {
         }
         sb.append((String) item);
       }
-      return new OrgJsonValue(sb.toString());
+      return OrgJsonValue.fromString(sb.toString());
     }
 
     // Handle arrays
@@ -725,82 +725,6 @@ public class OrgJsonValue implements JqValue {
     return new OrgJsonValue(result);
   }
 
-  @Override
-  public JqValue add() {
-    if (!isArray()) {
-      throw new RuntimeException("Cannot add elements of non-array");
-    }
-
-    JSONArray arr = (JSONArray) value;
-    if (arr.length() == 0) {
-      return nullValue();
-    }
-
-    Object first = arr.get(0);
-
-    // Handle numbers
-    if (first instanceof Number) {
-      double sum = 0;
-      for (int i = 0; i < arr.length(); i++) {
-        Object item = arr.get(i);
-        if (!(item instanceof Number)) {
-          throw new RuntimeException("Cannot add mixed types");
-        }
-        sum += ((Number) item).doubleValue();
-      }
-      if (sum == (long) sum) {
-        return new OrgJsonValue((long) sum);
-      }
-      return new OrgJsonValue(sum);
-    }
-
-    // Handle strings
-    if (first instanceof String) {
-      StringBuilder sb = new StringBuilder();
-      for (int i = 0; i < arr.length(); i++) {
-        Object item = arr.get(i);
-        if (!(item instanceof String)) {
-          throw new RuntimeException("Cannot add mixed types");
-        }
-        sb.append((String) item);
-      }
-      return OrgJsonValue.fromString(sb.toString());
-    }
-
-    // Handle arrays
-    if (first instanceof JSONArray) {
-      JSONArray result = new JSONArray();
-      for (int i = 0; i < arr.length(); i++) {
-        Object item = arr.get(i);
-        if (!(item instanceof JSONArray)) {
-          throw new RuntimeException("Cannot add mixed types");
-        }
-        JSONArray subArr = (JSONArray) item;
-        for (int j = 0; j < subArr.length(); j++) {
-          result.put(subArr.get(j));
-        }
-      }
-      return new OrgJsonValue(result);
-    }
-
-    // Handle objects
-    if (first instanceof JSONObject) {
-      Map<String, Object> result = new java.util.LinkedHashMap<>();
-      for (int i = 0; i < arr.length(); i++) {
-        Object item = arr.get(i);
-        if (!(item instanceof JSONObject)) {
-          throw new RuntimeException("Cannot add mixed types");
-        }
-        JSONObject obj = (JSONObject) item;
-        for (String key : obj.keySet()) {
-          result.put(key, obj.get(key));
-        }
-      }
-      return new OrgJsonValue(new OrderedJSONObject(result));
-    }
-
-    throw new RuntimeException("Cannot add elements of this type");
-  }
 
   @Override
   public JqValue sort() {
