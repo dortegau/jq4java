@@ -29,6 +29,7 @@ import com.dortegau.jq4java.ast.ToEntries;
 import com.dortegau.jq4java.ast.Type;
 import com.dortegau.jq4java.ast.UnaryMinus;
 import com.dortegau.jq4java.ast.ZeroArgFunction;
+import com.dortegau.jq4java.ast.WithEntries;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -401,6 +402,11 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
           throw new RuntimeException("map/" + arguments.size() + " is not defined");
         }
         return new MapFunction(arguments.get(0));
+      case "with_entries":
+        if (arguments.size() != 1) {
+          throw new RuntimeException("with_entries/" + arguments.size() + " is not defined");
+        }
+        return new WithEntries(arguments.get(0));
       case "select":
         if (arguments.size() != 1) {
           throw new RuntimeException("select/" + arguments.size() + " is not defined");

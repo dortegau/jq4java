@@ -681,6 +681,17 @@ class JqTest {
 
     @ParameterizedTest
     @CsvSource(value = {
+        "'with_entries({key: .key, value: (.value + 1)})' ; '{\"a\": 1, \"b\": 2}' ; '{\"a\":2,\"b\":3}'",
+        "'with_entries(select(.key == \"b\"))' ; '{\"a\": 1, \"b\": 2}' ; '{\"b\":2}'",
+        "'with_entries({key: (\"prefix_\" + .key), value: .value})' ; '{\"a\": 1}' ; '{\"prefix_a\":1}'",
+        "'with_entries(.)' ; '[1,2]' ; '{\"0\":1,\"1\":2}'"
+    }, delimiter = ';')
+    void testWithEntries(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
         // Basic unary minus with numbers (happy path)
         "'-.' ; '5' ; '-5'",
         "'-.' ; '-3' ; '3'",
