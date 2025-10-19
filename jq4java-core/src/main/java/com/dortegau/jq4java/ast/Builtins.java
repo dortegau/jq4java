@@ -11,6 +11,10 @@ import java.util.stream.Stream;
  * of all available builtin function names.
  */
 public class Builtins implements Expression {
+  static {
+    BuiltinRegistry.register("builtins", 0);
+  }
+
   @Override
   public Stream<JqValue> evaluate(JqValue input) {
     List<JqValue> functions = BuiltinRegistry.list().stream()

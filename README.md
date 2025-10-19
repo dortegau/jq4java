@@ -55,7 +55,7 @@ A Java 8+ port of [jq](https://jqlang.github.io/jq/), the lightweight command-li
 - Arithmetic operators: `+`, `-`, `*`, `/`, `%` (also string/array concatenation with `+`)
 - Logical operators: `and`, `or`, `not`
 - Conditional expressions: `if-then-else-end`, `if-then-elif-then-else-end`, `if-then-end` (optional else)
-- Built-in functions: `length`, `keys`, `type`, `map(expr)`, `select(expr)`, `builtins`, `flatten`, `add`, `abs`, `sort`, `reverse`, `unique`, `transpose`, `range(n)`, `range(from; to)`, `range(from; to; step)`, `to_entries`, `from_entries`
+- Built-in functions: `length`, `keys`, `type`, `map(expr)`, `select(expr)`, `builtins`, `flatten`, `add`, `abs`, `sort`, `reverse`, `unique`, `transpose`, `range(n)`, `range(from; to)`, `range(from; to; step)`, `to_entries`, `from_entries`, `with_entries(expr)`
 - Format filters: `@base64`, `@base64d`, `@uri`, `@urid`
 
 ## Usage
@@ -140,6 +140,16 @@ String result = Jq.execute("from_entries", "[{\"key\": \"a\", \"value\": 1}, {\"
 
 String result = Jq.execute("to_entries | from_entries", "{\"x\": 42, \"y\": 99}");
 // result: "{\"x\":42,\"y\":99}"
+
+// Advanced object transformations with with_entries
+String result = Jq.execute("with_entries({key: .key, value: (.value + 1)})", "{\"a\": 1, \"b\": 2}");
+// result: "{\"a\":2,\"b\":3}"
+
+String result = Jq.execute("with_entries(select(.key == \"b\"))", "{\"a\": 1, \"b\": 2, \"c\": 3}");
+// result: "{\"b\":2}"
+
+String result = Jq.execute("with_entries({key: (\"prefix_\" + .key), value: .value})", "{\"name\": \"Alice\", \"age\": 30}");
+// result: "{\"prefix_name\":\"Alice\",\"prefix_age\":30}"
 ```
 
 #### Reuse precompiled jq expressions
