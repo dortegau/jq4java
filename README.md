@@ -125,6 +125,30 @@ String result = Jq.execute("to_entries | from_entries", "{\"x\": 42, \"y\": 99}"
 // result: "{\"x\":42,\"y\":99}"
 ```
 
+#### Reuse precompiled jq expressions
+
+When you need to evaluate the same jq program repeatedly, compile it once and keep the
+resulting `Expression`. Doing so prevents rebuilding the AST on every execution.
+
+```java
+import com.dortegau.jq4java.Jq;
+import com.dortegau.jq4java.ast.Expression;
+import com.dortegau.jq4java.json.JqValue;
+import com.dortegau.jq4java.json.OrgJsonValue;
+
+Expression projection = Jq.compile(".user.email");
+
+String first = Jq.execute(projection, "{\"user\":{\"email\":\"a@example.com\"}}");
+String second = Jq.execute(projection, "{\"user\":{\"email\":\"b@example.com\"}}");
+
+// You can also reuse parsed JSON inputs
+JqValue input = OrgJsonValue.parse("{\"user\":{\"email\":\"c@example.com\"}}");
+String third = Jq.execute(projection, input);
+```
+
+This pattern is particularly helpful in pipelines that apply the same jq query to many
+documents—such as API integrations, batch processing, or repeated validations.
+
 ### As a CLI
 
 ```bash
