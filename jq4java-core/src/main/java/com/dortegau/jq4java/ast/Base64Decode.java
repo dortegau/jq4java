@@ -6,9 +6,6 @@ import java.util.Base64;
 import java.util.stream.Stream;
 
 public class Base64Decode implements Expression {
-  static {
-    BuiltinRegistry.register("base64d", 0);
-  }
 
   @Override
   public Stream<JqValue> evaluate(JqValue input) {

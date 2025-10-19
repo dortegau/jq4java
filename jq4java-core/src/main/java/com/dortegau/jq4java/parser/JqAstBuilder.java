@@ -13,6 +13,8 @@ import com.dortegau.jq4java.ast.Comparison;
 import com.dortegau.jq4java.ast.Conditional;
 import com.dortegau.jq4java.ast.Expression;
 import com.dortegau.jq4java.ast.FieldAccess;
+import com.dortegau.jq4java.ast.FormatFunction;
+import com.dortegau.jq4java.ast.FromEntries;
 import com.dortegau.jq4java.ast.Identity;
 import com.dortegau.jq4java.ast.Keys;
 import com.dortegau.jq4java.ast.Length;
@@ -24,7 +26,6 @@ import com.dortegau.jq4java.ast.Or;
 import com.dortegau.jq4java.ast.Pipe;
 import com.dortegau.jq4java.ast.Range;
 import com.dortegau.jq4java.ast.Select;
-import com.dortegau.jq4java.ast.FromEntries;
 import com.dortegau.jq4java.ast.ToEntries;
 import com.dortegau.jq4java.ast.Type;
 import com.dortegau.jq4java.ast.UnaryMinus;
@@ -423,6 +424,12 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
   public Expression visitZeroArgFunction(JqGrammarParser.ZeroArgFunctionContext ctx) {
     String functionName = ctx.IDENTIFIER().getText();
     return new ZeroArgFunction(functionName);
+  }
+
+  @Override
+  public Expression visitFormatFunction(JqGrammarParser.FormatFunctionContext ctx) {
+    String formatName = ctx.IDENTIFIER().getText();
+    return new FormatFunction(formatName);
   }
 
   @Override

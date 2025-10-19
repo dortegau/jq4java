@@ -8,9 +8,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Base64Encode implements Expression {
-  static {
-    BuiltinRegistry.register("base64", 0);
-  }
 
   @Override
   public Stream<JqValue> evaluate(JqValue input) {

@@ -193,25 +193,25 @@ class JqTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-        "'base64' ; '\"hello\"' ; '\"aGVsbG8=\"'",
-        "'base64' ; '[104,101,108,108,111]' ; '\"aGVsbG8=\"'",
-        "'base64d' ; '\"aGVsbG8=\"' ; '\"hello\"'",
-        "'base64d' ; '\"4pyTIMOgIGxhIG1vZGU=\"' ; '\"✓ à la mode\"'"
+        "'@base64' ; '\"hello\"' ; '\"aGVsbG8=\"'",
+        "'@base64' ; '[104,101,108,108,111]' ; '\"aGVsbG8=\"'",
+        "'@base64d' ; '\"aGVsbG8=\"' ; '\"hello\"'",
+        "'@base64d' ; '\"4pyTIMOgIGxhIG1vZGU=\"' ; '\"✓ à la mode\"'"
     }, delimiter = ';')
-    void testBase64Functions(String program, String input, String expected) {
+    void testBase64FormatFilters(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
 
     @ParameterizedTest
     @CsvSource(value = {
-        "'urlencode' ; '\"hello world\"' ; '\"hello%20world\"'",
-        "'urlencode' ; '\"café\"' ; '\"caf%C3%A9\"'",
-        "'urlencode' ; '\"a+b?=c\"' ; '\"a%2Bb%3F%3Dc\"'",
-        "'urlencode' ; '\"\"' ; '\"\"'",
-        "'urldecode' ; '\"hello%20world\"' ; '\"hello world\"'",
-        "'urldecode' ; '\"caf%C3%A9\"' ; '\"café\"'",
-        "'urldecode' ; '\"a%2Bb%3F%3Dc\"' ; '\"a+b?=c\"'",
-        "'urldecode' ; '\"\"' ; '\"\"'"
+        "'@uri' ; '\"hello world\"' ; '\"hello%20world\"'",
+        "'@uri' ; '\"café\"' ; '\"caf%C3%A9\"'",
+        "'@uri' ; '\"a+b?=c\"' ; '\"a%2Bb%3F%3Dc\"'",
+        "'@uri' ; '\"\"' ; '\"\"'",
+        "'@urid' ; '\"hello%20world\"' ; '\"hello world\"'",
+        "'@urid' ; '\"caf%C3%A9\"' ; '\"café\"'",
+        "'@urid' ; '\"a%2Bb%3F%3Dc\"' ; '\"a+b?=c\"'",
+        "'@urid' ; '\"\"' ; '\"\"'"
     }, delimiter = ';')
     void testUrlEncodingFunctions(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));

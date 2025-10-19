@@ -6,16 +6,13 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
-public class UrlDecode implements Expression {
-  static {
-    BuiltinRegistry.register("urldecode", 0);
-  }
+public class UriDecode implements Expression {
 
   @Override
   public Stream<JqValue> evaluate(JqValue input) {
     if (!input.isString()) {
       throw new RuntimeException(
-          "Cannot url decode " + input.typeName() + " (" + input + ")");
+          "Cannot uri decode " + input.typeName() + " (" + input + ")");
     }
 
     try {
@@ -24,7 +21,7 @@ public class UrlDecode implements Expression {
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid percent-encoded string: " + input, e);
     } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException("Failed to url decode string", e);
+      throw new RuntimeException("Failed to uri decode string", e);
     }
   }
 }
