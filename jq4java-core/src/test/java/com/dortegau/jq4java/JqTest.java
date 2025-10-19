@@ -191,6 +191,21 @@ class JqTest {
 
     @ParameterizedTest
     @CsvSource(value = {
+        "'urlencode' ; '\"hello world\"' ; '\"hello%20world\"'",
+        "'urlencode' ; '\"café\"' ; '\"caf%C3%A9\"'",
+        "'urlencode' ; '\"a+b?=c\"' ; '\"a%2Bb%3F%3Dc\"'",
+        "'urlencode' ; '\"\"' ; '\"\"'",
+        "'urldecode' ; '\"hello%20world\"' ; '\"hello world\"'",
+        "'urldecode' ; '\"caf%C3%A9\"' ; '\"café\"'",
+        "'urldecode' ; '\"a%2Bb%3F%3Dc\"' ; '\"a+b?=c\"'",
+        "'urldecode' ; '\"\"' ; '\"\"'"
+    }, delimiter = ';')
+    void testUrlEncodingFunctions(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
         "'.users[1:] | .[].email' ; '{\"users\":[{\"name\":\"Alice\",\"email\":\"alice@example.com\"},{\"name\":\"Bob\",\"email\":\"bob@example.com\"},{\"name\":\"Charlie\",\"email\":\"charlie@example.com\"}]}' ; '\"bob@example.com\"\n\"charlie@example.com\"'",
         "'.products[-1].name' ; '{\"products\":[{\"name\":\"Laptop\",\"price\":999},{\"name\":\"Mouse\",\"price\":25}]}' ; '\"Mouse\"'",
         "'.items[0:2] | .[].data.value' ; '{\"items\":[{\"data\":{\"value\":10}},{\"data\":{\"value\":20}},{\"data\":{\"value\":30}}]}' ; '10\n20'",

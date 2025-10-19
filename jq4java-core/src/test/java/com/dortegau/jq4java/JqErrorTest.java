@@ -189,6 +189,27 @@ class JqErrorTest {
   }
 
   @Test
+  void testUrlencodeOnNonString() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("urlencode", "42"));
+    assertTrue(ex.getMessage().contains("Cannot url encode number"));
+  }
+
+  @Test
+  void testUrldecodeOnNonString() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("urldecode", "42"));
+    assertTrue(ex.getMessage().contains("Cannot url decode number"));
+  }
+
+  @Test
+  void testUrldecodeWithInvalidPercentSequence() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("urldecode", "\"%ZZ\""));
+    assertTrue(ex.getMessage().contains("Invalid percent-encoded string"));
+  }
+
+  @Test
   void testMapOnNonArray() {
     RuntimeException ex = assertThrows(RuntimeException.class,
         () -> Jq.execute("5 | map(. * 2)", "null"));
