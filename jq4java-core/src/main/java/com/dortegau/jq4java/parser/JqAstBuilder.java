@@ -7,17 +7,13 @@ import com.dortegau.jq4java.ast.ArrayConstruction;
 import com.dortegau.jq4java.ast.ArrayIndexing;
 import com.dortegau.jq4java.ast.ArrayIteration;
 import com.dortegau.jq4java.ast.ArraySlicing;
-import com.dortegau.jq4java.ast.Builtins;
 import com.dortegau.jq4java.ast.Comma;
 import com.dortegau.jq4java.ast.Comparison;
 import com.dortegau.jq4java.ast.Conditional;
 import com.dortegau.jq4java.ast.Expression;
 import com.dortegau.jq4java.ast.FieldAccess;
 import com.dortegau.jq4java.ast.FormatFunction;
-import com.dortegau.jq4java.ast.FromEntries;
 import com.dortegau.jq4java.ast.Identity;
-import com.dortegau.jq4java.ast.Keys;
-import com.dortegau.jq4java.ast.Length;
 import com.dortegau.jq4java.ast.Literal;
 import com.dortegau.jq4java.ast.MapFunction;
 import com.dortegau.jq4java.ast.Not;
@@ -26,8 +22,6 @@ import com.dortegau.jq4java.ast.Or;
 import com.dortegau.jq4java.ast.Pipe;
 import com.dortegau.jq4java.ast.Range;
 import com.dortegau.jq4java.ast.Select;
-import com.dortegau.jq4java.ast.ToEntries;
-import com.dortegau.jq4java.ast.Type;
 import com.dortegau.jq4java.ast.UnaryMinus;
 import com.dortegau.jq4java.ast.WithEntries;
 import com.dortegau.jq4java.ast.ZeroArgFunction;
@@ -334,58 +328,13 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
     return new Literal(ctx.STRING().getText());
   }
 
-  @Override
-  public Expression visitLengthExpr(JqGrammarParser.LengthExprContext ctx) {
-    return new Length();
-  }
-
-  @Override
-  public Expression visitBuiltinsExpr(JqGrammarParser.BuiltinsExprContext ctx) {
-    return new Builtins();
-  }
 
   @Override
   public Expression visitNotExpr(JqGrammarParser.NotExprContext ctx) {
     return new Not();
   }
 
-  @Override
-  public Expression visitKeysExpr(JqGrammarParser.KeysExprContext ctx) {
-    return new Keys();
-  }
 
-  @Override
-  public Expression visitTypeExpr(JqGrammarParser.TypeExprContext ctx) {
-    return new Type();
-  }
-
-  @Override
-  public Expression visitRangeNoArgsExpr(JqGrammarParser.RangeNoArgsExprContext ctx) {
-    // Range without arguments should throw an error
-    throw new RuntimeException("range/0 is not defined");
-  }
-
-  @Override
-  public Expression visitRangeCall(JqGrammarParser.RangeCallContext ctx) {
-    List<Expression> arguments = new ArrayList<>();
-
-    // Collect all arguments (first one plus any after semicolons)
-    for (JqGrammarParser.ExpressionContext exprCtx : ctx.expression()) {
-      arguments.add(visit(exprCtx));
-    }
-
-    return new Range(arguments);
-  }
-
-  @Override
-  public Expression visitToEntriesExpr(JqGrammarParser.ToEntriesExprContext ctx) {
-    return new ToEntries();
-  }
-
-  @Override
-  public Expression visitFromEntriesExpr(JqGrammarParser.FromEntriesExprContext ctx) {
-    return new FromEntries();
-  }
 
   @Override
   public Expression visitFunctionCall(JqGrammarParser.FunctionCallContext ctx) {

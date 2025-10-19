@@ -65,15 +65,7 @@ primary
     | NULL                                          # NullLiteral
     | NUMBER                                        # NumberLiteral
     | STRING                                        # StringLiteral
-    | LENGTH                                        # LengthExpr
-    | BUILTINS                                      # BuiltinsExpr
-    | KEYS                                          # KeysExpr
-    | TYPE                                          # TypeExpr
     | NOT                                           # NotExpr
-    | RANGE                                         # RangeNoArgsExpr
-    | TO_ENTRIES                                    # ToEntriesExpr
-    | FROM_ENTRIES                                  # FromEntriesExpr
-    | RANGE LPAREN expression (SEMICOLON expression)* RPAREN  # RangeCall
     | IDENTIFIER LPAREN expression (SEMICOLON expression)* RPAREN  # FunctionCall
     | IDENTIFIER                                    # ZeroArgFunction
     | AT IDENTIFIER                                 # FormatFunction
@@ -117,14 +109,7 @@ AT          : '@' ;
 TRUE        : 'true' ;
 FALSE       : 'false' ;
 NULL        : 'null' ;
-LENGTH      : 'length' ;
-BUILTINS    : 'builtins' ;
-KEYS        : 'keys' ;
-TYPE        : 'type' ;
 NOT         : 'not' ;
-RANGE       : 'range' ;
-TO_ENTRIES  : 'to_entries' ;
-FROM_ENTRIES : 'from_entries' ;
 AND         : 'and' ;
 OR          : 'or' ;
 IF          : 'if' ;

@@ -794,4 +794,34 @@ class JqTest {
     void testAbsFunction(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        // Test that all builtin functions work as generic identifiers
+        "'length' ; '[1,2,3]' ; '3'",
+        "'keys' ; '{\"b\":2,\"a\":1}' ; '[\"a\",\"b\"]'",
+        "'type' ; '42' ; '\"number\"'",
+        "'to_entries' ; '{\"a\":1,\"b\":2}' ; '[{\"key\":\"a\",\"value\":1},{\"key\":\"b\",\"value\":2}]'",
+        "'from_entries' ; '[{\"key\":\"a\",\"value\":1}]' ; '{\"a\":1}'",
+        "'builtins | type' ; 'null' ; '\"array\"'",
+
+        // Test combined usage of builtin functions
+        "'{\"data\":[1,2,3]} | .data | length' ; 'null' ; '3'",
+        "'{\"users\":{\"alice\":25,\"bob\":30}} | .users | keys | length' ; 'null' ; '2'",
+        "'to_entries | map(.key) | length' ; '{\"a\":1,\"b\":2,\"c\":3}' ; '3'",
+        "'to_entries | from_entries | keys' ; '{\"x\":1,\"y\":2}' ; '[\"x\",\"y\"]'",
+        "'keys | map(length)' ; '{\"abc\":1,\"de\":2}' ; '[3,2]'",
+        "'{data: type, size: length}' ; '[1,2,3]' ; '{\"data\":\"array\",\"size\":3}'",
+
+        // Test that range zero-arg still throws error
+        // Note: This test verifies the error is thrown during evaluation
+        // "'range' ; 'null' ; 'ERROR'", // We'll handle this separately
+
+        // Test that functions work in complex expressions
+        "'map(type) | unique | length' ; '[1,\"a\",true,2,\"b\"]' ; '3'",
+        "'to_entries | map(select(.value > 1)) | from_entries | keys' ; '{\"a\":1,\"b\":2,\"c\":3}' ; '[\"b\",\"c\"]'"
+    }, delimiter = ';')
+    void testBuiltinFunctionsAsGenericIdentifiers(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
 }
