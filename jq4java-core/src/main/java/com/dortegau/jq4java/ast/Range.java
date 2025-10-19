@@ -10,12 +10,13 @@ import java.util.stream.Stream;
  * AST node representing the range function for sequence generation.
  */
 public class Range implements Expression {
+  private static final String FUNCTION_NAME = "range";
   private final List<Expression> arguments;
 
   static {
-    BuiltinRegistry.register("range", 1);
-    BuiltinRegistry.register("range", 2);
-    BuiltinRegistry.register("range", 3);
+    BuiltinRegistry.register(FUNCTION_NAME, 1);
+    BuiltinRegistry.register(FUNCTION_NAME, 2);
+    BuiltinRegistry.register(FUNCTION_NAME, 3);
   }
 
   public Range(List<Expression> arguments) {
@@ -25,18 +26,18 @@ public class Range implements Expression {
   @Override
   public Stream<JqValue> evaluate(JqValue input) {
     if (arguments.size() < 1 || arguments.size() > 3) {
-      throw new RuntimeException("range/" + arguments.size() + " is not defined");
+      throw new RuntimeException(FUNCTION_NAME + "/" + arguments.size() + " is not defined");
     }
 
     List<JqValue> args = new ArrayList<>();
     for (Expression arg : arguments) {
       List<JqValue> values = arg.evaluate(input).collect(Collectors.toList());
       if (values.size() != 1) {
-        throw new RuntimeException("range arguments must produce exactly one value");
+        throw new RuntimeException(FUNCTION_NAME + " arguments must produce exactly one value");
       }
       JqValue value = values.get(0);
       if (!value.isNumber()) {
-        throw new RuntimeException("range argument must be a number");
+        throw new RuntimeException(FUNCTION_NAME + " argument must be a number");
       }
       args.add(value);
     }
@@ -76,7 +77,7 @@ public class Range implements Expression {
       double step = args.get(2).asNumber();
 
       if (step == 0) {
-        throw new RuntimeException("range step cannot be zero");
+        throw new RuntimeException(FUNCTION_NAME + " step cannot be zero");
       }
 
       if (step > 0) {
