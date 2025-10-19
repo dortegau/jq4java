@@ -55,6 +55,13 @@ class JqErrorTest {
   }
 
   @Test
+  void testRecursiveDescentFollowedByIdentifierFails() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("..foo", "{}"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
   void testObjectKeyWithoutValue() {
     RuntimeException ex = assertThrows(RuntimeException.class,
         () -> Jq.execute("{\"key\":}", "{}"));

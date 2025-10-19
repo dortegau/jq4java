@@ -204,6 +204,17 @@ class JqTest {
 
     @ParameterizedTest
     @CsvSource(value = {
+        "'..' ; '42' ; '42'",
+        "'..' ; '[1,[2]]' ; '[1,[2]]\\n1\\n[2]\\n2'",
+        "'..' ; '{\"a\":1,\"b\":{\"c\":2}}' ; '{\"a\":1,\"b\":{\"c\":2}}\\n1\\n{\"c\":2}\\n2'",
+        "'recurse' ; '[1,[2]]' ; '[1,[2]]\\n1\\n[2]\\n2'"
+    }, delimiter = ';')
+    void testRecursiveDescent(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
         "'urlencode' ; '\"hello world\"' ; '\"hello%20world\"'",
         "'urlencode' ; '\"café\"' ; '\"caf%C3%A9\"'",
         "'urlencode' ; '\"a+b?=c\"' ; '\"a%2Bb%3F%3Dc\"'",

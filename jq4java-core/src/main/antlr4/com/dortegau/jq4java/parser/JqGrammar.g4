@@ -59,7 +59,8 @@ slice
     ;
 
 primary
-    : DOT                                           # IdentityExpr
+    : DOT DOT                                      # RecursiveDescentExpr
+    | DOT                                           # IdentityExpr
     | TRUE                                          # TrueLiteral
     | FALSE                                         # FalseLiteral
     | NULL                                          # NullLiteral

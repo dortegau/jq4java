@@ -23,6 +23,7 @@ import com.dortegau.jq4java.ast.ObjectConstruction;
 import com.dortegau.jq4java.ast.Or;
 import com.dortegau.jq4java.ast.Pipe;
 import com.dortegau.jq4java.ast.Range;
+import com.dortegau.jq4java.ast.RecursiveDescent;
 import com.dortegau.jq4java.ast.Select;
 import com.dortegau.jq4java.ast.FromEntries;
 import com.dortegau.jq4java.ast.ToEntries;
@@ -301,6 +302,11 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
   @Override
   public Expression visitPrimaryExpr(JqGrammarParser.PrimaryExprContext ctx) {
     return visit(ctx.primary());
+  }
+
+  @Override
+  public Expression visitRecursiveDescentExpr(JqGrammarParser.RecursiveDescentExprContext ctx) {
+    return new RecursiveDescent();
   }
 
   @Override
