@@ -203,6 +203,34 @@ class JqErrorTest {
   }
 
   @Test
+  void testCsvFormatOnNonArray() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("@csv", "\"hello\""));
+    assertTrue(ex.getMessage().contains("Cannot csv format string"));
+  }
+
+  @Test
+  void testCsvFormatNestedArray() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("@csv", "[1,[2]]"));
+    assertTrue(ex.getMessage().contains("Cannot csv format nested array values"));
+  }
+
+  @Test
+  void testTsvFormatOnObject() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("@tsv", "{\"a\":1}"));
+    assertTrue(ex.getMessage().contains("Cannot tsv format object"));
+  }
+
+  @Test
+  void testShellFormatOnObject() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("@sh", "{\"a\":1}"));
+    assertTrue(ex.getMessage().contains("Cannot shell format object"));
+  }
+
+  @Test
   void testUrldecodeWithInvalidPercentSequence() {
     RuntimeException ex = assertThrows(RuntimeException.class,
         () -> Jq.execute("@urid", "\"%ZZ\""));

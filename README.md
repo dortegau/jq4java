@@ -56,7 +56,7 @@ A Java 8+ port of [jq](https://jqlang.github.io/jq/), the lightweight command-li
 - Logical operators: `and`, `or`, `not`
 - Conditional expressions: `if-then-else-end`, `if-then-elif-then-else-end`, `if-then-end` (optional else)
 - Built-in functions: `length`, `keys`, `type`, `map(expr)`, `select(expr)`, `builtins`, `flatten`, `add`, `abs`, `sort`, `reverse`, `unique`, `transpose`, `range(n)`, `range(from; to)`, `range(from; to; step)`, `to_entries`, `from_entries`, `with_entries(expr)`
-- Format filters: `@base64`, `@base64d`, `@uri`, `@urid`
+- Format filters: `@text`, `@json`, `@html`, `@csv`, `@tsv`, `@sh`, `@base64`, `@base64d`, `@uri`, `@urid`
 
 ## Usage
 
@@ -96,6 +96,16 @@ String result = Jq.execute("@uri", "\"μ\"");
 
 String result = Jq.execute("@urid", "\"%CE%BC\"");
 // result: "\"μ\""
+
+// Additional format filters for structured text output
+String result = Jq.execute("@text", "{\"greeting\":\"hello\"}");
+// result: "\"{\"\\\"greeting\\\":\"hello\"}\""
+
+String result = Jq.execute("@csv", "[\"a\",\"b, c\"]");
+// result: "\"a,\"\"b, c\"\"\""
+
+String result = Jq.execute("@sh", "[\"foo\",\"bar baz\"]");
+// result: "\"'foo' 'bar baz'\""
 
 // Note: Like jq, the bare names `base64`/`base64d` and `uri`/`urid` are not valid functions.
 

@@ -47,7 +47,6 @@ The runner provides detailed analysis of failing tests:
 Based on executed tests, the following features need implementation in jq4java:
 
 ### ⚠️ **Critical** (affect many tests)
-- **String formatting**: `@base64`, `@html`, `@uri`, `@csv`, etc.
 - **String interpolation**: `"text \(expression) more"`
 - **Try/catch**: `try expression catch handler`
 - **Optional operators**: `.foo?`, `[]?`

@@ -30,6 +30,18 @@ public class FormatFunction implements Expression {
         return new UriEncode().evaluate(input);
       case "urid":
         return new UriDecode().evaluate(input);
+      case "text":
+        return new TextFormat().evaluate(input);
+      case "json":
+        return new JsonFormat().evaluate(input);
+      case "html":
+        return new HtmlFormat().evaluate(input);
+      case "csv":
+        return new CsvFormat().evaluate(input);
+      case "tsv":
+        return new TsvFormat().evaluate(input);
+      case "sh":
+        return new ShellFormat().evaluate(input);
       default:
         throw new RuntimeException("Unknown format: @" + formatName);
     }
