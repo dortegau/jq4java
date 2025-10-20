@@ -40,6 +40,7 @@ A Java 8+ port of [jq](https://jqlang.github.io/jq/), the lightweight command-li
 ## Implemented
 
 - Literals: `true`, `false`, `null`, numbers, strings (`"hello"`)
+- String interpolation: `"Hello, \(.name)!"`
 - Identity: `.`
 - Field access: `.foo`, `.foo.bar`, `."my-key"`, `.["foo"]`
 - Pipe: `|`
@@ -81,6 +82,11 @@ String result = Jq.execute("if .score >= 90 then \"A\" elif .score >= 80 then \"
 
 String result = Jq.execute("if .active then \"enabled\" else \"disabled\" end", "{\"active\": true}");
 // result: "\"enabled\""
+
+// Interpolated strings mix plain text with filter results
+String greeting = "\"Hello, \(.name)!\"";
+String result = Jq.execute(greeting, "{\"name\": \"Ada\"}");
+// result: "\"Hello, Ada!\""
 
 // Format filters for base64 encoding/decoding
 String result = Jq.execute("@base64", "\"hello\"");

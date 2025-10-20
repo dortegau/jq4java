@@ -27,6 +27,34 @@ class JqTest {
     }
 
     @ParameterizedTest
+    @MethodSource("stringInterpolationCases")
+    void testStringInterpolation(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    private static Stream<Arguments> stringInterpolationCases() {
+        return Stream.of(
+            Arguments.of("\"Hello \\(.name)!\"", "{\"name\":\"World\"}", "\"Hello World!\""),
+            Arguments.of("\"Value: \\(42)\"", "null", "\"Value: 42\""),
+            Arguments.of(
+                "\"\\(.[])\\(.[])\"",
+                "[1,2]",
+                String.join("\n", "\"11\"", "\"12\"", "\"21\"", "\"22\"")
+            ),
+            Arguments.of("\"Array: \\([1,2,3])\"", "null", "\"Array: [1,2,3]\""),
+            Arguments.of("\"\\\\(\"", "null", "\"\\\\(\""),
+            Arguments.of("\"Line1\\n\\(.value)\\tend\"", "{\"value\":2}", "\"Line1\\n2\\tend\""),
+            Arguments.of("\"Quote: \\(.value)\"", "{\"value\":\"a\\\"b\"}", "\"Quote: a\\\"b\""),
+            Arguments.of("\"Status: \\(.value)\"", "{\"value\":null}", "\"Status: null\""),
+            Arguments.of("\"Boolean: \\(.flag)\"", "{\"flag\":true}", "\"Boolean: true\""),
+            Arguments.of("\"Obj: \\(.value)\"", "{\"value\":{\"x\":1}}", "\"Obj: {\\\"x\\\":1}\""),
+            Arguments.of("\"Unicode \\u0048ello \\(.value)\"", "{\"value\":\"世界\"}", "\"Unicode Hello 世界\""),
+            Arguments.of("\"Escape \\\\(literal) and value \\(.value)\"", "{\"value\":5}", "\"Escape \\\\(literal) and value 5\""),
+            Arguments.of("\"Nested: \\((.a + (.b)))\"", "{\"a\":1,\"b\":2}", "\"Nested: 3\"")
+        );
+    }
+
+    @ParameterizedTest
     @CsvSource({
         "., 42, 42",
         "., true, true",
