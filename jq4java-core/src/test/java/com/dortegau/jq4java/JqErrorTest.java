@@ -52,6 +52,34 @@ class JqErrorTest {
   }
 
   @Test
+  void testStringInterpolationMissingClosingParen() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("\"Value \\(.\"", "null"));
+    assertTrue(ex.getMessage().contains("Unterminated interpolation expression"));
+  }
+
+  @Test
+  void testStringInterpolationEmptyExpression() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("\"\\()\"", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testStringInterpolationInvalidExpression() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("\"Broken \\(if)\"", "null"));
+    assertTrue(ex.getMessage().contains("Parse error"));
+  }
+
+  @Test
+  void testStringInterpolationParserErrorInside() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("\"Broken \\(()\"", "null"));
+    assertTrue(ex.getMessage().contains("Unterminated interpolation expression"));
+  }
+
+  @Test
   void testStringWithoutQuotesInBracket() {
     RuntimeException ex = assertThrows(RuntimeException.class,
         () -> Jq.execute(".[foo]", "{}"));

@@ -14,6 +14,7 @@ import com.dortegau.jq4java.ast.Expression;
 import com.dortegau.jq4java.ast.FieldAccess;
 import com.dortegau.jq4java.ast.FormatFunction;
 import com.dortegau.jq4java.ast.Identity;
+import com.dortegau.jq4java.ast.InterpolatedString;
 import com.dortegau.jq4java.ast.Literal;
 import com.dortegau.jq4java.ast.MapFunction;
 import com.dortegau.jq4java.ast.Not;
@@ -25,6 +26,7 @@ import com.dortegau.jq4java.ast.Select;
 import com.dortegau.jq4java.ast.UnaryMinus;
 import com.dortegau.jq4java.ast.WithEntries;
 import com.dortegau.jq4java.ast.ZeroArgFunction;
+import com.dortegau.jq4java.json.JqValue;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -233,7 +235,7 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
   }
 
   private String unquoteString(String quoted) {
-    return quoted.substring(1, quoted.length() - 1);
+    return JqValue.literal(quoted).asString();
   }
 
   @Override
@@ -325,7 +327,125 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
 
   @Override
   public Expression visitStringLiteral(JqGrammarParser.StringLiteralContext ctx) {
-    return new Literal(ctx.STRING().getText());
+    String raw = ctx.STRING().getText();
+    InterpolatedParts parts = parseInterpolatedString(raw);
+    if (!parts.hasInterpolation()) {
+      return new Literal(raw);
+    }
+    return new InterpolatedString(parts.literalParts(), parts.expressions());
+  }
+
+  private static class InterpolatedParts {
+    private final List<String> literalParts;
+    private final List<Expression> expressions;
+
+    InterpolatedParts(List<String> literalParts, List<Expression> expressions) {
+      this.literalParts = literalParts;
+      this.expressions = expressions;
+    }
+
+    boolean hasInterpolation() {
+      return !expressions.isEmpty();
+    }
+
+    List<String> literalParts() {
+      return literalParts;
+    }
+
+    List<Expression> expressions() {
+      return expressions;
+    }
+  }
+
+  private InterpolatedParts parseInterpolatedString(String raw) {
+    List<String> literalParts = new ArrayList<>();
+    List<Expression> expressions = new ArrayList<>();
+    StringBuilder current = new StringBuilder();
+
+    int length = raw.length();
+    for (int i = 1; i < length - 1; i++) {
+      char ch = raw.charAt(i);
+      if (ch == '\\') {
+        if (i + 1 >= length - 1) {
+          throw new RuntimeException("Unterminated escape sequence in string literal");
+        }
+        char next = raw.charAt(i + 1);
+        if (next == '(') {
+          literalParts.add(current.toString());
+          current.setLength(0);
+          int exprStart = i + 2;
+          int exprEnd = findInterpolationEnd(raw, exprStart);
+          String expressionSource = raw.substring(exprStart, exprEnd);
+          expressions.add(JqParser.parse(expressionSource));
+          i = exprEnd;
+        } else {
+          current.append(decodeEscapeSequence(raw, i + 1));
+          i += next == 'u' ? 5 : 1; // skip processed escape characters
+        }
+      } else {
+        current.append(ch);
+      }
+    }
+
+    literalParts.add(current.toString());
+    return new InterpolatedParts(literalParts, expressions);
+  }
+
+  private String decodeEscapeSequence(String raw, int escapeStart) {
+    char escapeType = raw.charAt(escapeStart);
+    switch (escapeType) {
+      case '"':
+        return "\"";
+      case '\\':
+        return "\\";
+      case '/':
+        return "/";
+      case 'b':
+        return "\b";
+      case 'f':
+        return "\f";
+      case 'n':
+        return "\n";
+      case 'r':
+        return "\r";
+      case 't':
+        return "\t";
+      case 'u':
+        if (escapeStart + 4 >= raw.length()) {
+          throw new RuntimeException("Invalid unicode escape in string literal");
+        }
+        int codePoint = Integer.parseInt(raw.substring(escapeStart + 1, escapeStart + 5), 16);
+        return new String(Character.toChars(codePoint));
+      default:
+        return String.valueOf(escapeType);
+    }
+  }
+
+  private int findInterpolationEnd(String raw, int startIndex) {
+    int depth = 1;
+    boolean inString = false;
+    for (int i = startIndex; i < raw.length() - 1; i++) {
+      char ch = raw.charAt(i);
+      if (inString) {
+        if (ch == '\\') {
+          i++;
+        } else if (ch == '"') {
+          inString = false;
+        }
+      } else {
+        if (ch == '"') {
+          inString = true;
+        } else if (ch == '(') {
+          depth++;
+        } else if (ch == ')') {
+          depth--;
+          if (depth == 0) {
+            return i;
+          }
+        }
+      }
+    }
+    throw new RuntimeException("Unterminated interpolation expression in string literal");
   }
 
 
