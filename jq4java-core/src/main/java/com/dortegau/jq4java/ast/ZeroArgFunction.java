@@ -45,6 +45,8 @@ public class ZeroArgFunction implements Expression {
         return new FromJson().evaluate(input);
       case "length":
         return new Length().evaluate(input);
+      case "utf8bytelength":
+        return new Utf8ByteLength().evaluate(input);
       case "keys":
         return new Keys().evaluate(input);
       case "type":

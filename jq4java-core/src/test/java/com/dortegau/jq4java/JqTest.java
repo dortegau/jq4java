@@ -3,6 +3,8 @@ package com.dortegau.jq4java;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
@@ -122,6 +124,24 @@ class JqTest {
     })
     void testArrayIteration(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "'\"hello\"', '5'",
+        "'\"\\u03bc\"', '2'",
+        "'\"\\uD83D\\uDE00\"', '4'",
+        "'\"\"', '0'"
+    })
+    void testUtf8ByteLength(String input, String expected) {
+        assertEquals(expected, Jq.execute("utf8bytelength", input));
+    }
+
+    @Test
+    void testUtf8ByteLengthErrorsForNonStrings() {
+        RuntimeException ex =
+            assertThrows(RuntimeException.class, () -> Jq.execute("utf8bytelength", "1"));
+        assertTrue(ex.getMessage().contains("only strings have UTF-8 byte length"));
     }
 
     @ParameterizedTest
