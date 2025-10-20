@@ -39,24 +39,38 @@ A Java 8+ port of [jq](https://jqlang.github.io/jq/), the lightweight command-li
 
 ## Implemented
 
-- Literals: `true`, `false`, `null`, numbers, strings (`"hello"`)
-- String interpolation: `"Hello, \(.name)!"`
-- Identity: `.`
-- Field access: `.foo`, `.foo.bar`, `."my-key"`, `.["foo"]`
-- Pipe: `|`
-- Array iteration: `.[]`
-- Array indexing: `.[0]`, `.[-1]`
-- Array slicing: `.[1:3]`, `.[:2]`, `.[2:]`
+### Array operations
+
 - Array construction: `[.a, .b]`
+- Array indexing: `.[0]`, `.[-1]`
+- Array iteration: `.[]`
+- Array slicing: `.[1:3]`, `.[:2]`, `.[2:]`
+
+### Basic syntax
+
+- Field access: `.foo`, `.foo.bar`, `."my-key"`, `.["foo"]`
+- Identity: `.`
+- Literals: `true`, `false`, `null`, numbers, strings (`"hello"`)
+- Pipe: `|`
+- String interpolation: `"Hello, \(.name)!"`
+
+### Functions and filters
+
+- Built-in functions: `abs`, `add`, `builtins`, `flatten`, `from_entries`, `fromjson`, `in(object_or_array)`, `keys`, `length`, `map(expr)`, `map_values(expr)`, `range(from; to)`, `range(from; to; step)`, `range(n)`, `reverse`, `select(expr)`, `sort`, `to_entries`, `tojson`, `transpose`, `type`, `unique`, `utf8bytelength`, `with_entries(expr)`
+- Format filters: `@base64`, `@base64d`, `@csv`, `@html`, `@json`, `@sh`, `@text`, `@tsv`, `@uri`, `@urid`
+
+### Object operations
+
 - Object construction: `{a: .x, b: .y}`, `{"my-key": .value}`, `{a, b}` (shorthand)
-- Comma operator: `.a, .b` (multiple outputs)
+
+### Operators
+
 - Alternative operator: `.foo // "default"` (null/false coalescing)
-- Comparison operators: `==`, `!=`, `<`, `<=`, `>`, `>=`
 - Arithmetic operators: `+`, `-`, `*`, `/`, `%` (also string/array concatenation with `+`)
-- Logical operators: `and`, `or`, `not`
+- Comma operator: `.a, .b` (multiple outputs)
+- Comparison operators: `==`, `!=`, `<`, `<=`, `>`, `>=`
 - Conditional expressions: `if-then-else-end`, `if-then-elif-then-else-end`, `if-then-end` (optional else)
-- Built-in functions: `length`, `utf8bytelength`, `keys`, `in(object_or_array)`, `type`, `map(expr)`, `map_values(expr)`, `select(expr)`, `builtins`, `flatten`, `add`, `abs`, `sort`, `reverse`, `unique`, `transpose`, `range(n)`, `range(from; to)`, `range(from; to; step)`, `to_entries`, `from_entries`, `tojson`, `fromjson`, `with_entries(expr)`
-- Format filters: `@text`, `@json`, `@html`, `@csv`, `@tsv`, `@sh`, `@base64`, `@base64d`, `@uri`, `@urid`
+- Logical operators: `and`, `or`, `not`
 
 ## Usage
 
