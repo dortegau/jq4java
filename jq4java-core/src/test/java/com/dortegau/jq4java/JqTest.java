@@ -616,6 +616,20 @@ class JqTest {
     }
 
     @ParameterizedTest
+    @CsvSource(value = {
+        "'map_values(. + 1)' ; '[1,2,3]' ; '[2,3,4]'",
+        "'map_values(., .)' ; '[1,2]' ; '[1,2]'",
+        "'map_values(select(. > 1))' ; '[1,2,3]' ; '[2,3]'",
+        "'map_values(select(. > 10))' ; '[1,2]' ; '[]'",
+        "'map_values(. + 1)' ; '{\"a\":1,\"b\":2}' ; '{\"a\":2,\"b\":3}'",
+        "'map_values(select(. > 1))' ; '{\"a\":1,\"b\":2,\"c\":3}' ; '{\"b\":2,\"c\":3}'",
+        "'map_values(select(. > 10))' ; '{\"a\":1,\"b\":2}' ; '{}'"
+    }, delimiter = ';')
+    void testMapValues(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
     @CsvSource({
         "'. | type', 'null', '\"null\"'",
         "'5 | type', '{}', '\"number\"'",

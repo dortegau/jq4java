@@ -18,6 +18,7 @@ import com.dortegau.jq4java.ast.In;
 import com.dortegau.jq4java.ast.InterpolatedString;
 import com.dortegau.jq4java.ast.Literal;
 import com.dortegau.jq4java.ast.MapFunction;
+import com.dortegau.jq4java.ast.MapValuesFunction;
 import com.dortegau.jq4java.ast.Not;
 import com.dortegau.jq4java.ast.ObjectConstruction;
 import com.dortegau.jq4java.ast.Or;
@@ -473,6 +474,11 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
           throw new RuntimeException("map/" + arguments.size() + " is not defined");
         }
         return new MapFunction(arguments.get(0));
+      case "map_values":
+        if (arguments.size() != 1) {
+          throw new RuntimeException("map_values/" + arguments.size() + " is not defined");
+        }
+        return new MapValuesFunction(arguments.get(0));
       case "with_entries":
         if (arguments.size() != 1) {
           throw new RuntimeException("with_entries/" + arguments.size() + " is not defined");
