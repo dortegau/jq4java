@@ -90,6 +90,43 @@ public class OrgJsonValue implements JqValue {
   }
 
   @Override
+  public JqValue set(String key, JqValue newValue) {
+    if (!(newValue instanceof OrgJsonValue)) {
+      throw new IllegalArgumentException("Cannot assign non-OrgJsonValue");
+    }
+
+    if (value instanceof JSONObject) {
+      JSONObject copy = copyJsonObject((JSONObject) value);
+      copy.put(key, ((OrgJsonValue) newValue).value);
+      return new OrgJsonValue(copy);
+    }
+
+    String type = typeName();
+    throw new RuntimeException(type + " (" + this + ") cannot have key '" + key + "'");
+  }
+
+  @Override
+  public JqValue set(int index, JqValue newValue) {
+    if (!(newValue instanceof OrgJsonValue)) {
+      throw new IllegalArgumentException("Cannot assign non-OrgJsonValue");
+    }
+
+    if (value instanceof JSONArray) {
+      JSONArray arr = (JSONArray) value;
+      int actualIndex = index < 0 ? arr.length() + index : index;
+      if (actualIndex < 0 || actualIndex >= arr.length()) {
+        throw new RuntimeException("Index " + index + " is out of bounds");
+      }
+      JSONArray copy = copyJsonArray(arr);
+      copy.put(actualIndex, ((OrgJsonValue) newValue).value);
+      return new OrgJsonValue(copy);
+    }
+
+    String type = typeName();
+    throw new RuntimeException(type + " (" + this + ") cannot be indexed with '" + index + "'");
+  }
+
+  @Override
   public Stream<JqValue> stream() {
     if (value instanceof JSONArray) {
       JSONArray arr = (JSONArray) value;
@@ -203,6 +240,22 @@ public class OrgJsonValue implements JqValue {
     return sb.toString();
   }
 
+  private static JSONObject copyJsonObject(JSONObject source) {
+    Map<String, Object> ordered = new java.util.LinkedHashMap<>();
+    for (String key : source.keySet()) {
+      ordered.put(key, source.get(key));
+    }
+    return new OrderedJsonObject(ordered);
+  }
+
+  private static JSONArray copyJsonArray(JSONArray source) {
+    JSONArray copy = new JSONArray();
+    for (int i = 0; i < source.length(); i++) {
+      copy.put(source.get(i));
+    }
+    return copy;
+  }
+
   public static JqValue nullValue() {
     return NULL;
   }
@@ -302,6 +355,12 @@ public class OrgJsonValue implements JqValue {
       }
       sb.append("}");
       return sb.toString();
+    }
+
+    @Override
+    public JSONObject put(String key, Object value) {
+      orderedMap.put(key, value);
+      return super.put(key, value);
     }
   }
 

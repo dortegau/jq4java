@@ -11,7 +11,20 @@ expression
     ;
 
 commaExpr
-    : alternativeExpr (COMMA alternativeExpr)*
+    : updateExpr (COMMA updateExpr)*
+    ;
+
+updateExpr
+    : alternativeExpr (updateOp alternativeExpr)?
+    ;
+
+updateOp
+    : PLUS_ASSIGN
+    | MINUS_ASSIGN
+    | MULT_ASSIGN
+    | DIV_ASSIGN
+    | MOD_ASSIGN
+    | ALT_ASSIGN
     ;
 
 alternativeExpr
@@ -89,6 +102,12 @@ SEMICOLON   : ';' ;
 ALT         : '//' ;
 PLUS        : '+' ;
 MINUS       : '-' ;
+PLUS_ASSIGN : '+=' ;
+MINUS_ASSIGN: '-=' ;
+MULT_ASSIGN : '*=' ;
+DIV_ASSIGN  : '/=' ;
+MOD_ASSIGN  : '%=' ;
+ALT_ASSIGN  : '//=' ;
 MULT        : '*' ;
 DIV         : '/' ;
 MOD         : '%' ;
