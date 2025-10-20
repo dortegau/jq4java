@@ -46,6 +46,8 @@ public interface JqValue extends Comparable<JqValue> {
 
   JqValue length();
 
+  JqValue utf8ByteLength();
+
   JqValue add(JqValue other);
 
   JqValue add();

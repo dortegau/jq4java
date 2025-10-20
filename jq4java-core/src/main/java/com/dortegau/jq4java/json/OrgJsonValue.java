@@ -1,5 +1,6 @@
 package com.dortegau.jq4java.json;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
@@ -408,6 +409,15 @@ public class OrgJsonValue implements JqValue {
       throw new RuntimeException("boolean (" + value + ") has no length");
     }
     throw new RuntimeException("length not supported for type: " + value.getClass());
+  }
+
+  @Override
+  public JqValue utf8ByteLength() {
+    if (value instanceof String) {
+      return OrgJsonValue.fromLong(((String) value).getBytes(StandardCharsets.UTF_8).length);
+    }
+    String type = typeName();
+    throw new RuntimeException(type + " (" + this + ") only strings have UTF-8 byte length");
   }
 
   @Override
