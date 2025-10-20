@@ -1056,4 +1056,18 @@ class JqTest {
     void testBuiltinFunctionsAsGenericIdentifiers(String program, String input, String expected) {
         assertEquals(expected, Jq.execute(program, input));
     }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'.[] | in({\"foo\": 42})' ; '[\"foo\",\"bar\"]' ; 'true\nfalse'",
+        "'map(in([0,1]))' ; '[2,0]' ; '[false,true]'",
+        "'in([0,1,2])' ; '2.9' ; 'true'",
+        "'in([0])' ; '-0.9' ; 'true'",
+        "'in({\"foo\": null})' ; '\"foo\"' ; 'true'",
+        "'in(({}, {}))' ; '\"foo\"' ; 'false\nfalse'",
+        "'in(null)' ; '\"foo\"' ; 'false'"
+    }, delimiter = ';')
+    void testInFunction(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
 }

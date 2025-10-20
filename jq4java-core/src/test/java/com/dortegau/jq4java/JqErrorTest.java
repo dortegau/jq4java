@@ -754,4 +754,25 @@ class JqErrorTest {
         Arguments.of("\"\"", "Invalid JSON text for fromjson")
     );
   }
+
+  @Test
+  void testInWithStringKeyOnArray() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("\"foo\" | in([])", "null"));
+    assertTrue(ex.getMessage().contains("Cannot check whether array has a string key"));
+  }
+
+  @Test
+  void testInWithNumberKeyOnObject() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("1 | in({\"foo\": 42})", "null"));
+    assertTrue(ex.getMessage().contains("Cannot check whether object has a number key"));
+  }
+
+  @Test
+  void testInWithBooleanContainer() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("\"foo\" | in(true)", "null"));
+    assertTrue(ex.getMessage().contains("Cannot check whether boolean has a string key"));
+  }
 }

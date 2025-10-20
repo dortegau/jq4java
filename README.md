@@ -55,7 +55,7 @@ A Java 8+ port of [jq](https://jqlang.github.io/jq/), the lightweight command-li
 - Arithmetic operators: `+`, `-`, `*`, `/`, `%` (also string/array concatenation with `+`)
 - Logical operators: `and`, `or`, `not`
 - Conditional expressions: `if-then-else-end`, `if-then-elif-then-else-end`, `if-then-end` (optional else)
-- Built-in functions: `length`, `utf8bytelength`, `keys`, `type`, `map(expr)`, `select(expr)`, `builtins`, `flatten`, `add`, `abs`, `sort`, `reverse`, `unique`, `transpose`, `range(n)`, `range(from; to)`, `range(from; to; step)`, `to_entries`, `from_entries`, `tojson`, `fromjson`, `with_entries(expr)`, `utf8bytelength`
+- Built-in functions: `length`, `utf8bytelength`, `keys`, `in(object_or_array)`, `type`, `map(expr)`, `select(expr)`, `builtins`, `flatten`, `add`, `abs`, `sort`, `reverse`, `unique`, `transpose`, `range(n)`, `range(from; to)`, `range(from; to; step)`, `to_entries`, `from_entries`, `tojson`, `fromjson`, `with_entries(expr)`
 - Format filters: `@text`, `@json`, `@html`, `@csv`, `@tsv`, `@sh`, `@base64`, `@base64d`, `@uri`, `@urid`
 
 ## Usage
