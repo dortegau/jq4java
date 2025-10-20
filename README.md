@@ -67,6 +67,7 @@ A Java 8+ port of [jq](https://jqlang.github.io/jq/), the lightweight command-li
 
 - Alternative operator: `.foo // "default"` (null/false coalescing)
 - Arithmetic operators: `+`, `-`, `*`, `/`, `%` (also string/array concatenation with `+`)
+- Update assignment operators: `.foo += expr`, `.foo -= expr`, `.foo *= expr`, `.foo /= expr`, `.foo %= expr`, `.foo //= expr`
 - Comma operator: `.a, .b` (multiple outputs)
 - Comparison operators: `==`, `!=`, `<`, `<=`, `>`, `>=`
 - Conditional expressions: `if-then-else-end`, `if-then-elif-then-else-end`, `if-then-end` (optional else)

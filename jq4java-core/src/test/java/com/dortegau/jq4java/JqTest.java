@@ -290,6 +290,35 @@ class JqTest {
 
     @ParameterizedTest
     @CsvSource(value = {
+        "'.foo += 1' ; '{\"foo\": 41}' ; '{\"foo\":42}'",
+        "'.foo -= 2' ; '{\"foo\": 41}' ; '{\"foo\":39}'",
+        "'.foo *= 3' ; '{\"foo\": 4}' ; '{\"foo\":12}'",
+        "'.foo /= 2' ; '{\"foo\": 6}' ; '{\"foo\":3}'",
+        "'.foo %= 5' ; '{\"foo\": 12}' ; '{\"foo\":2}'",
+        "'.[1] += 5' ; '[0,1,2]' ; '[0,6,2]'"
+    }, delimiter = ';')
+    void testArithmeticUpdateAssignments(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @Test
+    void testUpdateAssignmentUsesOriginalInputForRightHandSide() {
+        String program = ".foo += .bar";
+        String input = "{\"foo\":1,\"bar\":2}";
+        assertEquals("{\"bar\":2,\"foo\":3}", Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'.foo //= 99' ; '{\"foo\": null}' ; '{\"foo\":99}'",
+        "'.foo //= 99' ; '{\"foo\": 0}' ; '{\"foo\":0}'"
+    }, delimiter = ';')
+    void testAlternativeUpdateAssignment(String program, String input, String expected) {
+        assertEquals(expected, Jq.execute(program, input));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
         "'@base64' ; '\"hello\"' ; '\"aGVsbG8=\"'",
         "'@base64' ; '[104,101,108,108,111]' ; '\"aGVsbG8=\"'",
         "'@base64d' ; '\"aGVsbG8=\"' ; '\"hello\"'",

@@ -26,6 +26,8 @@ import com.dortegau.jq4java.ast.Pipe;
 import com.dortegau.jq4java.ast.Range;
 import com.dortegau.jq4java.ast.Select;
 import com.dortegau.jq4java.ast.UnaryMinus;
+import com.dortegau.jq4java.ast.UpdatableExpression;
+import com.dortegau.jq4java.ast.UpdateAssignment;
 import com.dortegau.jq4java.ast.WithEntries;
 import com.dortegau.jq4java.ast.ZeroArgFunction;
 import com.dortegau.jq4java.json.JqValue;
@@ -59,15 +61,33 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
 
   @Override
   public Expression visitCommaExpr(JqGrammarParser.CommaExprContext ctx) {
-    List<JqGrammarParser.AlternativeExprContext> altExprs = ctx.alternativeExpr();
-    if (altExprs.size() == 1) {
-      return visitAlternativeExpr(altExprs.get(0));
+    List<JqGrammarParser.UpdateExprContext> updateExprs = ctx.updateExpr();
+    if (updateExprs.size() == 1) {
+      return visit(updateExprs.get(0));
     }
     List<Expression> expressions = new ArrayList<>();
-    for (JqGrammarParser.AlternativeExprContext altExpr : altExprs) {
-      expressions.add(visitAlternativeExpr(altExpr));
+    for (JqGrammarParser.UpdateExprContext updateExpr : updateExprs) {
+      expressions.add(visit(updateExpr));
     }
     return new Comma(expressions);
+  }
+
+  @Override
+  public Expression visitUpdateExpr(JqGrammarParser.UpdateExprContext ctx) {
+    List<JqGrammarParser.AlternativeExprContext> altExprs = ctx.alternativeExpr();
+    Expression left = visitAlternativeExpr(altExprs.get(0));
+
+    if (altExprs.size() == 1) {
+      return left;
+    }
+
+    if (!(left instanceof UpdatableExpression)) {
+      throw new RuntimeException("Left-hand side of update assignment is not updatable");
+    }
+
+    Expression right = visitAlternativeExpr(altExprs.get(1));
+    String operator = ctx.getChild(1).getText();
+    return new UpdateAssignment((UpdatableExpression) left, operator, right);
   }
 
   @Override

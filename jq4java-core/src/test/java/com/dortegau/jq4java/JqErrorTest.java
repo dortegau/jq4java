@@ -782,4 +782,18 @@ class JqErrorTest {
         () -> Jq.execute("\"foo\" | in(true)", "null"));
     assertTrue(ex.getMessage().contains("Cannot check whether boolean has a string key"));
   }
+
+  @Test
+  void testUpdateAssignmentFailsForInvalidTypes() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute(".foo += 1", "{\"foo\":\"text\"}"));
+    assertTrue(ex.getMessage().contains("Cannot add values of these types"));
+  }
+
+  @Test
+  void testUpdateAssignmentRequiresUpdatableTarget() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("1 += 2", "0"));
+    assertTrue(ex.getMessage().contains("Left-hand side of update assignment is not updatable"));
+  }
 }

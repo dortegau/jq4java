@@ -12,6 +12,10 @@ public interface JqValue extends Comparable<JqValue> {
 
   JqValue get(int index);
 
+  JqValue set(String key, JqValue value);
+
+  JqValue set(int index, JqValue value);
+
   boolean isArray();
 
   Stream<JqValue> stream();
