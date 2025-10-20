@@ -14,6 +14,7 @@ import com.dortegau.jq4java.ast.Expression;
 import com.dortegau.jq4java.ast.FieldAccess;
 import com.dortegau.jq4java.ast.FormatFunction;
 import com.dortegau.jq4java.ast.Identity;
+import com.dortegau.jq4java.ast.In;
 import com.dortegau.jq4java.ast.InterpolatedString;
 import com.dortegau.jq4java.ast.Literal;
 import com.dortegau.jq4java.ast.MapFunction;
@@ -482,6 +483,11 @@ public class JqAstBuilder extends JqGrammarBaseVisitor<Expression> {
           throw new RuntimeException("select/" + arguments.size() + " is not defined");
         }
         return new Select(arguments.get(0));
+      case "in":
+        if (arguments.size() != 1) {
+          throw new RuntimeException("in/" + arguments.size() + " is not defined");
+        }
+        return new In(arguments.get(0));
       case "range":
         return new Range(arguments);
       default:
