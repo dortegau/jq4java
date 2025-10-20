@@ -20,6 +20,7 @@ public class BuiltinRegistry {
       Class.forName("com.dortegau.jq4java.ast.Type");
       Class.forName("com.dortegau.jq4java.ast.Builtins");
       Class.forName("com.dortegau.jq4java.ast.MapFunction");
+      Class.forName("com.dortegau.jq4java.ast.MapValuesFunction");
       Class.forName("com.dortegau.jq4java.ast.Select");
       Class.forName("com.dortegau.jq4java.ast.Flatten");
       Class.forName("com.dortegau.jq4java.ast.Add");

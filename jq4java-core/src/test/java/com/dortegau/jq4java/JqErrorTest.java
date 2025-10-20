@@ -291,6 +291,13 @@ class JqErrorTest {
   }
 
   @Test
+  void testMapValuesOnNonIterable() {
+    RuntimeException ex = assertThrows(RuntimeException.class,
+        () -> Jq.execute("5 | map_values(. + 1)", "null"));
+    assertTrue(ex.getMessage().contains("Cannot iterate"));
+  }
+
+  @Test
   void testObjectShorthandOnArray() {
     RuntimeException ex = assertThrows(RuntimeException.class,
         () -> Jq.execute("{a}", "[1,2,3]"));
